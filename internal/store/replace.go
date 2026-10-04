@@ -27,7 +27,9 @@ func replaceFile(src, dst string) error {
 
 // fsyncFile flushes a file's contents and metadata to durable storage.
 func fsyncFile(path string) error {
-	f, err := os.Open(path)
+	// Windows requires a write-capable handle for FlushFileBuffers, which is
+	// what os.File.Sync uses. Every caller passes a writable temporary file.
+	f, err := os.OpenFile(path, os.O_RDWR, 0)
 	if err != nil {
 		return err
 	}
