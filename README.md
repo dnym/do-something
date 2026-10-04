@@ -328,6 +328,19 @@ bin/do-something done FULL_ID
 `make install` installs to `~/.local/bin` (`PREFIX`/`DESTDIR` supported).
 `make dist VERSION=1.0.0` builds Linux, macOS, and Windows, for amd64 and arm64,
 with reproducible paths and `dist/SHA256SUMS`. `--help` lists the complete surface.
+
+GitHub releases are automatic. Create and push a semantic-version tag after the
+commit has passed CI:
+
+```sh
+git tag -a v1.0.0 -m "v1.0.0"
+git push origin v1.0.0
+```
+
+The release workflow reruns the race-enabled test suite, builds the six release
+binaries, uploads them with `SHA256SUMS`, and generates release notes. Tags with
+a suffix such as `v1.0.0-rc.1` are published as prereleases.
+
 `help [topic]` shows a command page or a concept topic (`kind`, `type`,
 `category`, `modes`, `engagement`, `properties`, `scoring`, `filters`). `completion bash|zsh|fish` emits
 completion based on the parsed command model.
