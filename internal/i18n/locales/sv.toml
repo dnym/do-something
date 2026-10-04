@@ -1,0 +1,1055 @@
+["app.name"]
+other = "do-something"
+
+["app.tagline"]
+other = "Vad ska jag göra med den tid och energi jag har?"
+
+["doctor.healthy"]
+other = "Databasen är frisk"
+
+["doctor.problem"]
+other = "Databasen behöver tillsyn"
+
+["error.ambiguous_id"]
+other = "Prefixet {{.prefix}} är tvetydigt; kandidater: {{.candidates}}"
+
+["error.code.cycle"]
+other = "Beroendet skulle skapa en cykel."
+
+["error.code.invalid_argument"]
+other = "Ogiltiga argument; se --help."
+
+["error.code.invalid_id"]
+other = "Okänd eller tvetydig postreferens."
+
+["error.code.invalid_state"]
+other = "Ogiltig statusändring."
+
+["error.code.io_error"]
+other = "En in- eller utmatningsåtgärd misslyckades."
+
+["error.code.no_peer_base"]
+other = "Ingen tidigare version för enheten finns; använd --keep-local eller --take-remote."
+
+["error.code.no_store"]
+other = "Ingen databas finns; använd add eller sync --take-remote."
+
+["error.code.schema_mismatch"]
+other = "Databasschemats version stöds inte."
+
+["error.code.store_corrupt"]
+other = "Databasen klarade inte valideringen."
+
+["error.code.store_locked"]
+other = "En annan process har låst databasen; försök snart igen."
+
+["error.code.sync_conflict"]
+other = "Välj uttryckligen --keep-local, --take-remote eller --merge --master local|remote."
+
+["error.code.sync_identity_mismatch"]
+other = "Ögonblicksbilden tillhör en annan databas."
+
+["error.cycle"]
+other = "Beroendet skulle skapa en cykel: {{.path}}"
+
+["error.generic"]
+other = "Fel [{{.code}}]: {{.detail}}"
+
+["error.invalid_argument"]
+other = "Ogiltigt värde {{.value}} för --{{.argument}}: {{.detail}}"
+
+["error.invalid_id"]
+other = "Ingen post matchar id eller prefix {{.id}}"
+
+["error.invalid_state"]
+other = "{{.id}}: kan inte utföra {{.action}} från status {{.status}}"
+
+["error.io"]
+other = "In- eller utmatningsfel: {{.detail}}"
+
+["error.no_peer_base"]
+other = "Ingen tidigare version för denna enhet; använd --keep-local eller --take-remote"
+
+["error.no_store"]
+other = "Ingen databas på {{.path}} — skapa med add eller hämta med sync <fil> --take-remote"
+
+["error.schema_mismatch"]
+other = "Databasschemat stöds inte: {{.detail}}"
+
+["error.store_corrupt"]
+other = "Databasen på {{.path}} klarade inte valideringen: {{.detail}}"
+
+["error.store_locked"]
+other = "Databasen är låst av process {{.pid}}; försök snart igen"
+
+["error.sync_conflict"]
+other = "Synkroniseringskonflikt: {{.detail}}"
+
+["error.sync_identity_mismatch"]
+other = "Filen {{.path}} tillhör en annan databas"
+
+["error.usage"]
+other = "Felaktigt anrop: {{.detail}}"
+
+["field.added"]
+other = "Tillagda"
+
+["field.after"]
+other = "Efter"
+
+["field.archives"]
+other = "Arkiv"
+
+["field.baseline"]
+other = "Tidigare version"
+
+["field.before"]
+other = "Före"
+
+["field.blocked"]
+other = "Blockerade"
+
+["field.blocked_by"]
+other = "Blockeras av"
+
+["field.catalog_completeness"]
+other = "Saknade översättningar"
+
+["field.category"]
+other = "Kategori"
+
+["field.changed"]
+other = "Ändrad"
+
+["field.config"]
+other = "Konfiguration"
+
+["field.conflicts"]
+other = "Konflikter"
+
+["field.corrupt_events"]
+other = "Korrupta händelser"
+
+["field.cost_left"]
+other = "Återstående kostnad"
+
+["field.created_at"]
+other = "Skapad"
+
+["field.database_schema_version"]
+other = "Databasschemats version"
+
+["field.database_uuid"]
+other = "Databasens UUID"
+
+["field.db_config"]
+other = "Databaskonfiguration"
+
+["field.deadline"]
+other = "Sista datum"
+
+["field.decision"]
+other = "Beslut"
+
+["field.dependencies"]
+other = "Beroenden"
+
+["field.device_config"]
+other = "Enhetskonfiguration"
+
+["field.dry_run"]
+other = "Provsynkronisering"
+
+["field.gc_removed"]
+other = "Borttagna arkiv"
+
+["field.healthy"]
+other = "Frisk"
+
+["field.held"]
+other = "Låst"
+
+["field.id"]
+other = "ID"
+
+["field.invalid"]
+other = "Ogiltiga"
+
+["field.issues"]
+other = "Problem"
+
+["field.items"]
+other = "Poster"
+
+["field.kind"]
+other = "Sort"
+
+["field.legacy_id"]
+other = "Äldre id"
+
+["field.total_duration"]
+other = "Total tidsåtgång"
+
+["field.locale"]
+other = "Språk"
+
+["field.locales"]
+other = "Språk"
+
+["field.lock"]
+other = "Lås"
+
+["field.message"]
+other = "Meddelande"
+
+["field.min_session_duration"]
+other = "Minsta meningsfulla pass"
+
+["field.notes"]
+other = "Anteckningar"
+
+["field.path"]
+other = "Sökväg"
+
+["field.pid"]
+other = "Process-id"
+
+["field.problems"]
+other = "Problem"
+
+["field.property"]
+other = "Egenskap"
+
+["field.rated_at"]
+other = "Bedömd"
+
+["field.ratings"]
+other = "Bedömningar"
+
+["field.rollback_warning"]
+other = "Möjlig återställning"
+
+["field.row"]
+other = "Rad"
+
+["field.schema_version"]
+other = "Schemaversion"
+
+["field.since"]
+other = "Sedan"
+
+["field.skipped"]
+other = "Överhoppade"
+
+["field.snapshots"]
+other = "Ögonblicksbilder"
+
+["field.source"]
+other = "Källa"
+
+["field.state_bytes"]
+other = "Tillståndets storlek i byte"
+
+["field.status"]
+other = "Status"
+
+["field.store_path"]
+other = "Databassökväg"
+
+["field.tags"]
+other = "Taggar"
+
+["field.title"]
+other = "Titel"
+
+["field.type"]
+other = "Typ"
+
+["field.updated"]
+other = "Uppdaterade"
+
+["field.updated_at"]
+other = "Uppdaterad"
+
+["field.url"]
+other = "URL"
+
+["field.value"]
+other = "Värde"
+
+["field.remaining_duration"]
+other = "Återstående tidsåtgång"
+
+["help.add"]
+other = "Lägg till en post med frågor eller flaggor. Använd --ongoing för aktiviteter utan slutmål (se help ongoing)."
+
+["help.completion"]
+other = "Skapa kompletteringsskript för kommandoskal."
+
+["help.config"]
+other = "Visa eller ändra konfigurationen i databasen."
+
+["help.deps"]
+other = "Hantera beroenden."
+
+["help.doctor"]
+other = "Kontrollera databas, synkronisering och språk."
+
+["help.done"]
+other = "Markera poster som klara."
+
+["help.drop"]
+other = "Lägg ned poster."
+
+["help.edit"]
+other = "Redigera en post; --depends-on ersätter alla beroenden. Använd --ongoing för aktiviteter utan slutmål (se help ongoing)."
+
+["help.export"]
+other = "Exportera allt innehåll som kanonisk JSON."
+
+["help.flags"]
+other = "Flaggor"
+
+["help.import"]
+other = "Importera kanonisk JSON från en fil eller - för standardindata."
+
+["help.list"]
+other = "Visa poster med poäng, oavsett status."
+
+["help.reopen"]
+other = "Öppna poster igen."
+
+["help.root"]
+other = "Samla allt du vill göra eller ta del av och få förslag på vad du kan göra nu."
+
+["help.schema"]
+other = "Visa det maskinläsbara gränssnittet."
+
+["help.show"]
+other = "Visa alla uppgifter och poängberäkning för en post."
+
+["help.snapshot"]
+other = "Skapa en konsekvent ögonblicksbild av databasen."
+
+["help.start"]
+other = "Markera poster som påbörjade."
+
+["help.suggest"]
+other = "Föreslå något utifrån din energi, tid och önskade aktivitet."
+
+["help.sync"]
+other = "Jämför och synkronisera med en annan enhets ögonblicksbild."
+
+["help.usage"]
+other = "Användning: do-something [kommando] [flaggor]"
+
+["help.version"]
+other = "Visa version."
+
+["output.blocked_by"]
+other = "Blockeras av \"{{.title}}\" [{{.id}}] ({{.status}})"
+
+["output.status_transition"]
+other = "\"{{.title}}\" [{{.id}}]: {{.before}} → {{.after}}"
+
+["output.dependencies"]
+other = "Beroenden för \"{{.title}}\" [{{.id}}]:"
+
+["output.item_reference"]
+other = "\"{{.title}}\" [{{.id}}]"
+
+["output.none"]
+other = "inga"
+
+["output.breakdown"]
+other = "grundpoäng {{.base}} · just nu {{.rightnow}}"
+
+["output.changed"]
+other = "Ändrad: {{.changed}}"
+
+["output.column.id"]
+other = "id"
+
+["output.column.kind"]
+other = "sort"
+
+["output.column.score"]
+other = "poäng"
+
+["output.column.status"]
+other = "status"
+
+["output.column.title"]
+other = "titel"
+
+["output.column.type"]
+other = "typ"
+
+["output.matched"]
+other = "{{.n}} matchande post(er)"
+
+["output.no_results"]
+other = "Inga poster matchar"
+
+["output.peek"]
+other = "Förslaget har inte registrerats (--peek)"
+
+["output.recorded"]
+other = "Förslaget har registrerats"
+
+["output.result"]
+other = "Resultat: {{.value}}"
+
+["output.why.fresh"]
+other = "inte föreslagen nyligen"
+
+["output.why.high_value"]
+other = "högt värde"
+
+["output.why.low_commitment"]
+other = "liten insats"
+
+["output.why.moderate_interest"]
+other = "visst intresse"
+
+["output.why.momentum"]
+other = "redan påbörjad"
+
+["output.why.short_commitment"]
+other = "kort tidsåtgång"
+
+["output.why.strong_interest"]
+other = "stort intresse"
+
+["output.why.unblocking"]
+other = "låser upp andra poster"
+
+["output.why.unknown"]
+other = "okänd uppgift: {{.factor}}"
+
+["output.why.urgent"]
+other = "tidsfristen närmar sig"
+
+["prompt.add_vocabulary"]
+other = "Lägg till den nya termen i konfigurationen? (y/N)"
+
+["prompt.category"]
+other = "Kategori"
+
+["prompt.cost_left"]
+other = "Återstående kostnad"
+
+["prompt.deadline"]
+other = "Sista datum (ÅÅÅÅ-MM-DD)"
+
+["prompt.dependency"]
+other = "Beroenden (id, prefix eller titel; kommaseparerade)"
+
+["prompt.kind"]
+other = "Sort: project (något du gör för nytta eller nödvändighet) · media (något du konsumerar för avslappning, ro eller intresse)"
+
+["prompt.total_duration"]
+other = "Total tidsåtgång (t.ex. 20h)"
+
+["prompt.total_duration_bucket"]
+other = "Uppskattad tidsåtgång"
+
+["prompt.total_duration_choices"]
+other = "1 minuter · 2 timmar · 3 tiotals timmar · 4 dagar; eller en tidsåtgång som 30m eller 2h"
+
+["prompt.master"]
+other = "Konflikter kvarstår. Välj local eller remote för alla konflikter"
+
+["prompt.min_session_duration"]
+other = "Kortaste meningsfulla pass (t.ex. 20m)"
+
+["prompt.notes"]
+other = "Anteckningar"
+
+["prompt.rating"]
+other = "{{.label}} ({{.range}})"
+
+["prompt.rating_levels"]
+other = "Betygen är 0..1 — ett nivånamn eller ett vanligt tal fungerar: none=0 · low=1/3 · medium=1/2 · high=2/3 · very_high=4/5 · max=1"
+
+["prompt.refresh"]
+other = "Uppdatera bedömningarna nu? (y/N)"
+
+["prompt.skip"]
+other = "(tomt för att hoppa över)"
+
+["prompt.skip_clear"]
+other = "tomt för att behålla/hoppa över; clear för att rensa"
+
+["prompt.status"]
+other = "Status"
+
+["prompt.status_choices"]
+other = "eller 1–4 i samma ordning"
+
+["prompt.sync"]
+other = "Välj keep-local, take-remote eller merge"
+
+["prompt.tags"]
+other = "Taggar (kommaseparerade)"
+
+["prompt.title"]
+other = "Titel"
+
+["prompt.type"]
+other = "Typ"
+
+["prompt.url"]
+other = "URL"
+
+["prompt.vocabulary_prompt"]
+other = "Typer för {{.kind}}"
+
+["prompt.remaining_duration"]
+other = "Återstående tidsåtgång (t.ex. 3h)"
+
+["rating.label.actuality"]
+other = "Aktualitet"
+
+["rating.label.career"]
+other = "Karriärvärde"
+
+["rating.label.influence"]
+other = "Inflytande"
+
+["rating.label.intensity"]
+other = "Intensitet"
+
+["rating.label.interest"]
+other = "Intresse"
+
+["rating.label.mental"]
+other = "Mentalt värde"
+
+["rating.label.physical"]
+other = "Fysiskt värde"
+
+["rating.label.quality"]
+other = "Kvalitet"
+
+["rating.label.social"]
+other = "Socialt värde"
+
+["rating.range.actuality"]
+other = "0 inaktuellt … 1 högaktuellt"
+
+["rating.range.career"]
+other = "0 inget … 1 utmärkt"
+
+["rating.range.influence"]
+other = "0 obetydligt … 1 livsförändrande"
+
+["rating.range.intensity"]
+other = "0 ingen … 1 intensiv"
+
+["rating.range.interest"]
+other = "0 inget … 1 kan knappt vänta"
+
+["rating.range.mental"]
+other = "0 inget … 1 utmärkt"
+
+["rating.range.physical"]
+other = "0 inget … 1 utmärkt"
+
+["rating.range.quality"]
+other = "0 ingen … 1 utmärkt"
+
+["rating.range.social"]
+other = "0 inget … 1 utmärkt"
+
+["sync.advisory"]
+other = "En annan enhets ögonblicksbild har ändrats: {{.path}} — granska med sync"
+
+["sync.archived"]
+other = "Indata arkiverade i history/{{.peer}}"
+
+["sync.auto_union"]
+other = "Endast händelseloggen skiljde sig; händelserna har förenats automatiskt"
+
+["sync.bootstrap"]
+other = "Databas skapad från {{.peer}} med samma database_uuid"
+
+["sync.corruption"]
+other = "Händelsen {{.id}} har olika innehåll på de två sidorna och har uteslutits"
+
+["sync.invalid_snapshot"]
+other = "Ögonblicksbilden klarade inte valideringen: {{.path}}"
+
+["sync.keep_local"]
+other = "Lokalt innehåll behållet; fjärrinnehållet arkiverat"
+
+["sync.merged"]
+other = "{{.applied}} ändring(ar) sammanfogade, {{.conflicts}} konflikt(er)"
+
+["sync.noop"]
+other = "Redan synkroniserad med {{.peer}}"
+
+["sync.rollback_warning"]
+other = "Varning: detta liknar en återställning till en äldre version"
+
+["sync.take_remote"]
+other = "Fjärrögonblicksbilden från {{.peer}} har antagits"
+
+["prompt.conflict"]
+other = "Välj local eller remote för denna konflikt"
+
+["output.why.value_estimate"]
+other = "uppskattat värde"
+
+["output.why.commitment_estimate"]
+other = "uppskattad insats"
+
+["field.base"]
+other = "Grundpoäng"
+
+["field.right_now"]
+other = "Just nu"
+
+["field.final"]
+other = "Slutpoäng"
+
+["field.groups"]
+other = "Grupper"
+
+["field.group"]
+other = "Grupp"
+
+["field.members"]
+other = "Egenskaper"
+
+["field.weight"]
+other = "Vikt"
+
+["field.share"]
+other = "Andel"
+
+["field.d"]
+other = "Önskvärdhet"
+
+["field.state"]
+other = "Tillstånd"
+
+["field.age_months"]
+other = "Bedömningens ålder (månader)"
+
+["field.note"]
+other = "Beräkningsnotering"
+
+["field.terms"]
+other = "Termer för just nu"
+
+["field.name"]
+other = "Namn"
+
+["field.v"]
+other = "Värde"
+
+["field.days_left"]
+other = "Dagar kvar"
+
+["field.pace"]
+other = "Arbetstakt"
+
+["field.ready"]
+other = "Redo"
+
+["field.total"]
+other = "Totalt"
+
+["field.anchor_age"]
+other = "Tid sedan senaste förslag/påbörjande (dagar)"
+
+["factor.value"]
+other = "värde"
+
+["factor.commitment"]
+other = "insats"
+
+["factor.interest"]
+other = "intresse"
+
+["factor.effort"]
+other = "intensitet"
+
+["factor.session"]
+other = "passlängd"
+
+["factor.finish_within"]
+other = "tid till slutförande"
+
+["factor.budget"]
+other = "kostnad"
+
+["factor.type"]
+other = "typ"
+
+["factor.category"]
+other = "kategori"
+
+["output.hours"]
+other = "{{.hours}} h"
+
+["error.argument"]
+other = "Ogiltigt värde {{.value}} för {{.argument}}"
+
+["error.allowed"]
+other = "Tillåtna värden: {{.values}}"
+
+["field.checks"]
+other = "Kontroller"
+
+["field.openability"]
+other = "Öppningsbarhet"
+
+["field.quick_check"]
+other = "SQLite-integritet"
+
+["field.foreign_key_check"]
+other = "Referensintegritet"
+
+["field.schema"]
+other = "Schema"
+
+["field.ok"]
+other = "OK"
+
+["field.not_run"]
+other = "Inte körd"
+
+["help.commands"]
+other = "Kommandon"
+
+["help.default_command"]
+other = "Utan kommando är suggest standard."
+
+["help.usage_command"]
+other = "Användning: do-something {{.command}}"
+
+["help.positionals"]
+other = "Positionella argument"
+
+["help.global_flags"]
+other = "Globala flaggor"
+
+["help.notes"]
+other = "Anmärkningar"
+
+["help.values"]
+other = "Värden"
+
+["help.ratings"]
+other = "Betyg (0..1) per typ"
+
+["help.measurements"]
+other = "Mätvärden per typ"
+
+["help.none"]
+other = "inga"
+
+["help.exit_codes"]
+other = "Avslutningskoder"
+
+["help.exit.0"]
+other = "lyckades, även med noll träffar"
+
+["help.exit.1"]
+other = "körstidsfel"
+
+["help.exit.2"]
+other = "ogiltigt anrop"
+
+["help.exit.3"]
+other = "tomt resultat med --fail-empty"
+
+["help.format_duration"]
+other = "Go-tidsangivning (t.ex. 30m, 2h)"
+
+["help.default"]
+other = "(standard: {{.value}})"
+
+["help.alias"]
+other = "alias: {{.name}}"
+
+["help.arg.id"]
+other = "postens UUID, unikt UUID-prefix eller entydig exakt titel (UUID har företräde)"
+
+["help.arg.file"]
+other = "en filsökväg"
+
+["help.arg.target"]
+other = "sökväg till ögonblicksbildsfil"
+
+["help.arg.key"]
+other = "konfigurationsnyckel"
+
+["help.arg.value"]
+other = "konfigurationsvärde"
+
+["help.filter.and"]
+other = "Uppprepade filter kombineras med OCH."
+
+["help.filter.type"]
+other = "--type och --category matchar exakt, okänsligt för stor bokstav."
+
+["help.filter.text"]
+other = "--text är en okänslig delsträngssökning i titel, anteckningar, kategori och typ."
+
+["help.filter.unknown"]
+other = "Poster med okända värden släpps igenom med etiketten \"unknown\"; --unknown exclude är strikt."
+
+["help.help"]
+other = "Visa ett hjälpämne eller en kommandosida"
+
+["help.arg.topic"]
+other = "ett kommandonamn eller ett hjälppämne (ämnelistan finns på startsidan)"
+
+["help.topics"]
+other = "Hjälpämnen (do-something help <topic>):"
+
+["help.default_kind"]
+other = "suggest rangordnar project som standard; --kind media eller both når de andra sorterna."
+
+["help.filter.kind"]
+other = "--kind (endast suggest) är project som standard; both rangordnar project och media i en lista."
+
+["prompt.vocabulary_empty"]
+other = "Inget ordförråd för {{.topic}} ännu; sätt några med: do-something config set {{.key}} \"a,b,c\""
+
+["help.topic.kind"]
+other = "kind är vad en post är:\n  project — något du gör för nytta eller nödvändighet\n  media — något du konsumerar för avslappning, ro eller intresse\n\nkind sätts när posten läggs till; ändra senare med: do-something edit <id|title> --kind …\nsuggest rangordnar project som standard; --kind media / both väljer de andra sorterna; list visar alla sorter.\n\nVäntar du på ett beslut? Gör beslutet självt till ett project (\"besluta vad du ska göra med bilen\"): det betygas som vilket project som helst, och utfallet blir ett uppföljningsproject, kopplat med beroenden."
+
+["help.topic.type"]
+other = "type är formen på posten; fritext på alla sorter (en film, ett brädspel, ett skrivprojekt, ...).\n\nInga typer är inbyggda. Ordförrådet är ditt:\n  do-something config get vocabulary.types\n  do-something config set vocabulary.types \"film,game,anime\"\n\nOrdförrådet styr bara interaktiv add/edit; allt du skriver accepteras och nya termer kan läggas till."
+
+["help.topic.category"]
+other = "category är ämnet för posten; fritext på alla sorter (fantasy, programmering, hälsa, ...).\n\nInga kategorier är inbyggda. Ordförrådet är ditt:\n  do-something config get vocabulary.categories\n  do-something config set vocabulary.categories \"fantasy,science\"\n\nOrdförrådet styr bara interaktiv add/edit; allt du skriver accepteras och nya termer kan läggas till."
+
+["help.topic.properties"]
+other = "Betyg (0..1) per sort:\n  project — intensity, career, physical, mental, social, interest\n  media — intensity, actuality, influence, quality, interest\n\nMätvärden per sort:\n  project — remaining_duration, cost_left, min_session_duration, total_duration, deadline\n  media — remaining_duration, cost_left, min_session_duration, total_duration, deadline\n\nOkända värden rapporteras aldrig som nollor; poängsättningen behandlar dem med ett prior på 0.5 (scoring.prior).\n\nAlla egenskaper har sin egen sida: do-something help <property>. Använd --ongoing för aktiviteter utan slutmål (se help ongoing)."
+
+["help.topic.scoring"]
+other = "score = (1 - beta) * base + beta * right-now, beta standard 0.2 (scoring.beta)\n\nbase: postens värdegrupper, vikta och normaliserade:\n  project — value (career, physical, mental, social), commitment (remaining_duration, cost_left), interest\n  media — value (quality, influence, actuality), commitment (remaining_duration), interest\nOkända värden betygas med ett prior på 0.5 (scoring.prior). Commitment halveras vid k-konstanterna (scoring.k.*); grupp-, egenskaps- och termvikter är konfiguration (scoring.group.*, scoring.weights.*, scoring.term.*).\n\nright-now: urgency (deadline mot takt), momentum (påbörjad), unblocking (låser upp andra poster), mode_match (posten passar den valda --mode; finns bara om --mode anges), engagement_match (posten passar den valda --engagement; finns bara om --engagement anges) och cooldown (inte föreslagen nyligen), blandade efter sina vikter. Använd --ongoing för aktiviteter utan slutmål (se help ongoing)."
+
+["help.topic.filters"]
+other = "Filter kombineras med AND; varje flagga begränsar resultatmängden.\n  --kind project|media|both   --status not_started|in_progress|done|dropped\n  --type T  --category C  --tag T  --not-tag T  --text T\n  --effort LEVEL  --session DURATION  --finish-within DURATION\n  --budget N  --min-score 0..1  --unknown include|exclude\n  --limit N  --random  --peek  --explain  --fail-empty\n  --mode movement|hands_on|thinking|making  --engagement focused|loose\n\n--kind both (suggest och list) rangordnar project och media i en lista; suggest är --kind project som standard.\n--effort LEVEL är ett betygsnivånamn — none, low, medium, high, very_high, max — och behåller poster med intensity på eller under nivåns tak (se help effort).\n--mode och --engagement omrankerar poster mot den valda aktivitetstypen och engagemangsstilen (se help modes och help engagement); till skillnad från övriga filter excluderar de aldrig poster.\nPoster med okända värden släpps igenom och märks \"unknown\"; --unknown exclude är strikt."
+
+["mode.movement"]
+other = "Rör på mig"
+
+["status.not_started"]
+other = "Inte påbörjad"
+
+["status.in_progress"]
+other = "Påbörjad"
+
+["status.done"]
+other = "Klar"
+
+["status.dropped"]
+other = "Avbokad"
+
+["mode.hands_on"]
+other = "Använd händerna"
+
+["mode.thinking"]
+other = "Använd huvudet"
+
+["mode.making"]
+other = "Skapa något"
+
+["engagement.focused"]
+other = "Lägg upp fullt fokus"
+
+["engagement.loose"]
+other = "Håll det slapat"
+
+["prompt.modes"]
+other = "Moduler (kommaseparerade, eller \"clear\")"
+
+["prompt.engagements"]
+other = "Engagemang (kommaseparerade, eller \"clear\")"
+
+["field.modes"]
+other = "Moduler"
+
+["field.engagements"]
+other = "Engagemang"
+
+["help.filter.mode"]
+other = "--mode MODE omrankerar poster mot den valda aktivitetstypen (movement, hands_on, thinking, making); den excluderar aldrig poster — styrkan är vikten scoring.term.mode_match."
+
+["help.filter.engagement"]
+other = "--engagement ENGAGEMENT omrankerar poster mot den valda engagemangsstilen (focused, loose); den excluderar aldrig poster — styrkan är vikten scoring.term.engagement_match."
+
+["help.topic.modes"]
+other = "mode är den typ av aktivitet du känner för:\n  movement — rör på mig (promenad, gym, sport, dans)\n  hands_on — använd händerna (bygga, slöjd, pyssla, laga)\n  thinking — använd huvudet (studera, analysera, läsa, pussel)\n  making — skapa något (ett verk du försöker för in i världen: spelet, låten, fågelboet)\n\nGrenen för making: det räknas som making när sessionen tjänar en ofärdig artefakt du försöker för in i världen — även om den aldrig ska finnas utöver för dig, även om du river i bitar papperet efteråt. Att bearbeta trä i slöjdsalen \"bara för att\" är hands_on, inte making; ett fågelbo är hands_on + making; att koreografera en dans är making + movement.\n\nEn post kan ha flera moduler; en post utan moduler är oklassificerad. Tomt betyder okänt, inte \"passar allting\" — om en post verkligen passar flera typer, markera dem alla uttryckligen. Modulmängden är inbyggd (som kind och status); egna moduler är en v2-kandidat.\n\n--mode MODE (suggest, list) omrankerar poster mot den valda typen: en passande post lyfts, en post som passar andra typer sänks och en oklassificerad post hamnar emellan. Den excluderar aldrig poster. Styrkan är vikten scoring.term.mode_match (standard 2.0; sätt den till 0 för att stänga av).\n\nSätt moduler vid add/edit med --modes movement --modes hands_on (kommaseparerat fungerar också); --clear-modes tar bort dem. I interaktivt läge frågas du; \"clear\" tömmer mängden."
+
+["help.topic.engagement"]
+other = "engagement är hur du vill engagera dig i aktiviteten, oberoende av dess typ:\n  focused — lägg upp fullt fokus (absorberad, ouppdelad uppmärksamhet)\n  loose — håll det slapat (avslappnat, av och till, inte krävande)\n\nDet gäller alla typer, inte bara huvudarbete: fokuserat studerande eller slapp läsning; ett tekniskt träningspass eller en otressad promenad; att lära sig löda eller sticka ett bekant mönster; att komponera eller måla utan mål. Det är en preferens, inte en intensitetsreglage — hur krävande en aktivitet är betygas och filtreras av --effort istället.\n\nEn post kan bära båda (en krävande bok du studerar en fokuserad dag och läser en sakta kväll); en post utan engagemang är oklassificerad. Tomt betyder okänt, inte \"fungerar i alla engagemangsstilar\". Engagemangsmängden är inbyggd (som mode, kind och status); egna engagemang är en v2-kandidat.\n\n--engagement ENGAGEMENT (suggest, list) omrankerar poster mot den valda engagemangsstilen, exakt som --mode: träff lyfts, endast-andra sänks, oklassificerad hamnar emellan; den excluderar aldrig. Styrkan är vikten scoring.term.engagement_match (standard 2.0; sätt den till 0 för att stänga av). De två flaggorna är oberoende axlar och kombineras: --mode thinking --engagement focused = absorbera något krävande med huvudet.\n\nSätt engagement vid add/edit med --engagements focused --engagements loose (kommaseparerat fungerar också); --clear-engagements tar bort dem. I interaktivt läge frågas du; \"clear\" tömmer mängden."
+
+["output.why.mode_match"]
+other = "passar den valda moden"
+
+["output.why.mode_unclassified"]
+other = "har ingen mode satt"
+
+["output.why.mode_mismatch"]
+other = "utanför den valda moden"
+
+["output.why.engagement_match"]
+other = "passar det valda engagemanget"
+
+["output.why.engagement_unclassified"]
+other = "har inget engagemang satt"
+
+["output.why.engagement_mismatch"]
+other = "utanför det valda engagemanget"
+
+["help.topic.intensity"]
+other = "intensity är 0..1-betyget för hur krävande aktiviteten är i sig — den energi och uppmärksamhet den kräver medan du gör den (0 ingen … 1 intensiv). De sex kanoniska nivåerna namnger ankaretalen: none=0, low=1/3, medium=1/2, high=2/3, very_high=4/5, max=1.\n\nDet är en krävighetsdimension, inte en värde-dimension: intensity ingår aldrig i poängen — ingen poänggrupp och ingen just-nu-term läser den. Dess roll är --effort-filtret (se help effort): --effort LEVEL behåller poster med intensity på eller under nivåns tak (scoring.effort.<level>, standardvärdena ovan) — en post betygd high släpps igenom av --effort high men inte av --effort medium.\n\nDen avtar aldrig (scoring.half_life.intensity är oändlig som standard): hur krävande en aktivitet är åldras inte.\n\nSätt den med ett nivånamn eller ett tal i 0..1: do-something add --intensity high eller --intensity 0.3, på samma sätt edit <id|title> --intensity high; de interaktiva frågorna visar nivåerna och accepterar båda. --unset-rating intensity gör den okänd igen."
+
+["help.topic.career"]
+other = "career är project-ens 0..1-värde för din professionella utveckling och dina långsiktiga karriärmål: de färdigheter, det rykte och de möjligheter det bygger (0 inget … 1 utmärkt).\n\nDen hör till project-gruppen value (tillsammans med physical, mental, social); gruppen ingår i grundpoängen, vikta med scoring.group.value och egenskapvikten scoring.weights.project.career (eller sort-oberoende scoring.weights.career).\n\nBetyget avtar mot prior 0.5 med halveringstiden 36 månader (scoring.half_life.career): ett värde uppskattat för år sedan är mindre säkert än ett du just gav. Betyg utan datum (t.ex. importerade) avtar aldrig.\n\nSätt det med do-something add --career 0.5 eller edit <id|title> --career 0.5, eller interaktivt; --unset-rating career gör det okänt igen."
+
+["help.topic.physical"]
+other = "physical är project-ens 0..1-värde för din fysiska hälsa och kondition: hur det bidrar till en hälsosam livsstil, en bättre träningsnivå eller ett hälsomål (0 inget … 1 utmärkt).\n\nDen hör till project-gruppen value (tillsammans med career, mental, social); gruppen ingår i grundpoängen, vikta med scoring.group.value och egenskapvikten scoring.weights.project.physical (eller sort-oberoende scoring.weights.physical).\n\nBetyget avtar mot prior 0.5 med halveringstiden 36 månader (scoring.half_life.physical). Betyg utan datum (t.ex. importerade) avtar aldrig.\n\nSätt det med do-something add --physical 0.5 eller edit <id|title> --physical 0.5, eller interaktivt; --unset-rating physical gör det okänt igen."
+
+["help.topic.mental"]
+other = "mental är project-ens 0..1-värde för din mentala hälsa, kognitiva funktioner och emotionella välbefinnande: motståndskraft, minskad stress, meningsfullhet (0 inget … 1 utmärkt).\n\nDen hör till project-gruppen value (tillsammans med career, physical, social); gruppen ingår i grundpoängen, vikta med scoring.group.value och egenskapvikten scoring.weights.project.mental (eller sort-oberoende scoring.weights.mental).\n\nBetyget avtar mot prior 0.5 med halveringstiden 36 månader (scoring.half_life.mental). Betyg utan datum (t.ex. importerade) avtar aldrig.\n\nSätt det med do-something add --mental 0.5 eller edit <id|title> --mental 0.5, eller interaktivt; --unset-rating mental gör det okänt igen."
+
+["help.topic.social"]
+other = "social är project-ens 0..1-värde för dina relationer och samhälle: de interaktioner det innebär, de band det stärker, de andra det gynnar (0 inget … 1 utmärkt).\n\nDen hör till project-gruppen value (tillsammans med career, physical, mental); gruppen ingår i grundpoängen, vikta med scoring.group.value och egenskapvikten scoring.weights.project.social (eller sort-oberoende scoring.weights.social).\n\nBetyget avtar mot prior 0.5 med halveringstiden 36 månader (scoring.half_life.social). Betyg utan datum (t.ex. importerade) avtar aldrig.\n\nSätt det med do-something add --social 0.5 eller edit <id|title> --social 0.5, eller interaktivt; --unset-rating social gör det okänt igen."
+
+["help.topic.interest"]
+other = "interest är 0..1-betyget för hur mycket posten tilltalar dig (0 inget … 1 kan knappt vänta). Båda sorterna har den.\n\nDen har sin egen poänggrupp (interest) i båda sorterna: ju mer du vill göra posten, desto högre grundpoäng. Vikt: scoring.group.interest och egenskapvikten scoring.weights.<kind>.interest (eller sort-oberoende scoring.weights.interest).\n\nDet är det snabbast avtagande betyget — halveringstiden 18 månader (scoring.half_life.interest): ett betyg från i år säger lite om hur du känner dig idag. Att betyga interaktivt uppdaterar dess datum; betyg utan datum (t.ex. importerade) avtar aldrig.\n\nSätt den med do-something add --interest 0.8 eller edit <id|title> --interest 0.8, eller interaktivt; --unset-rating interest gör den okänd igen."
+
+["help.topic.actuality"]
+other = "actuality är media-postens 0..1-betyg för hur närvarande verket är i nutida media och debatt (0 inaktuellt … 1 högaktuellt).\n\nDen hör till media-gruppen value (tillsammans med quality och influence); gruppen ingår i grundpoängen, vikta med scoring.group.value och egenskapvikten scoring.weights.media.actuality (eller sort-oberoende scoring.weights.actuality).\n\nDen avtar snabbare än vilket annat betyg som helst — halveringstiden 12 månader (scoring.half_life.actuality): det som var aktuellt för ett år sedan är sällan det längre. (Quality och influence avtar i stället aldrig.)\n\nSätt den med do-something add --actuality 0.5 eller edit <id|title> --actuality 0.5, eller interaktivt; --unset-rating actuality gör den okänd igen."
+
+["help.topic.influence"]
+other = "influence är media-postens 0..1-betyg för hur mycket verket har format sin genre eller kultur (0 obetydligt … 1 kulturbärande referens).\n\nDen hör till media-gruppen value (tillsammans med quality och actuality); gruppen ingår i grundpoängen, vikta med scoring.group.value och egenskapvikten scoring.weights.media.influence (eller sort-oberoende scoring.weights.influence).\n\nDen avtar aldrig (scoring.half_life.influence är oändlig): ett referensverk förblir ett referensverk.\n\nSätt den med do-something add --influence 0.5 eller edit <id|title> --influence 0.5, eller interaktivt; --unset-rating influence gör den okänd igen."
+
+["help.topic.quality"]
+other = "quality är media-postens 0..1-betyg för hur bra verket är (0 dåligt eller okänt … 1 hyllat).\n\nDen hör till media-gruppen value (tillsammans med influence och actuality); gruppen ingår i grundpoängen, vikta med scoring.group.value och egenskapvikten scoring.weights.media.quality (eller sort-oberoende scoring.weights.quality).\n\nDen avtar aldrig (scoring.half_life.quality är oändlig): kvaliteten på ett verk åldras inte som dess aktualitet gör.\n\nSätt den med do-something add --quality 0.5 eller edit <id|title> --quality 0.5, eller interaktivt; --unset-rating quality gör den okänd igen."
+
+["help.topic.remaining_duration"]
+other = "remaining_duration är den uppskattade aktiva tid som behövs för att slutföra posten från dess nuvarande läge. Den gäller för både project och media. Lagring och JSON använder timmar; CLI-indata använder tidsangivelser som 30m eller 2h.\n\nDen ingår i commitment-gruppen för båda sorterna (tillsammans med cost_left för project) och poängsätts med k-kurvan d = k/(k+v). scoring.k.remaining_duration är som standard 20 timmar. Mindre återstående tid ger högre poäng för denna komponent. En serie på 40 timmar med 24 minuter kvar får cirka 0.98 i stället för 0.33 när inget har setts. Ingen extra bonus baseras på andelen som är klar.\n\nDen styr --finish-within DURATION och kolumnen för återstående tid i list/show. För project med deadline styr den även beräkningen av kravtakten mot scoring.k_pace (standard 2 h/dag).\n\nSätt den med do-something add --remaining-duration 40h eller edit <id|title> --remaining-duration 30m. Ändringar påverkar inte total_duration eller status; inte ens noll markerar posten som klar. --clear-remaining-duration gör värdet okänt. Ingen av tidsuppskattningarna härleds från den andra; enbart återstående tid räcker för poängsättning. Använd --ongoing för aktiviteter utan slutmål (se help ongoing)."
+
+["help.topic.cost_left"]
+other = "cost_left är den återstående direkta ekonomiska kostnaden för att slutföra posten, i den valutaenhet du använder (visningsetiketten är konfigurationsnyckeln scoring.cost_unit). Båda sorterna har den.\n\nDen gäller för båda sorterna, men standardsammansättningen räknar bara in den i commitment-gruppen för project (commitment-gruppen för media innehåller bara remaining_duration), så en kostnad sparad på en mediapost påverkar inte poängen förrän du lägger till den där: do-something config set scoring.group_members.commitment.media remaining_duration,cost_left. I en grupp poängsätts den på k-kurvan d = k/(k+v) — men scoring.k.cost_left levereras utan standardvärde. Innan du kalibrerar den i din egen valutaenhet (do-something config set scoring.k.cost_left 500) beter sig mätvärdet som okänt: det betygas med prior 0.5 även när ett värde är lagrat. En kostnad i nån annans enhet är meningslös, så produkten vägrar hitta på en.\n\nDen styr --budget N-filtret (cost_left ≤ N; okända släpps igenom med etikett).\n\nSätt den med do-something add --cost N eller edit <id|title> --cost N; --clear-cost gör den okänd."
+
+["help.topic.min_session_duration"]
+other = "min_session_duration är postens kortaste meningsfulla pass: ett kapitel, några övningar, ett avsnitt eller en tvåminutersfilm. Båda sorterna har värdet. Lagring och JSON använder timmar; CLI-indata använder tidsangivelser som 20m eller 1h.\n\nVärdet deltar inte i poängsättningen (ingen kurva är definierad). Filtret --session DURATION (alias --time) behåller poster vars minsta meningsfulla pass ryms i den tillgängliga tiden. Okända värden släpps igenom som standard och märks unknown.\n\nInga typspecifika värden levereras. Typspecifika standardvärden används när en post läggs till, om värdet inte uttryckligen rensas, och visas som förslag i frågorna. Konfigurera dem i timmar med do-something config set defaults.min_session_duration.custom 0.5.\n\nSätt värdet med do-something add --min-session-duration 30m eller edit <id|title> --min-session-duration 20m; --clear-min-session-duration gör det okänt."
+
+["help.topic.total_duration"]
+other = "total_duration är den uppskattade aktiva tiden för hela posten, för både project och media: ett projekts arbetsinsats, en films speltid, en boks lästid eller en series totala visningstid. Väntetid mellan passen räknas inte in. Lagring och JSON använder timmar; CLI-indata använder tidsangivelser som 30m eller 2h.\n\nDen används inte för poängsättning eller --finish-within; det gör remaining_duration. Totalen minskar inte när du gör framsteg, men kan revideras när uppskattningen eller omfattningen ändras.\n\nUppskattad andel klar är 100 * (1 - remaining_duration / total_duration). list/show visar estimated_progress_percent i JSON och en ungefärlig procentsats i text. Värdet är null och utelämnas i text när någon uppskattning är okänd, totalen är noll eller återstående tid överstiger totalen. Reviderade uppskattningar kan sänka procentsatsen. Status är oberoende.\n\nDen interaktiva frågan erbjuder fyra grova tidsuppskattningar via scoring.duration_anchors (standard 0.5 / 3 / 20 / 100 timmar), eller en uttrycklig tidsangivelse. Sätt värdet med do-something add --total-duration 40h eller edit <id|title> --total-duration 50h; --clear-total-duration gör det okänt. För en opåbörjad post anger du uttryckligen samma uppskattning som remaining_duration. Använd --ongoing för aktiviteter utan slutmål (se help ongoing)."
+
+["help.topic.deadline"]
+other = "deadline är sista dag (ÅÅÅÅ-MM-DD) posten fortfarande kan slutföras. Båda sorterna har den.\n\nDen styr urgency-termen i just nu. För project med känd remaining_duration följer brådska kravtackten (remaining_duration ÷ dagar kvar) mot scoring.k_pace (standard 2 h/dag). För media — och project utan timmeuppskattning — gäller i stället en dagsbaserad kurva: 1 − dagar kvar ÷ scoring.deadline_horizon_days (standard 30), neddämpad till 0 (ingen brådska) och takad till 1 (sen = maximal brådska).\n\nPoster utan deadline har ingen urgency-term — om du inte sätter scoring.no_deadline_horizon till ett positivt antal dagar, vilket gör att urgency utgår från att varje deadline-lös post är förfallen efter just så många dagar.\n\nSätt den med do-something add --deadline 2026-12-01 eller edit <id|title> --deadline 2026-12-01; --clear-deadline tar bort den."
+
+["help.topic.dependencies"]
+other = "dependencies kopplar ihop poster: en post listar de förutsättningar som måste vara klara innan den kan påbörjas.\n\nEtt beroende blockerar sin beroende: medan någon förutsättning inte är klar, är den beroende posten blockerad. suggest döljer blockerade poster (se dem med --include-unready); list, show och doctor visar blockerarna med blockerarens status. Endast done löser upp en blockering — en dropped eller öppen förutsättning blockerar fortfarande, eftersom en avbokad förutsättning inte är en fullbordad. Antingen öppna den igen eller upplös kanterna: do-something deps remove <id|title> <dependency-id|title>.\n\nGrafen påverkar poängen också: unblocking-termen i just nu belönar att slutföra en post som gör dess beroende redo. Cyklar avvisas (CYCLE).\n\nHantera kanter med do-something deps list|add|remove <id|title> [ref …], eller ersätt hela mängden med do-something edit <id|title> --depends-on ref-a,ref-b (kommaseparerat). Varje ref är ett fullt id, ett entydigt id-prefix eller en exakt (skiftlägeskänslig) titel; en tvetydig titel ger INVALID_ID som listar kandidaterna, och en titel som också är en befintlig posts id tolkas som id. Ett kommatecken i en titel undviker du med omvänt snedstreck (\\,)."
+
+["help.topic.status"]
+other = "status är postens livscykeltillstånd:\n  not_started — inte påbörjad\n  in_progress — påbörjad, inte slutförd\n  done — klar\n  dropped — avbokad; det finns ingen hård radering, avbokning är hur en post lämnar den aktiva listan\n\nÖvergångar är uttryckliga verb på ett eller flera id: do-something start <id|title …>, done, drop, reopen. start fungerar från alla status utom in_progress; done och drop från alla; reopen från alla utom not_started — de undantagna raderna är idempotenta tomgångar (nuvarande = mål ⇒ changed: false), så ett verb lyckas på vilken post som helst. En körning med flera id är en enda allt-eller-inget-transaction; en ändring skriver en händelse (started / completed / dropped — reopen skriver ingen) som påverkar poängsättningen, en tomgång skriver ingen.\n\nadd och edit sätter status direkt: do-something add --title '…' --kind media --status done, eller edit <id|title> --status in_progress. En statusändring skriver samma händelse som det matchande verbet (started / completed / dropped; not_started skriver ingen), så historik och poängsättning ser den precis som efter ett statuskommando. Det är den bekväma vägen för historiska poster: skapa dem i det läge de är i, utan ett efterföljande start/done/drop-steg.\n\nsuggest returnar endast not_started- och in_progress-poster; list visar alla status. Filtrera med --status.\n\nStatus påverkar poängen: in_progress-poster bär momentum-termen, done-poster låser upp sina beroende (unblocking-termen) och blockerade poster döljs från suggest."
+
+["help.topic.effort"]
+other = "effort är värdet --effort LEVEL (suggest, list): hur mycket energi du kan lägga just nu, uttryckt som ett tak på posternas intensity-betyg. De sex nivåerna, från minst till mest krävande:\n  none       behåller poster med intensity ≤ 0 (i princip ansträngningsfri)\n  low        behåller poster med intensity ≤ 1/3\n  medium     behåller poster med intensity ≤ 1/2\n  high       behåller poster med intensity ≤ 2/3\n  very_high  behåller poster med intensity ≤ 4/5\n  max        sätter inget tak: alla intensiteter släpps igenom\n\nTaken är konfiguration, en per nivå: scoring.effort.none … scoring.effort.max (standardvärdena är värdena ovan). Poster utan intensity släpps igenom och märks \"unknown\"; --unknown exclude är strikt.\n\nTill skillnad från --mode och --engagement (som omrankerar) är effort ett hårt filter: en post över taket är utanför resultatmängden. Se help intensity och help filters."
+
+["field.estimated_progress_percent"]
+other = "Uppskattad andel klar (%)"
+
+["output.estimated_progress"]
+other = "~{{.percent}}% klart"
+
+["prompt.session_default"]
+other = "Föreslaget minsta pass för denna typ: {{.duration}}"
+
+["help.log"]
+other = "Registrera nedlagd tid och/eller kostnad: log <id|title> [time-passed] [--cost N]. Tid och kostnad kan registreras var för sig eller atomärt i samma anrop. Utelämnad tid hämtas från min_session_duration endast när --cost också saknas. Värden måste vara positiva och ändliga. Ändliga poster måste ha motsvarande återstående uppskattning; fortlöpande poster kan registrera kostnad utan cost_left. Återstående uppskattningar minskas som lägst till noll medan totalerna bevaras. Loggning tillåts endast för in_progress om inte --force anges; --force registrerar aktiviteten utan att i övrigt ändra status. Vid noll återstående tid frågar en terminal om en in_progress-post ska markeras som klar. Utan interaktion lämnas status oförändrad. --complete markerar den som klar vid noll; --no-complete förhindrar frågan. --complete kräver registrerad tid, är ogiltig för fortlöpande poster och kan inte slutföra klara eller avförda poster. Varje anrop registrerar en separat aktivitet, så upprepa inte ett anrop utan att kontrollera resultatet."
+
+["help.arg.time-passed"]
+other = "Nedlagd tid (t.ex. 24m); använder min_session_duration om tiden utelämnas"
+
+["prompt.log_complete"]
+other = "Återstående tid är noll. Markera posten som klar? [j/N]"
+
+["prompt.yes_no"]
+other = "Svara ja eller nej."
+
+["output.log"]
+other = "Registrerade {{.duration}}. Återstående tid: {{.before}} → {{.after}}. {{.status}}"
+
+["output.log_status_unchanged"]
+other = "Status oförändrad."
+
+["output.log_completed"]
+other = "Markerad som klar."
+
+["error.log.not_in_progress"]
+other = "Starta posten innan du loggar, eller använd --force."
+
+["error.log.complete_inactive"]
+other = "En klar eller avförd post kan inte slutföras genom loggning."
+
+["error.log.complete_without_time"]
+other = "--complete kräver registrerad tid."
+
+["error.log.remaining_unknown"]
+other = "Ange remaining_duration innan du registrerar tid."
+
+["error.log.cost_unknown"]
+other = "Ange cost_left innan du registrerar kostnad."
+
+["error.log.session_unknown"]
+other = "Ange nedlagd tid eller ett positivt min_session_duration."
+
+["error.log.duration_invalid"]
+other = "Nedlagd tid måste vara positiv och ändlig."
+
+["error.log.cost_invalid"]
+other = "Kostnaden måste vara positiv och ändlig."
+
+["help.references"]
+other = "Postreferenser kan vara ett UUID, ett unikt UUID-prefix eller en entydig exakt titel (skiftlägeskänslig), i den ordningen. Sätt titlar med blanksteg inom citattecken: do-something show \"En serie\". Tvetydiga titlar ger ett fel med kandidaternas ID:n."
+
+["output.digit_group_separator"]
+other = " "
+
+["output.duration.seconds"]
+other = "{{.value}} s"
+
+["output.duration.minutes"]
+other = "{{.value}} m"
+
+["output.duration.hours"]
+other = "{{.value}} h"
+
+["output.ongoing"]
+other = "fortlöpande"
+
+["output.log_ongoing"]
+other = "Registrerade {{.duration}}. Fortlöpande aktivitet; status oförändrad."
+
+["output.log_cost"]
+other = "Registrerade kostnad {{.cost}}. Återstående kostnad: {{.before}} → {{.after}}."
+
+["output.log_cost_unknown"]
+other = "Registrerade kostnad {{.cost}}. Återstående kostnad är okänd."
+
+["field.ongoing"]
+other = "Fortlöpande"
+
+["error.log.ongoing_complete"]
+other = "Fortlöpande poster kan inte slutföras genom att registrera tid. Utelämna --complete; använd drop för att avföra aktiviteten."
+
+["error.ongoing_duration"]
+other = "Fortlöpande poster kan inte ha total eller återstående tidsåtgång. Rensa båda uttryckligen när du omvandlar en befintlig post."
+
+["help.topic.ongoing"]
+other = "En fortlöpande post har inget slutmål: promenader, teckningsövningar eller läsning utan bestämt slut. Både project och media stöder --ongoing. Det skiljer sig från en ändlig post med okänd tidsåtgång och skapar inte återkommande tillfällen eller ett schema.\n\nLägg till en med do-something add --title \"Ta en promenad\" --kind project --ongoing --min-session-duration 15m. Total och återstående tidsåtgång är not_applicable; att ange något av dessa värden ger ett fel. Omvandla en befintlig post med edit <id|title> --ongoing --clear-total-duration --clear-remaining-duration. Gör den ändlig igen med --ongoing=false och ange eventuellt tidsuppskattningar.\n\nlog registrerar nedlagd tid utan att minska återstående tid eller fråga om posten ska markeras som klar. En positiv tidsåtgång krävs fortfarande, eller ett positivt min_session_duration om tiden utelämnas. --complete ger ett fel för fortlöpande poster; --no-complete tillåts men behövs inte. Ingen procentsats för framsteg visas.\n\n--session kontrollerar fortfarande det minsta meningsfulla passet. --finish-within utesluter alltid fortlöpande poster, även med --unknown include. Poängsättningen utelämnar total och återstående tid ur konfigurerade grupper; en tom grupp utelämnas och övriga grupper normaliseras. Andra egenskaper, som kostnad, gäller fortfarande.\n\nAnvänd drop för att avföra aktiviteten och reopen för att ta tillbaka den. Statuskommandon är fortfarande uttryckliga; vanliga loggningar ändrar inte status."

@@ -30,3 +30,12 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+# Local build artifacts
+/bin/
+/dist/
+*.db
+*.db-wal
+*.db-shm
+*.db.state/
+*.db.lock

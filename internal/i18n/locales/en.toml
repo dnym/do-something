@@ -1,0 +1,1055 @@
+["app.name"]
+other = "do-something"
+
+["app.tagline"]
+other = "given my effort, my time, and the kind of activity I feel like — what should I do?"
+
+["doctor.healthy"]
+other = "Store is healthy"
+
+["doctor.problem"]
+other = "Store needs attention"
+
+["error.ambiguous_id"]
+other = "prefix {{.prefix}} is ambiguous; candidates: {{.candidates}}"
+
+["error.code.cycle"]
+other = "The dependency would create a cycle."
+
+["error.code.invalid_argument"]
+other = "Invalid arguments; see --help."
+
+["error.code.invalid_id"]
+other = "Unknown or ambiguous item reference."
+
+["error.code.invalid_state"]
+other = "Invalid status transition."
+
+["error.code.io_error"]
+other = "An input/output operation failed."
+
+["error.code.no_peer_base"]
+other = "No peer baseline exists; use --keep-local or --take-remote."
+
+["error.code.no_store"]
+other = "No store exists; use add or sync --take-remote."
+
+["error.code.schema_mismatch"]
+other = "Unsupported database schema version."
+
+["error.code.store_corrupt"]
+other = "Store validation failed."
+
+["error.code.store_locked"]
+other = "Another process holds the store lock; retry shortly."
+
+["error.code.sync_conflict"]
+other = "Sync requires an explicit resolution: --keep-local, --take-remote, or --merge --master local|remote."
+
+["error.code.sync_identity_mismatch"]
+other = "The snapshot belongs to a different database."
+
+["error.cycle"]
+other = "adding this dependency would create a cycle: {{.path}}"
+
+["error.generic"]
+other = "Error [{{.code}}]: {{.detail}}"
+
+["error.invalid_argument"]
+other = "invalid value {{.value}} for --{{.argument}}: {{.detail}}"
+
+["error.invalid_id"]
+other = "no item matches id or prefix {{.id}}"
+
+["error.invalid_state"]
+other = "{{.id}}: cannot {{.action}} from status {{.status}}"
+
+["error.io"]
+other = "i/o error: {{.detail}}"
+
+["error.no_peer_base"]
+other = "no recorded baseline for this peer; --merge is unavailable (use --keep-local or --take-remote)"
+
+["error.no_store"]
+other = "no store found at {{.path}} — run `add` to create one, or `sync <file> --take-remote` to adopt a snapshot"
+
+["error.schema_mismatch"]
+other = "schema mismatch: {{.detail}}"
+
+["error.store_corrupt"]
+other = "store at {{.path}} failed validation: {{.detail}}"
+
+["error.store_locked"]
+other = "store is locked by another process (pid {{.pid}}); retry shortly"
+
+["error.sync_conflict"]
+other = "sync conflict: {{.detail}}"
+
+["error.sync_identity_mismatch"]
+other = "file {{.path}} belongs to a different database (database_uuid mismatch)"
+
+["error.usage"]
+other = "usage error: {{.detail}}"
+
+["field.added"]
+other = "Added"
+
+["field.after"]
+other = "After"
+
+["field.archives"]
+other = "Archives"
+
+["field.baseline"]
+other = "Baseline"
+
+["field.before"]
+other = "Before"
+
+["field.blocked"]
+other = "Blocked"
+
+["field.blocked_by"]
+other = "Blocked by"
+
+["field.catalog_completeness"]
+other = "Missing translations"
+
+["field.category"]
+other = "Category"
+
+["field.changed"]
+other = "Changed"
+
+["field.config"]
+other = "Configuration"
+
+["field.conflicts"]
+other = "Conflicts"
+
+["field.corrupt_events"]
+other = "Corrupt events"
+
+["field.cost_left"]
+other = "Cost left"
+
+["field.created_at"]
+other = "Created"
+
+["field.database_schema_version"]
+other = "Database schema version"
+
+["field.database_uuid"]
+other = "Database UUID"
+
+["field.db_config"]
+other = "Database configuration"
+
+["field.deadline"]
+other = "Deadline"
+
+["field.decision"]
+other = "Decision"
+
+["field.dependencies"]
+other = "Dependencies"
+
+["field.device_config"]
+other = "Device configuration"
+
+["field.dry_run"]
+other = "Dry run"
+
+["field.gc_removed"]
+other = "Removed archives"
+
+["field.healthy"]
+other = "Healthy"
+
+["field.held"]
+other = "Held"
+
+["field.id"]
+other = "ID"
+
+["field.invalid"]
+other = "Invalid"
+
+["field.issues"]
+other = "Issues"
+
+["field.items"]
+other = "Items"
+
+["field.kind"]
+other = "Kind"
+
+["field.legacy_id"]
+other = "Legacy ID"
+
+["field.total_duration"]
+other = "Total duration"
+
+["field.locale"]
+other = "Language"
+
+["field.locales"]
+other = "Languages"
+
+["field.lock"]
+other = "Lock"
+
+["field.message"]
+other = "Message"
+
+["field.min_session_duration"]
+other = "Minimum session duration"
+
+["field.notes"]
+other = "Notes"
+
+["field.path"]
+other = "Path"
+
+["field.pid"]
+other = "Process ID"
+
+["field.problems"]
+other = "Problems"
+
+["field.property"]
+other = "Property"
+
+["field.rated_at"]
+other = "Rated at"
+
+["field.ratings"]
+other = "Ratings"
+
+["field.rollback_warning"]
+other = "Possible rollback"
+
+["field.row"]
+other = "Row"
+
+["field.schema_version"]
+other = "Schema version"
+
+["field.since"]
+other = "Since"
+
+["field.skipped"]
+other = "Skipped"
+
+["field.snapshots"]
+other = "Snapshots"
+
+["field.source"]
+other = "Source"
+
+["field.state_bytes"]
+other = "State bytes"
+
+["field.status"]
+other = "Status"
+
+["field.store_path"]
+other = "Store path"
+
+["field.tags"]
+other = "Tags"
+
+["field.title"]
+other = "Title"
+
+["field.type"]
+other = "Type"
+
+["field.updated"]
+other = "Updated"
+
+["field.updated_at"]
+other = "Updated"
+
+["field.url"]
+other = "URL"
+
+["field.value"]
+other = "Value"
+
+["field.remaining_duration"]
+other = "Remaining duration"
+
+["help.add"]
+other = "Add a new item (interactive or flag-driven). Use --ongoing for activities with no finish line (see help ongoing)."
+
+["help.completion"]
+other = "Generate shell completion scripts."
+
+["help.config"]
+other = "Read or write the tier-2 (in-database) configuration."
+
+["help.deps"]
+other = "Manage the dependency graph."
+
+["help.doctor"]
+other = "Report store, sync, and locale health."
+
+["help.done"]
+other = "Mark items as done."
+
+["help.drop"]
+other = "Mark items as dropped (retired)."
+
+["help.edit"]
+other = "Edit an item; --depends-on replaces the full dependency set. Use --ongoing for activities with no finish line (see help ongoing)."
+
+["help.export"]
+other = "Export all content as canonical JSON."
+
+["help.flags"]
+other = "Flags"
+
+["help.import"]
+other = "Import canonical JSON from a file or - for stdin."
+
+["help.list"]
+other = "Browse items with scores, all statuses by default."
+
+["help.reopen"]
+other = "Reopen items to not_started."
+
+["help.root"]
+other = "Keep one list of everything you want to do or consume, and ask what to do now."
+
+["help.schema"]
+other = "Print the machine-readable command/flag/output contract."
+
+["help.show"]
+other = "Show full detail and score breakdown for one item."
+
+["help.snapshot"]
+other = "Produce a consistent single-file copy of the store."
+
+["help.start"]
+other = "Mark items as in progress."
+
+["help.suggest"]
+other = "Suggest what to do given your effort, time, and activity."
+
+["help.sync"]
+other = "Resolve this store against another device's snapshot."
+
+["help.usage"]
+other = "Usage: do-something [command] [flags]"
+
+["help.version"]
+other = "Print the version."
+
+["output.blocked_by"]
+other = "blocked by \"{{.title}}\" [{{.id}}] ({{.status}})"
+
+["output.status_transition"]
+other = "\"{{.title}}\" [{{.id}}]: {{.before}} → {{.after}}"
+
+["output.dependencies"]
+other = "Dependencies for \"{{.title}}\" [{{.id}}]:"
+
+["output.item_reference"]
+other = "\"{{.title}}\" [{{.id}}]"
+
+["output.none"]
+other = "none"
+
+["output.breakdown"]
+other = "base {{.base}} · right now {{.rightnow}}"
+
+["output.changed"]
+other = "Changed: {{.changed}}"
+
+["output.column.id"]
+other = "id"
+
+["output.column.kind"]
+other = "kind"
+
+["output.column.score"]
+other = "score"
+
+["output.column.status"]
+other = "status"
+
+["output.column.title"]
+other = "title"
+
+["output.column.type"]
+other = "type"
+
+["output.matched"]
+other = "{{.n}} item(s) matched"
+
+["output.no_results"]
+other = "no items match"
+
+["output.peek"]
+other = "suggestion not recorded (--peek)"
+
+["output.recorded"]
+other = "suggestion recorded"
+
+["output.result"]
+other = "Result: {{.value}}"
+
+["output.why.fresh"]
+other = "not suggested recently"
+
+["output.why.high_value"]
+other = "high value"
+
+["output.why.low_commitment"]
+other = "low commitment"
+
+["output.why.moderate_interest"]
+other = "some interest"
+
+["output.why.momentum"]
+other = "already in progress"
+
+["output.why.short_commitment"]
+other = "short commitment"
+
+["output.why.strong_interest"]
+other = "strong interest"
+
+["output.why.unblocking"]
+other = "unblocks other items"
+
+["output.why.unknown"]
+other = "unknown {{.factor}}"
+
+["output.why.urgent"]
+other = "deadline approaching"
+
+["prompt.add_vocabulary"]
+other = "New term not in vocabulary — add to config? (y/N)"
+
+["prompt.category"]
+other = "Category (topic)"
+
+["prompt.cost_left"]
+other = "Cost left"
+
+["prompt.deadline"]
+other = "Deadline (YYYY-MM-DD)"
+
+["prompt.dependency"]
+other = "Dependency (id, prefix, or title)"
+
+["prompt.kind"]
+other = "Kind: project (something you do for benefit or necessity) · media (something you consume for relaxation, fun, or interest)"
+
+["prompt.total_duration"]
+other = "Total duration (e.g. 20h)"
+
+["prompt.total_duration_bucket"]
+other = "Duration estimate"
+
+["prompt.total_duration_choices"]
+other = "1 minutes · 2 hours · 3 tens of hours · 4 days; or a duration such as 30m or 2h"
+
+["prompt.master"]
+other = "Conflicts remain. Choose local or remote for all conflicts"
+
+["prompt.min_session_duration"]
+other = "Shortest worthwhile session (e.g. 20m)"
+
+["prompt.notes"]
+other = "Notes"
+
+["prompt.rating"]
+other = "{{.label}} ({{.range}})"
+
+["prompt.rating_levels"]
+other = "Ratings are 0..1 — a level name or a plain number works: none=0 · low=1/3 · medium=1/2 · high=2/3 · very_high=4/5 · max=1"
+
+["prompt.refresh"]
+other = "Refresh ratings now? (y/N)"
+
+["prompt.skip"]
+other = "(blank to skip)"
+
+["prompt.skip_clear"]
+other = "blank to keep/skip; clear to unset"
+
+["prompt.status"]
+other = "Status"
+
+["prompt.status_choices"]
+other = "or 1–4 in the same order"
+
+["prompt.sync"]
+other = "Choose keep-local, take-remote, or merge"
+
+["prompt.tags"]
+other = "Tags (comma-separated)"
+
+["prompt.title"]
+other = "Title"
+
+["prompt.type"]
+other = "Type"
+
+["prompt.url"]
+other = "URL"
+
+["prompt.vocabulary_prompt"]
+other = "{{.kind}} types"
+
+["prompt.remaining_duration"]
+other = "Remaining duration (e.g. 3h)"
+
+["rating.label.actuality"]
+other = "Actuality"
+
+["rating.label.career"]
+other = "Career value"
+
+["rating.label.influence"]
+other = "Influence"
+
+["rating.label.intensity"]
+other = "Intensity"
+
+["rating.label.interest"]
+other = "Interest"
+
+["rating.label.mental"]
+other = "Mental value"
+
+["rating.label.physical"]
+other = "Physical value"
+
+["rating.label.quality"]
+other = "Quality"
+
+["rating.label.social"]
+other = "Social value"
+
+["rating.range.actuality"]
+other = "0 stale … 1 timely"
+
+["rating.range.career"]
+other = "0 none … 1 excellent"
+
+["rating.range.influence"]
+other = "0 trivial … 1 life-changing"
+
+["rating.range.intensity"]
+other = "0 none … 1 intense"
+
+["rating.range.interest"]
+other = "0 none … 1 can't wait"
+
+["rating.range.mental"]
+other = "0 none … 1 excellent"
+
+["rating.range.physical"]
+other = "0 none … 1 excellent"
+
+["rating.range.quality"]
+other = "0 none … 1 excellent"
+
+["rating.range.social"]
+other = "0 none … 1 excellent"
+
+["sync.advisory"]
+other = "Peer snapshot changed: {{.path}} — run sync to review"
+
+["sync.archived"]
+other = "inputs archived to history/{{.peer}}"
+
+["sync.auto_union"]
+other = "only the event log diverged; events reconciled automatically"
+
+["sync.bootstrap"]
+other = "bootstrapped store from {{.peer}} (adopted database_uuid)"
+
+["sync.corruption"]
+other = "event {{.id}} present on both sides with differing payloads — excluded as corruption"
+
+["sync.invalid_snapshot"]
+other = "Snapshot failed validation: {{.path}}"
+
+["sync.keep_local"]
+other = "kept local; remote archived"
+
+["sync.merged"]
+other = "merged {{.applied}} change(s), {{.conflicts}} conflict(s)"
+
+["sync.noop"]
+other = "already in sync with {{.peer}}"
+
+["sync.rollback_warning"]
+other = "warning: this looks like a rollback, not incremental change"
+
+["sync.take_remote"]
+other = "adopted remote snapshot {{.peer}}"
+
+["prompt.conflict"]
+other = "Choose local or remote for this conflict"
+
+["output.why.value_estimate"]
+other = "estimated value"
+
+["output.why.commitment_estimate"]
+other = "estimated commitment"
+
+["field.base"]
+other = "Base"
+
+["field.right_now"]
+other = "Right now"
+
+["field.final"]
+other = "Final score"
+
+["field.groups"]
+other = "Groups"
+
+["field.group"]
+other = "Group"
+
+["field.members"]
+other = "Properties"
+
+["field.weight"]
+other = "Weight"
+
+["field.share"]
+other = "Share"
+
+["field.d"]
+other = "Desirability"
+
+["field.state"]
+other = "State"
+
+["field.age_months"]
+other = "Rating age (months)"
+
+["field.note"]
+other = "Scoring note"
+
+["field.terms"]
+other = "Right-now terms"
+
+["field.name"]
+other = "Name"
+
+["field.v"]
+other = "Value"
+
+["field.days_left"]
+other = "Days left"
+
+["field.pace"]
+other = "Work pace"
+
+["field.ready"]
+other = "Ready"
+
+["field.total"]
+other = "Total"
+
+["field.anchor_age"]
+other = "Cooldown age (days)"
+
+["factor.value"]
+other = "value"
+
+["factor.commitment"]
+other = "commitment"
+
+["factor.interest"]
+other = "interest"
+
+["factor.effort"]
+other = "effort"
+
+["factor.session"]
+other = "session length"
+
+["factor.finish_within"]
+other = "completion time"
+
+["factor.budget"]
+other = "cost"
+
+["factor.type"]
+other = "type"
+
+["factor.category"]
+other = "category"
+
+["output.hours"]
+other = "{{.hours}}h"
+
+["error.argument"]
+other = "Invalid value {{.value}} for {{.argument}}"
+
+["error.allowed"]
+other = "Allowed: {{.values}}"
+
+["field.checks"]
+other = "Checks"
+
+["field.openability"]
+other = "Openability"
+
+["field.quick_check"]
+other = "SQLite integrity"
+
+["field.foreign_key_check"]
+other = "Foreign key integrity"
+
+["field.schema"]
+other = "Schema"
+
+["field.ok"]
+other = "OK"
+
+["field.not_run"]
+other = "Not run"
+
+["help.commands"]
+other = "Commands"
+
+["help.default_command"]
+other = "With no command, suggest is the default."
+
+["help.usage_command"]
+other = "Usage: do-something {{.command}}"
+
+["help.positionals"]
+other = "Positionals"
+
+["help.global_flags"]
+other = "Global flags"
+
+["help.notes"]
+other = "Notes"
+
+["help.values"]
+other = "Values"
+
+["help.ratings"]
+other = "Ratings (0..1) by kind"
+
+["help.measurements"]
+other = "Measurements by kind"
+
+["help.none"]
+other = "none"
+
+["help.exit_codes"]
+other = "Exit codes"
+
+["help.exit.0"]
+other = "success, including zero matches"
+
+["help.exit.1"]
+other = "runtime failure"
+
+["help.exit.2"]
+other = "invalid invocation"
+
+["help.exit.3"]
+other = "empty result with --fail-empty"
+
+["help.format_duration"]
+other = "Go duration (e.g. 30m, 2h)"
+
+["help.default"]
+other = "(default: {{.value}})"
+
+["help.alias"]
+other = "alias: {{.name}}"
+
+["help.arg.id"]
+other = "item UUID, unique UUID prefix, or unambiguous exact title (UUID first)"
+
+["help.arg.file"]
+other = "a file path"
+
+["help.arg.target"]
+other = "snapshot file path"
+
+["help.arg.key"]
+other = "config key"
+
+["help.arg.value"]
+other = "config value"
+
+["help.filter.and"]
+other = "Repeated filters are combined with AND."
+
+["help.filter.type"]
+other = "--type and --category match exactly, case-insensitively."
+
+["help.filter.text"]
+other = "--text is a case-insensitive substring match over title, notes, category, and type."
+
+["help.filter.unknown"]
+other = "Items with unknown values pass and are labelled \"unknown\"; --unknown exclude is strict."
+
+["help.help"]
+other = "Show a concept topic or a command page"
+
+["help.arg.topic"]
+other = "a command name or a help topic (the topic list is on the root page)"
+
+["help.topics"]
+other = "Help topics (do-something help <topic>):"
+
+["help.default_kind"]
+other = "suggest ranks projects by default; --kind media or both reaches the other kinds."
+
+["help.filter.kind"]
+other = "--kind (suggest only) defaults to project; both ranks projects and media in one list."
+
+["prompt.vocabulary_empty"]
+other = "No {{.topic}} vocabulary yet; set some with: do-something config set {{.key}} \"a,b,c\""
+
+["help.topic.kind"]
+other = "kind is what an item is:\n  project — something you do for benefit or necessity\n  media — something you consume for relaxation, fun, or interest\n\nkind is set when the item is added; change it later with: do-something edit <id|title> --kind …\nsuggest ranks projects by default; --kind media / both selects the other kinds; list shows all kinds.\n\nNot sure what to do about something yet? Make the decision itself a project (\"decide what to do about the car\"): it scores like any other project, and its outcome becomes a follow-up project, linked by dependencies."
+
+["help.topic.type"]
+other = "type is the form of the item; free text on every kind (a film, a board game, a writing project, ...).\n\nNo types are built in. The vocabulary is yours:\n  do-something config get vocabulary.types\n  do-something config set vocabulary.types \"film,game,anime\"\n\nThe vocabulary only guides interactive add/edit; anything you type is accepted, and new terms can be added to it."
+
+["help.topic.category"]
+other = "category is the topic of the item; free text on every kind (fantasy, programming, health, ...).\n\nNo categories are built in. The vocabulary is yours:\n  do-something config get vocabulary.categories\n  do-something config set vocabulary.categories \"fantasy,science\"\n\nThe vocabulary only guides interactive add/edit; anything you type is accepted, and new terms can be added to it."
+
+["help.topic.properties"]
+other = "Ratings (0..1) by kind:\n  project — intensity, career, physical, mental, social, interest\n  media — intensity, actuality, influence, quality, interest\n\nMeasurements by kind:\n  project — remaining_duration, cost_left, min_session_duration, total_duration, deadline\n  media — remaining_duration, cost_left, min_session_duration, total_duration, deadline\n\nUnknown values are never reported as zeroes; scoring treats them with a 0.5 prior (scoring.prior).\n\nEvery property has its own page: do-something help <property>. Use --ongoing for activities with no finish line (see help ongoing)."
+
+["help.topic.scoring"]
+other = "score = (1 - beta) * base + beta * right-now, beta default 0.2 (scoring.beta)\n\nbase: the value groups of the item's kind, weighted and normalized:\n  project — value (career, physical, mental, social), commitment (remaining_duration, cost_left), interest\n  media — value (quality, influence, actuality), commitment (remaining_duration), interest\nUnknown values are scored with a 0.5 prior (scoring.prior). Commitment halves at the k constants (scoring.k.*); group, property, and term weights are config keys (scoring.group.*, scoring.weights.*, scoring.term.*).\n\nright-now: urgency (deadline versus pace), momentum (already in progress), unblocking (frees other items), mode_match (item fits the selected --mode; present only when --mode is given), engagement_match (item fits the selected --engagement; present only when --engagement is given), and cooldown (not suggested recently), blended by their weights. Use --ongoing for activities with no finish line (see help ongoing)."
+
+["help.topic.filters"]
+other = "Filters combine with AND; every flag narrows the result set.\n  --kind project|media|both   --status not_started|in_progress|done|dropped\n  --type T  --category C  --tag T  --not-tag T  --text T\n  --effort LEVEL  --session DURATION  --finish-within DURATION\n  --budget N  --min-score 0..1  --unknown include|exclude\n  --limit N  --random  --peek  --explain  --fail-empty\n  --mode movement|hands_on|thinking|making  --engagement focused|loose\n\n--kind both (suggest and list) ranks projects and media in one list; suggest defaults to --kind project.\n--effort LEVEL is a rating level — none, low, medium, high, very_high, max — and keeps items with intensity at or below the level's ceiling (see help effort).\n--mode and --engagement re-rank items toward the selected kind and engagement style (see help modes and help engagement); unlike the other filters they never exclude items.\nItems with unknown values pass and are labelled \"unknown\"; --unknown exclude is strict."
+
+["mode.movement"]
+other = "Move my body"
+
+["status.not_started"]
+other = "Not started"
+
+["status.in_progress"]
+other = "In progress"
+
+["status.done"]
+other = "Done"
+
+["status.dropped"]
+other = "Dropped"
+
+["mode.hands_on"]
+other = "Use my hands"
+
+["mode.thinking"]
+other = "Use my mind"
+
+["mode.making"]
+other = "Make something"
+
+["engagement.focused"]
+other = "Give it your full attention"
+
+["engagement.loose"]
+other = "Keep it low-key"
+
+["prompt.modes"]
+other = "Modes (comma-separated, or \"clear\")"
+
+["prompt.engagements"]
+other = "Engagements (comma-separated, or \"clear\")"
+
+["field.modes"]
+other = "Modes"
+
+["field.engagements"]
+other = "Engagements"
+
+["help.filter.mode"]
+other = "--mode MODE re-ranks items toward the selected activity kind (movement, hands_on, thinking, making); it never excludes items — the strength is the weight scoring.term.mode_match."
+
+["help.filter.engagement"]
+other = "--engagement ENGAGEMENT re-ranks items toward the selected engagement style (focused, loose); it never excludes items — the strength is the weight scoring.term.engagement_match."
+
+["help.topic.modes"]
+other = "mode is the kind of activity you feel like doing:\n  movement — move my body (walking, gym, sport, dance)\n  hands_on — use my hands (building, crafting, tinkering, fixing)\n  thinking — use my mind (study, analysis, reading, puzzles)\n  making — make something (a work you are bringing into the world: the game, the song, the birdhouse)\n\nThe making line: it counts as making when the session serves an unfinished artifact you are trying to bring into the world — even if it will only ever exist for you, even if you tear up the paper afterwards. Working wood in the shop just for the doing is hands_on, not making; a birdhouse is hands_on + making; choreographing a piece is making + movement.\n\nAn item may carry several modes; an item with no modes is unclassified. Empty means unknown, not \"suits everything\" — if an item genuinely suits several kinds, mark them all explicitly. The mode set is built in (like kind and status); custom modes are a v2 candidate.\n\n--mode MODE (suggest, list) re-ranks items toward the selected kind: a fitting item is lifted, an item that suits other kinds is demoted, an unclassified item lands in between. It never excludes items. The strength is the weight scoring.term.mode_match (default 2.0; set it to 0 to disable).\n\nSet modes on add/edit with --modes movement --modes hands_on (comma-separated also works); --clear-modes removes them. In interactive mode you are prompted; \"clear\" empties the set."
+
+["help.topic.engagement"]
+other = "engagement is how you want to engage with the activity, independent of its kind:\n  focused — give it your full attention (absorbed, undivided)\n  loose — keep it low-key (relaxed, intermittent, undemanding)\n\nIt applies to every kind, not only mind work: focused study or loose reading; a technical workout or an unhurried walk; learning to solder or knitting a familiar pattern; composing or goal-free doodling. It is a preference, not an intensity dial — how demanding an activity is gets rated and filtered by --effort instead.\n\nAn item may carry both (a dense book you study on a focused day and read on a slow evening); an item with no engagements is unclassified. Empty means unknown, not \"works at any engagement\". The engagement set is built in (like mode, kind and status); custom engagements are a v2 candidate.\n\n--engagement ENGAGEMENT (suggest, list) re-ranks items toward the selected engagement, exactly like --mode: fit is lifted, other-only is demoted, unclassified lands in between; it never excludes. The strength is the weight scoring.term.engagement_match (default 2.0; set it to 0 to disable). The two flags are independent axes and combine: --mode thinking --engagement focused = absorb something hard with my mind.\n\nSet engagements on add/edit with --engagements focused --engagements loose (comma-separated also works); --clear-engagements removes them. In interactive mode you are prompted; \"clear\" empties the set."
+
+["output.why.mode_match"]
+other = "fits the selected mode"
+
+["output.why.mode_unclassified"]
+other = "has no mode set"
+
+["output.why.mode_mismatch"]
+other = "outside the selected mode"
+
+["output.why.engagement_match"]
+other = "fits the selected engagement"
+
+["output.why.engagement_unclassified"]
+other = "has no engagement set"
+
+["output.why.engagement_mismatch"]
+other = "outside the selected engagement"
+
+["help.topic.intensity"]
+other = "intensity is the 0..1 rating of how demanding the activity is in itself — the energy and attention it takes while you do it (0 none … 1 intense). The six canonical levels name the anchor fractions: none=0, low=1/3, medium=1/2, high=2/3, very_high=4/5, max=1.\n\nIt is a demand dimension, not a value dimension: intensity never enters the score — no scoring group and no right-now term reads it. Its role is the --effort filter (see help effort): --effort LEVEL keeps items with intensity at or below the level's ceiling (scoring.effort.<level>, defaulting to the values above) — an item rated high passes --effort high but not --effort medium.\n\nIt never decays (scoring.half_life.intensity is infinite by default): how demanding an activity is does not age.\n\nSet it with a level name or a 0..1 number: do-something add --intensity high or --intensity 0.3, likewise edit <id|title> --intensity high; the interactive prompts show the levels and accept either. --unset-rating intensity makes it unknown again."
+
+["help.topic.career"]
+other = "career is the project's 0..1 value for your professional development and long-term career goals: the skills, reputation, and opportunities it builds (0 none … 1 excellent).\n\nIt belongs to the project value group (with physical, mental, social); the group feeds the base score, weighted by scoring.group.value and the property weight scoring.weights.project.career (or kind-agnostic scoring.weights.career).\n\nThe rating decays toward the 0.5 prior with a 36-month half-life (scoring.half_life.career): a value estimated years ago is less certain than one you just gave. Undated ratings (e.g. imported) never decay.\n\nSet it with do-something add --career 0.5 or edit <id|title> --career 0.5, or interactively; --unset-rating career makes it unknown again."
+
+["help.topic.physical"]
+other = "physical is the project's 0..1 value for your physical health and fitness: how it contributes to a healthy lifestyle, a better training level, or a health goal (0 none … 1 excellent).\n\nIt belongs to the project value group (with career, mental, social); the group feeds the base score, weighted by scoring.group.value and the property weight scoring.weights.project.physical (or kind-agnostic scoring.weights.physical).\n\nThe rating decays toward the 0.5 prior with a 36-month half-life (scoring.half_life.physical). Undated ratings (e.g. imported) never decay.\n\nSet it with do-something add --physical 0.5 or edit <id|title> --physical 0.5, or interactively; --unset-rating physical makes it unknown again."
+
+["help.topic.mental"]
+other = "mental is the project's 0..1 value for your mental health, cognitive function, and emotional well-being: resilience, stress reduction, meaning (0 none … 1 excellent).\n\nIt belongs to the project value group (with career, physical, social); the group feeds the base score, weighted by scoring.group.value and the property weight scoring.weights.project.mental (or kind-agnostic scoring.weights.mental).\n\nThe rating decays toward the 0.5 prior with a 36-month half-life (scoring.half_life.mental). Undated ratings (e.g. imported) never decay.\n\nSet it with do-something add --mental 0.5 or edit <id|title> --mental 0.5, or interactively; --unset-rating mental makes it unknown again."
+
+["help.topic.social"]
+other = "social is the project's 0..1 value for your relationships and community: the interactions it involves, the bonds it strengthens, the others it benefits (0 none … 1 excellent).\n\nIt belongs to the project value group (with career, physical, mental); the group feeds the base score, weighted by scoring.group.value and the property weight scoring.weights.project.social (or kind-agnostic scoring.weights.social).\n\nThe rating decays toward the 0.5 prior with a 36-month half-life (scoring.half_life.social). Undated ratings (e.g. imported) never decay.\n\nSet it with do-something add --social 0.5 or edit <id|title> --social 0.5, or interactively; --unset-rating social makes it unknown again."
+
+["help.topic.interest"]
+other = "interest is the 0..1 rating of how much the item appeals to you (0 none … 1 can't wait). Both kinds carry it.\n\nIt has its own scoring group (interest) in both kinds: the more you want the item, the higher its base score. Weight: scoring.group.interest and the property weight scoring.weights.<kind>.interest (or kind-agnostic scoring.weights.interest).\n\nIt is the fastest-decaying rating — an 18-month half-life (scoring.half_life.interest): a rating from a year ago says little about how you feel today. Rating it interactively refreshes its date; undated ratings (e.g. imported) never decay.\n\nSet it with do-something add --interest 0.8 or edit <id|title> --interest 0.8, or interactively; --unset-rating interest makes it unknown again."
+
+["help.topic.actuality"]
+other = "actuality is the media item's 0..1 rating of how present the work is in current media and debate (0 stale … 1 timely).\n\nIt belongs to the media value group (with quality and influence); the group feeds the base score, weighted by scoring.group.value and the property weight scoring.weights.media.actuality (or kind-agnostic scoring.weights.actuality).\n\nIt decays faster than any other rating — a 12-month half-life (scoring.half_life.actuality): what was timely a year ago rarely is now. (Quality and influence, by contrast, never decay.)\n\nSet it with do-something add --actuality 0.5 or edit <id|title> --actuality 0.5, or interactively; --unset-rating actuality makes it unknown again."
+
+["help.topic.influence"]
+other = "influence is the media item's 0..1 rating of how much the work has shaped its genre or culture (0 trivial … 1 culture-defining reference).\n\nIt belongs to the media value group (with quality and actuality); the group feeds the base score, weighted by scoring.group.value and the property weight scoring.weights.media.influence (or kind-agnostic scoring.weights.influence).\n\nIt never decays (scoring.half_life.influence is infinite): a reference work stays a reference work.\n\nSet it with do-something add --influence 0.5 or edit <id|title> --influence 0.5, or interactively; --unset-rating influence makes it unknown again."
+
+["help.topic.quality"]
+other = "quality is the media item's 0..1 rating of how good the work is (0 poor or unknown … 1 acclaimed).\n\nIt belongs to the media value group (with influence and actuality); the group feeds the base score, weighted by scoring.group.value and the property weight scoring.weights.media.quality (or kind-agnostic scoring.weights.quality).\n\nIt never decays (scoring.half_life.quality is infinite): the quality of a work does not age the way its timeliness does.\n\nSet it with do-something add --quality 0.5 or edit <id|title> --quality 0.5, or interactively; --unset-rating quality makes it unknown again."
+
+["help.topic.remaining_duration"]
+other = "remaining_duration is the estimated active time needed to finish an item from its current state. It applies to both project and media. Storage and JSON use hours; CLI input uses durations such as 30m or 2h.\n\nIt belongs to the commitment group for both kinds (alongside cost_left for projects), scored on the k half-saturation curve d = k/(k+v), with scoring.k.remaining_duration defaulting to 20 hours. Less time remaining means higher commitment desirability. A 40-hour series with 24 minutes left scores this component at about 0.98 rather than 0.33 when unwatched. There is no additional percentage-based completion bonus.\n\nIt drives --finish-within DURATION and the remaining-time column in list/show. For projects with a deadline, it also drives the urgency pace calculation against scoring.k_pace (default 2 h/day).\n\nSet it with do-something add --remaining-duration 40h or edit <id|title> --remaining-duration 30m. Updates do not change total_duration or status; even zero does not mark an item done. --clear-remaining-duration makes it unknown. Neither duration is inferred from the other; remaining time alone is enough for scoring. Use --ongoing for activities with no finish line (see help ongoing)."
+
+["help.topic.cost_left"]
+other = "cost_left is the remaining direct monetary cost of finishing the item, in whatever currency unit you use (the display label is the scoring.cost_unit config key). Both kinds carry it.\n\nIt applies to both kinds, but the default composition only lists it in the project commitment group (the media commitment group contains only remaining_duration), so a cost stored on a media item does not contribute to scoring until you add it there: do-something config set scoring.group_members.commitment.media remaining_duration,cost_left. In a group it is scored on the k curve d = k/(k+v) — but scoring.k.cost_left ships without a default. Until you calibrate it in your own currency unit (do-something config set scoring.k.cost_left 500), the measurement behaves like unknown: it is scored at the 0.5 prior even when a value is stored. A cost in someone else's unit is meaningless, so the product refuses to invent one.\n\nIt drives the --budget N filter (cost_left ≤ N; unknowns pass, labelled).\n\nSet it with do-something add --cost N or edit <id|title> --cost N; --clear-cost makes it unknown."
+
+["help.topic.min_session_duration"]
+other = "min_session_duration is the item's smallest worthwhile session: a chapter, a few exercises, one episode, or a two-minute short. Both kinds carry it. Storage and JSON use hours; CLI input uses durations such as 20m or 1h.\n\nIt takes no part in scoring (no curve is defined for it). The --session DURATION filter (alias --time) keeps items whose smallest worthwhile session fits the available time. Unknown values pass by default and are labelled unknown.\n\nNo per-type values ship. Per-type defaults apply on add unless explicitly cleared, and are shown as suggestions in prompts. Configure them in hours with do-something config set defaults.min_session_duration.custom 0.5.\n\nSet it with do-something add --min-session-duration 30m or edit <id|title> --min-session-duration 20m; --clear-min-session-duration makes it unknown."
+
+["help.topic.total_duration"]
+other = "total_duration is the estimated active time needed for the whole item, for both project and media: project effort, a film's running time, a book's reading time, or a series' total viewing time. It excludes time spent waiting between sessions. Storage and JSON use hours; CLI input uses durations such as 30m or 2h.\n\nIt does not participate in scoring or --finish-within; remaining_duration does. Total duration does not decrease as you make progress, but you can revise it when your estimate or scope changes.\n\nEstimated progress is 100 * (1 - remaining_duration / total_duration). list/show exposes estimated_progress_percent in JSON and an approximate percentage in text. It is null/omitted from text when either estimate is unknown, total is zero, or remaining exceeds total. Revising estimates can move progress backward. Status remains independent.\n\nThe interactive prompt offers four coarse duration estimates using scoring.duration_anchors (default 0.5 / 3 / 20 / 100 hours), or an explicit duration. Set it with do-something add --total-duration 40h or edit <id|title> --total-duration 50h; --clear-total-duration makes it unknown. For an unstarted item, explicitly set remaining_duration to the same estimate. Use --ongoing for activities with no finish line (see help ongoing)."
+
+["help.topic.deadline"]
+other = "deadline is the last day (YYYY-MM-DD) the item can still be completed. Both kinds carry it.\n\nIt drives the urgency right-now term. For projects with a known remaining_duration, urgency follows the required pace (remaining_duration ÷ days left) against scoring.k_pace (default 2 h/day). For media — and projects without an hours estimate — a day-based curve applies instead: 1 − days left ÷ scoring.deadline_horizon_days (default 30), floored at 0 (no urgency) and capped at 1 (overdue = maximum urgency).\n\nItems without a deadline have no urgency term — unless you set scoring.no_deadline_horizon to a positive number of days, which makes urgency assume every deadline-less item is due that many days out.\n\nSet it with do-something add --deadline 2026-12-01 or edit <id|title> --deadline 2026-12-01; --clear-deadline removes it."
+
+["help.topic.dependencies"]
+other = "dependencies link items: an item lists the prerequisites that must be finished before it can start.\n\nA dependency blocks its dependent: while any prerequisite is not done, the dependent is blocked. suggest hides blocked items (see them with --include-unready); list, show, and doctor surface the blockers, with the blocker's status. Only done clears a block — a dropped or open prerequisite keeps blocking, because an abandoned prerequisite is not a completed one. Either reopen it or dissolve the edge: do-something deps remove <id|title> <dependency-id|title>.\n\nThe graph also scores: the unblocking right-now term rewards finishing an item that makes its dependents ready. Cycles are rejected (CYCLE).\n\nManage edges with do-something deps list|add|remove <id|title> [ref …], or replace the full set with do-something edit <id|title> --depends-on ref-a,ref-b (comma-separated). Each ref is a full id, a unique id prefix, or an exact (case-sensitive) title; an ambiguous title fails with INVALID_ID listing its candidates, and a title that is also an existing item's id resolves as the id. A comma inside a title is escaped with a backslash (\\,)."
+
+["help.topic.status"]
+other = "status is the item's lifecycle state:\n  not_started — not started\n  in_progress — started, not finished\n  done — finished\n  dropped — retired; there is no hard delete, dropping is how an item leaves the active list\n\nTransitions are explicit verbs on one or many ids: do-something start <id|title …>, done, drop, reopen. start works from any status except in_progress; done and drop from any; reopen from any except not_started — the excluded rows are idempotent no-ops (current = target ⇒ changed: false), so a verb on any item succeeds. A multi-id run is one all-or-nothing transaction; a change writes an event (started / completed / dropped — reopen writes none) that feeds scoring, a no-op writes none.\n\nadd and edit set the status directly: do-something add --title '…' --kind media --status done, or edit <id|title> --status in_progress. A status change records the same event as the matching verb (started / completed / dropped; not_started records none), so history and scoring see it just like a status command would. This is the convenient path for historical items: create them in the state they are in, with no follow-up start/done/drop step.\n\nsuggest returns only not_started and in_progress items; list shows every status. Filter with --status.\n\nStatus feeds the score: in_progress items carry the momentum term, done items unblock their dependents (the unblocking term), and blocked items are hidden from suggest."
+
+["help.topic.effort"]
+other = "effort is the --effort LEVEL value (suggest, list): how much energy you can put in right now, expressed as a ceiling on the items' intensity rating. The six levels, least to most demanding:\n  none       keeps items with intensity ≤ 0 (essentially effortless)\n  low        keeps items with intensity ≤ 1/3\n  medium     keeps items with intensity ≤ 1/2\n  high       keeps items with intensity ≤ 2/3\n  very_high  keeps items with intensity ≤ 4/5\n  max        applies no limit: every intensity passes\n\nThe ceilings are config, one per level: scoring.effort.none … scoring.effort.max (defaults are the values above). Items without an intensity pass and are labelled \"unknown\"; --unknown exclude is strict.\n\nUnlike --mode and --engagement (which re-rank), effort is a hard filter: an item above the ceiling is out of the result set. See help intensity and help filters."
+
+["field.estimated_progress_percent"]
+other = "Estimated progress (%)"
+
+["output.estimated_progress"]
+other = "~{{.percent}}% complete"
+
+["prompt.session_default"]
+other = "Suggested minimum session for this type: {{.duration}}"
+
+["help.log"]
+other = "Record time and/or cost: log <id|title> [time-passed] [--cost N]. Time and cost may be logged separately or atomically in one invocation. Omitted time uses min_session_duration only when --cost is also omitted. Values must be positive and finite. Finite items need the corresponding remaining estimate; ongoing items may log cost without cost_left. Remaining estimates are clamped to zero, while totals are preserved. Logging is allowed only for in_progress items unless --force is given; --force records activity without otherwise changing status. At zero remaining time, a terminal asks whether to mark an in_progress item done. Non-interactive use leaves status unchanged. --complete marks it done at zero; --no-complete suppresses the question. --complete requires logged time, is invalid for ongoing items, and cannot complete done or dropped items. Each invocation records a separate activity, so do not retry blindly."
+
+["help.arg.time-passed"]
+other = "Time spent (e.g. 24m); defaults to min_session_duration"
+
+["prompt.log_complete"]
+other = "Remaining time is zero. Mark this item done? [y/N]"
+
+["prompt.yes_no"]
+other = "Please answer yes or no."
+
+["output.log"]
+other = "Logged {{.duration}}. Remaining: {{.before}} → {{.after}}. {{.status}}"
+
+["output.log_status_unchanged"]
+other = "Status unchanged."
+
+["output.log_completed"]
+other = "Marked done."
+
+["error.log.not_in_progress"]
+other = "Start the item before logging, or use --force."
+
+["error.log.complete_inactive"]
+other = "A done or dropped item cannot be completed by logging."
+
+["error.log.complete_without_time"]
+other = "--complete requires logged time."
+
+["error.log.remaining_unknown"]
+other = "Set remaining_duration before logging time."
+
+["error.log.cost_unknown"]
+other = "Set cost_left before logging cost."
+
+["error.log.session_unknown"]
+other = "Specify time passed or set a positive min_session_duration."
+
+["error.log.duration_invalid"]
+other = "Time passed must be positive and finite."
+
+["error.log.cost_invalid"]
+other = "Cost must be positive and finite."
+
+["help.references"]
+other = "Item references accept a UUID, unique UUID prefix, or unambiguous exact title (case-sensitive), in that order. Quote titles containing spaces: do-something show \"A series\". Ambiguous titles produce an error with candidate IDs."
+
+["output.digit_group_separator"]
+other = ","
+
+["output.duration.seconds"]
+other = "{{.value}}s"
+
+["output.duration.minutes"]
+other = "{{.value}}m"
+
+["output.duration.hours"]
+other = "{{.value}}h"
+
+["output.ongoing"]
+other = "ongoing"
+
+["output.log_ongoing"]
+other = "Logged {{.duration}}. Ongoing activity; status unchanged."
+
+["output.log_cost"]
+other = "Logged cost {{.cost}}. Cost left: {{.before}} → {{.after}}."
+
+["output.log_cost_unknown"]
+other = "Logged cost {{.cost}}. Remaining cost is unknown."
+
+["field.ongoing"]
+other = "Ongoing"
+
+["error.log.ongoing_complete"]
+other = "Ongoing items cannot be completed by logging. Omit --complete; use drop to retire the activity."
+
+["error.ongoing_duration"]
+other = "Ongoing items cannot have total or remaining duration. Clear both explicitly when converting an existing item."
+
+["help.topic.ongoing"]
+other = "An ongoing item has no finish line: going for walks, drawing practice, or an open-ended reading activity. Both project and media support --ongoing. This is different from a finite item with an unknown duration, and does not create recurring occurrences or a schedule.\n\nAdd one with do-something add --title \"Go for a walk\" --kind project --ongoing --min-session-duration 15m. Total and remaining duration are not_applicable; setting either on an ongoing item is an error. To convert an existing item, use edit <id|title> --ongoing --clear-total-duration --clear-remaining-duration. To make it finite again, use --ongoing=false and optionally set duration estimates.\n\nlog records time spent without reducing a remainder or prompting for completion. It still requires a positive duration, or a positive min_session_duration when omitted. --complete is an error for ongoing items; --no-complete is accepted but unnecessary. No progress percentage is shown.\n\n--session still checks the minimum worthwhile session. --finish-within always excludes ongoing items, even with --unknown include. Scoring omits total/remaining duration from configured groups; an empty group is omitted and the other groups are normalized. Other properties such as cost still apply.\n\nUse drop to retire an activity and reopen to bring it back. Status commands remain explicit; ordinary logs do not change status."
