@@ -157,7 +157,7 @@ func TestContentModesAndEngagementsRoundTrip(t *testing.T) {
 	}
 }
 func TestIdempotentEditAndReadPathEscaping(t *testing.T) {
-	s, e := Open(OpenWrite, Options{DBPath: filepath.Join(t.TempDir(), "list?#.db")})
+	s, e := Open(OpenWrite, Options{DBPath: filepath.Join(t.TempDir(), "list #%25.db")})
 	if e != nil {
 		t.Fatal(e)
 	}

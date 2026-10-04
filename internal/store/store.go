@@ -17,6 +17,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -200,7 +201,7 @@ func IsNoStore(err error) bool {
 // openDB opens the SQLite file with WAL and foreign keys enabled on every
 // connection via the DSN, so pool connections are always consistent.
 func openDB(path string) (*sql.DB, error) {
-	dsn := (&url.URL{Scheme: "file", Path: path}).String() + "?_pragma=foreign_keys(1)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)"
+	dsn := sqliteFileURI(path) + "?_pragma=foreign_keys(1)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)"
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("store: open %s: %w", path, err)
@@ -212,6 +213,23 @@ func openDB(path string) (*sql.DB, error) {
 		return nil, fmt.Errorf("store: ping %s: %w", path, err)
 	}
 	return db, nil
+}
+
+// sqliteFileURI returns a SQLite file URI for an absolute native path. Windows
+// drive paths need forward slashes and a leading slash; otherwise SQLite reads
+// the drive letter as a URI authority (for example, "C:%5CUsers...").
+func sqliteFileURI(path string) string {
+	return sqliteFileURIForOS(path, runtime.GOOS)
+}
+
+func sqliteFileURIForOS(path, goos string) string {
+	if goos == "windows" {
+		path = strings.ReplaceAll(path, `\`, "/")
+		if len(path) >= 2 && path[1] == ':' && !strings.HasPrefix(path, "/") {
+			path = "/" + path
+		}
+	}
+	return (&url.URL{Scheme: "file", Path: path}).String()
 }
 
 // close releases the underlying handle.

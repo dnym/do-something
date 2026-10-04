@@ -3,7 +3,6 @@ package store
 import (
 	"database/sql"
 	"fmt"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,7 +21,7 @@ func snapshotPoint(phase string) {
 // to validate inbound files and VACUUM INTO output without ever forcing WAL onto
 // them (which would create -wal/-shm side files beside a clean snapshot).
 func openReadOnly(path string) (*sql.DB, error) {
-	dsn := (&url.URL{Scheme: "file", Path: path}).String() + "?mode=ro&_pragma=foreign_keys(1)"
+	dsn := sqliteFileURI(path) + "?mode=ro&_pragma=foreign_keys(1)"
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("store: open read-only %s: %w", path, err)

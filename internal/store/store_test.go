@@ -2,8 +2,34 @@ package store
 
 import (
 	"path/filepath"
+	"runtime"
 	"testing"
 )
+
+func TestSQLiteFileURI(t *testing.T) {
+	tests := []struct {
+		name string
+		path string
+		goos string
+		want string
+	}{
+		{"unix special characters", "/tmp/list ?#%.db", "linux", "file:///tmp/list%20%3F%23%25.db"},
+		{"windows drive path", `C:\Users\runner admin\list #%.db`, "windows", "file:///C:/Users/runner%20admin/list%20%23%25.db"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := sqliteFileURIForOS(tt.path, tt.goos); got != tt.want {
+				t.Fatalf("sqliteFileURIForOS() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+	if runtime.GOOS == "windows" {
+		got := sqliteFileURI(`C:\Users\runneradmin\list.db`)
+		if want := "file:///C:/Users/runneradmin/list.db"; got != want {
+			t.Fatalf("sqliteFileURI() = %q, want %q", got, want)
+		}
+	}
+}
 
 // TestOpenWriteRoundTrip verifies the modernc driver, WAL, migrations, and meta
 // all work end to end on a fresh store.
