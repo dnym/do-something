@@ -2,6 +2,12 @@ package cli
 
 // This single definition drives both Kong parsing and the schema command.
 type QueryFlags struct {
+	QueryOptions
+	Text string `placeholder:"TEXT"`
+}
+
+// QueryOptions are shared by browsing, suggestions, and positional text search.
+type QueryOptions struct {
 	Effort         string   `type:"effort"`
 	Session        string   `aliases:"time" type:"duration"`
 	FinishWithin   string   `type:"duration"`
@@ -14,7 +20,6 @@ type QueryFlags struct {
 	Engagement     string   `placeholder:"ENGAGEMENT" type:"engagement"`
 	Tag            []string
 	NotTag         []string
-	Text           string  `placeholder:"TEXT"`
 	MinScore       float64 `type:"unit"`
 	Limit          *int    `type:"nonnegative"`
 	Random         bool
@@ -82,7 +87,11 @@ type Args struct {
 	NoInput bool
 	Suggest QueryFlags `cmd:"" default:"withargs"`
 	List    QueryFlags `cmd:""`
-	Show    struct {
+	Search  struct {
+		Query string `arg:"" required:""`
+		QueryOptions
+	} `cmd:""`
+	Show struct {
 		ID string `arg:""`
 	} `cmd:""`
 	Add  Entry `cmd:""`

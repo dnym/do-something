@@ -115,6 +115,7 @@ type commandDescription struct {
 var commandMetadata = map[string]commandDescription{
 	"do-something": {Description: "Keep and rank a unified list of projects and media. With no command, runs suggest.", Mutation: "conditional: the default suggest invocation records suggestions unless --peek is set"},
 	"suggest":      {Description: "Rank ready, active items for what to do now; defaults to kind=project and records returned suggestions unless --peek is set.", Response: "suggest", Output: "A ranked Result with applied filters, counts, items, readiness, and scores; score_breakdown is populated only with --explain.", Mutation: "conditional: records a suggestion event for returned items unless --peek is set", Examples: []string{"do-something suggest --session 90m --effort medium --peek", "do-something --session 90m --effort medium --peek"}},
+	"search":       {Description: "Search titles and notes using a case-insensitive substring; includes all kinds and statuses by default, ordered by activity score.", Response: "search", Output: "A Result containing matching items and their scores; does not record suggestions.", Mutation: "never", Examples: []string{"do-something search woodworking", "do-something search 'breaking bad' --status in_progress"}},
 	"list":         {Description: "List and optionally rank/filter items; includes every status by default.", Response: "list", Output: "A Result containing matching items and their scores; does not record suggestions.", Mutation: "never", Examples: []string{"do-something list --status in_progress"}},
 	"show":         {Description: "Inspect one item, including properties, readiness, dependencies, and score breakdown.", Response: "show", Output: "A Result containing exactly the resolved item with score_breakdown included.", Mutation: "never", Examples: []string{"do-something show ITEM_ID"}},
 	"add":          {Description: "Create an item. Non-interactive use requires --title and --kind.", Response: "add", Output: "ItemMutation with changed=true, the new id, before=null, and after containing the item.", Mutation: "always", Examples: []string{"do-something add --title 'Read Dune' --kind media --type book --total-duration 12h --remaining-duration 12h --interest high"}},
@@ -161,6 +162,8 @@ var positionalExamples = map[string][]string{
 func positionalMetadata(command string, index int, fallback string) (string, string, string) {
 	item := "Item reference: full UUID, unique UUID prefix, or exact case-sensitive title."
 	switch command {
+	case "search":
+		return "query", "Non-empty case-insensitive substring to find in titles and notes.", ""
 	case "show", "edit", "log":
 		if index == 0 {
 			return "item", item, "item-reference"
@@ -217,7 +220,7 @@ func flagDescription(name string) string {
 		"status": "Lifecycle state to set or filter.",
 		"mode":   "Soft ranking preference for activity kind; never excludes items.", "engagement": "Soft ranking preference for focused versus loose engagement; independent of effort and never excludes items.",
 		"not-tag": "Exclude exact case-sensitive tags; repeated values combine with AND.",
-		"text":    "Case-insensitive substring filter over title, notes, category, and type.", "min-score": "Minimum computed desirability score from 0 to 1.",
+		"text":    "Case-insensitive substring filter over title and notes.", "min-score": "Minimum computed desirability score from 0 to 1.",
 		"limit": "Maximum returned items; 0 means all matches.", "random": "Shuffle matching candidates before applying limit.",
 		"peek": "Do not record suggestion events.", "explain": "Include score_breakdown details in item output.",
 		"include-unready": "Include items blocked by unfinished prerequisites; suggest hides them by default.",
@@ -449,7 +452,7 @@ func helpCommand(k *kong.Kong, n *kong.Node, tr *i18n.Translator, w io.Writer) {
 			fmt.Fprintln(w, "  "+flagUsage(f, tr))
 		}
 	}
-	if n.Name == "suggest" || n.Name == "list" {
+	if n.Name == "suggest" || n.Name == "list" || n.Name == "search" {
 		keys := []string{"help.filter.and", "help.filter.type", "help.filter.text", "help.filter.mode", "help.filter.engagement", "help.filter.unknown"}
 		if n.Name == "suggest" {
 			keys = append(keys, "help.filter.kind")
@@ -941,7 +944,7 @@ func directoryBytes(path string) int64 {
 func responseSchemas() map[string]any {
 	responses := map[string]any{}
 	for name, value := range map[string]any{
-		"suggest": output.Result{}, "list": output.Result{}, "show": output.Result{},
+		"suggest": output.Result{}, "list": output.Result{}, "search": output.Result{}, "show": output.Result{},
 		"log": output.LogMutation{}, "add": output.ItemMutation{}, "edit": output.ItemMutation{},
 		"start": output.StatusMutation{}, "done": output.StatusMutation{}, "drop": output.StatusMutation{}, "reopen": output.StatusMutation{},
 		"deps": output.Dependencies{}, "config": output.ConfigResult{}, "import": importp.Report{}, "sync": syncer.Report{},

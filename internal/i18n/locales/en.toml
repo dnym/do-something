@@ -797,7 +797,7 @@ other = "Repeated filters are combined with AND."
 other = "--type and --category match exactly, case-insensitively."
 
 ["help.filter.text"]
-other = "--text is a case-insensitive substring match over title, notes, category, and type."
+other = "--text is a case-insensitive substring match over title and notes."
 
 ["help.filter.unknown"]
 other = "Items with unknown values pass and are labelled \"unknown\"; --unknown exclude is strict."
@@ -1053,3 +1053,9 @@ other = "Ongoing items cannot have total or remaining duration. Clear both expli
 
 ["help.topic.ongoing"]
 other = "An ongoing item has no finish line: going for walks, drawing practice, or an open-ended reading activity. Both project and media support --ongoing. This is different from a finite item with an unknown duration, and does not create recurring occurrences or a schedule.\n\nAdd one with do-something add --title \"Go for a walk\" --kind project --ongoing --min-session-duration 15m. Total and remaining duration are not_applicable; setting either on an ongoing item is an error. To convert an existing item, use edit <id|title> --ongoing --clear-total-duration --clear-remaining-duration. To make it finite again, use --ongoing=false and optionally set duration estimates.\n\nlog records time spent without reducing a remainder or prompting for completion. It still requires a positive duration, or a positive min_session_duration when omitted. --complete is an error for ongoing items; --no-complete is accepted but unnecessary. No progress percentage is shown.\n\n--session still checks the minimum worthwhile session. --finish-within always excludes ongoing items, even with --unknown include. Scoring omits total/remaining duration from configured groups; an empty group is omitted and the other groups are normalized. Other properties such as cost still apply.\n\nUse drop to retire an activity and reopen to bring it back. Status commands remain explicit; ordinary logs do not change status."
+
+["help.search"]
+other = "Search titles and notes, all kinds and statuses by default; ordered by activity score."
+
+["help.arg.query"]
+other = "non-empty substring to find in titles and notes"

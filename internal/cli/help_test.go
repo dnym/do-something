@@ -74,7 +74,7 @@ func TestHelpRoot(t *testing.T) {
 func TestHelpRootAlignsCommandColumn(t *testing.T) {
 	out := helpOutput(t, "--help")
 	commands := map[string]bool{}
-	for _, n := range []string{"suggest", "list", "show", "add", "edit", "start", "done", "drop", "reopen", "deps", "import", "export", "snapshot", "sync", "config", "doctor", "schema", "version", "completion", "help"} {
+	for _, n := range []string{"suggest", "list", "search", "show", "add", "edit", "start", "done", "drop", "reopen", "deps", "import", "export", "snapshot", "sync", "config", "doctor", "schema", "version", "completion", "help"} {
 		commands[n] = true
 	}
 	// Usage strings are lowercase/punctuation only, so the first uppercase
@@ -155,6 +155,14 @@ func TestHelpCommandPages(t *testing.T) {
 		"get | set | unset",
 	})
 }
+func TestSearchHelp(t *testing.T) {
+	out := helpOutput(t, "search", "--help")
+	assertContains(t, out, []string{"Usage: do-something search <query> [flags]", "--status=", "--limit=", "title and notes", "non-empty substring"})
+	if strings.Contains(out, "--text=") || strings.Contains(out, "category, and type") {
+		t.Fatal(out)
+	}
+}
+
 func TestHelpDispatch(t *testing.T) {
 	// Value-taking global flags consume their value before the command, so a
 	// value can never be mistaken for a command name.

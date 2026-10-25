@@ -319,6 +319,7 @@ bin/do-something --effort low --session 30m --peek
 bin/do-something --mode thinking --engagement focused --effort low --peek
 bin/do-something --kind media --effort low --peek
 bin/do-something help kind
+bin/do-something search woodworking
 bin/do-something list --text woodworking --explain
 bin/do-something show FULL_ID
 bin/do-something start FULL_ID
@@ -392,7 +393,11 @@ preference, not an intensity dial — `--effort` covers demandingness. Unknown
 values pass by default;
 `--unknown exclude` requires known values. Tags are exact, case-sensitive set
 membership; `--tag` and `--not-tag` do not have an unknown state. Text searches
-match case-insensitive substrings in title and notes. `--limit 0` returns all
+match case-insensitive substrings in title and notes. `search QUERY` is a
+convenient equivalent to `list --text QUERY`, with a required non-empty query
+(quote multiword queries). It accepts the same other filters, includes all kinds
+and statuses by default, and orders results by activity score. Search does not
+record suggestions. `--limit 0` returns all
 matches; `--random` shuffles matching candidates before limiting.
 
 Interactive add/edit accepts blank to skip/keep and `clear` to unset. The

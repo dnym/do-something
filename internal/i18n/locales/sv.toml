@@ -797,7 +797,7 @@ other = "Uppprepade filter kombineras med OCH."
 other = "--type och --category matchar exakt, okänsligt för stor bokstav."
 
 ["help.filter.text"]
-other = "--text är en okänslig delsträngssökning i titel, anteckningar, kategori och typ."
+other = "--text är en okänslig delsträngssökning i titel och anteckningar."
 
 ["help.filter.unknown"]
 other = "Poster med okända värden släpps igenom med etiketten \"unknown\"; --unknown exclude är strikt."
@@ -1053,3 +1053,9 @@ other = "Fortlöpande poster kan inte ha total eller återstående tidsåtgång.
 
 ["help.topic.ongoing"]
 other = "En fortlöpande post har inget slutmål: promenader, teckningsövningar eller läsning utan bestämt slut. Både project och media stöder --ongoing. Det skiljer sig från en ändlig post med okänd tidsåtgång och skapar inte återkommande tillfällen eller ett schema.\n\nLägg till en med do-something add --title \"Ta en promenad\" --kind project --ongoing --min-session-duration 15m. Total och återstående tidsåtgång är not_applicable; att ange något av dessa värden ger ett fel. Omvandla en befintlig post med edit <id|title> --ongoing --clear-total-duration --clear-remaining-duration. Gör den ändlig igen med --ongoing=false och ange eventuellt tidsuppskattningar.\n\nlog registrerar nedlagd tid utan att minska återstående tid eller fråga om posten ska markeras som klar. En positiv tidsåtgång krävs fortfarande, eller ett positivt min_session_duration om tiden utelämnas. --complete ger ett fel för fortlöpande poster; --no-complete tillåts men behövs inte. Ingen procentsats för framsteg visas.\n\n--session kontrollerar fortfarande det minsta meningsfulla passet. --finish-within utesluter alltid fortlöpande poster, även med --unknown include. Poängsättningen utelämnar total och återstående tid ur konfigurerade grupper; en tom grupp utelämnas och övriga grupper normaliseras. Andra egenskaper, som kostnad, gäller fortfarande.\n\nAnvänd drop för att avföra aktiviteten och reopen för att ta tillbaka den. Statuskommandon är fortfarande uttryckliga; vanliga loggningar ändrar inte status."
+
+["help.search"]
+other = "Sök i titlar och anteckningar, alla sorter och statusar som standard; sorterat efter aktivitetspoäng."
+
+["help.arg.query"]
+other = "icke-tom delsträng att söka efter i titlar och anteckningar"

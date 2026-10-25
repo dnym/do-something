@@ -98,6 +98,9 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 	if e != nil {
 		return fail(invalid(e), flag(argv, "--format"), tr, errout, nil)
 	}
+	if strings.Fields(ctx.Command())[0] == "search" && strings.TrimSpace(a.Search.Query) == "" {
+		return fail(invalid(&argumentError{"query", a.Search.Query, constraint{}, fmt.Errorf("query must not be empty")}), a.Format, tr, errout, nil)
+	}
 	device, e := config.LoadDevice(config.DeviceOptions{DBPath: a.DB, SyncDir: a.Syncdir, Color: a.Color, Language: a.Lang}, nil)
 	if e != nil {
 		return fail(invalid(e), a.Format, tr, errout, nil)
@@ -275,12 +278,15 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 	changed := false
 	var result any
 	switch command {
-	case "suggest", "list", "show":
+	case "suggest", "list", "search", "show":
 		f := a.Suggest
 		browse := command != "suggest"
 		id := ""
 		if command == "list" {
 			f = a.List
+		}
+		if command == "search" {
+			f = QueryFlags{QueryOptions: a.Search.QueryOptions, Text: a.Search.Query}
 		}
 		if command == "show" {
 			id, e = s.ResolveItemRef(a.Show.ID)

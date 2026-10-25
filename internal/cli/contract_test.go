@@ -174,6 +174,7 @@ func TestCommandResponseSchemas(t *testing.T) {
 	check("edit", "edit", id, "--unset-rating", "quality,interest")
 	check("suggest", "suggest", "--peek", "--explain")
 	check("list", "list")
+	check("search", "search", "Example")
 	check("show", "show", id)
 	for _, verb := range []string{"start", "done", "drop", "reopen"} {
 		check(verb, verb, id)
