@@ -953,7 +953,7 @@ other = "total_duration is the estimated active time needed for the whole item, 
 other = "deadline is the last day (YYYY-MM-DD) the item can still be completed. Both kinds carry it.\n\nIt drives the urgency right-now term. For projects with a known remaining_duration, urgency follows the required pace (remaining_duration ÷ days left) against scoring.k_pace (default 2 h/day). For media — and projects without an hours estimate — a day-based curve applies instead: 1 − days left ÷ scoring.deadline_horizon_days (default 30), floored at 0 (no urgency) and capped at 1 (overdue = maximum urgency).\n\nItems without a deadline have no urgency term — unless you set scoring.no_deadline_horizon to a positive number of days, which makes urgency assume every deadline-less item is due that many days out.\n\nSet it with do-something add --deadline 2026-12-01 or edit <id|title> --deadline 2026-12-01; --clear-deadline removes it."
 
 ["help.topic.dependencies"]
-other = "dependencies link items: an item lists the prerequisites that must be finished before it can start.\n\nA dependency blocks its dependent: while any prerequisite is not done, the dependent is blocked. suggest hides blocked items (see them with --include-unready); list, show, and doctor surface the blockers, with the blocker's status. Only done clears a block — a dropped or open prerequisite keeps blocking, because an abandoned prerequisite is not a completed one. Either reopen it or dissolve the edge: do-something deps remove <id|title> <dependency-id|title>.\n\nThe graph also scores: the unblocking right-now term rewards finishing an item that makes its dependents ready. Cycles are rejected (CYCLE).\n\nManage edges with do-something deps list|add|remove <id|title> [ref …], or replace the full set with do-something edit <id|title> --depends-on ref-a,ref-b (comma-separated). Each ref is a full id, a unique id prefix, or an exact (case-sensitive) title; an ambiguous title fails with INVALID_ID listing its candidates, and a title that is also an existing item's id resolves as the id. A comma inside a title is escaped with a backslash (\\,)."
+other = "dependencies link items: an item lists the prerequisites that must be finished before it can start.\n\nA dependency blocks its dependent: while any prerequisite is not done, the dependent is blocked. suggest hides blocked items (see them with --include-unready); list, show, and doctor surface the blockers, with the blocker's status. Only done clears a block — a dropped or open prerequisite keeps blocking, because an abandoned prerequisite is not a completed one. Either reopen it or dissolve the edge: do-something deps remove <id|title> <dependency-id|title>.\n\nThe graph also scores: the unblocking right-now term rewards finishing an item that makes its dependents ready. Cycles are rejected (CYCLE).\n\nManage edges with do-something deps list|tree|add|remove <id|title> [ref …], or replace the full set with do-something edit <id|title> --depends-on ref-a,ref-b (comma-separated). Each ref is a full id, a unique id prefix, or an exact (case-sensitive) title; an ambiguous title fails with INVALID_ID listing its candidates, and a title that is also an existing item's id resolves as the id. A comma inside a title is escaped with a backslash (\\,)."
 
 ["help.topic.status"]
 other = "status is the item's lifecycle state:\n  not_started — not started\n  in_progress — started, not finished\n  done — finished\n  dropped — retired; there is no hard delete, dropping is how an item leaves the active list\n\nTransitions are explicit verbs on one or many ids: do-something start <id|title …>, done, drop, reopen. start works from any status except in_progress; done and drop from any; reopen from any except not_started — the excluded rows are idempotent no-ops (current = target ⇒ changed: false), so a verb on any item succeeds. A multi-id run is one all-or-nothing transaction; a change writes an event (started / completed / dropped — reopen writes none) that feeds scoring, a no-op writes none.\n\nadd and edit set the status directly: do-something add --title '…' --kind media --status done, or edit <id|title> --status in_progress. A status change records the same event as the matching verb (started / completed / dropped; not_started records none), so history and scoring see it just like a status command would. This is the convenient path for historical items: create them in the state they are in, with no follow-up start/done/drop step.\n\nsuggest returns only not_started and in_progress items; list shows every status. Filter with --status.\n\nStatus feeds the score: in_progress items carry the momentum term, done items unblock their dependents (the unblocking term), and blocked items are hidden from suggest."
@@ -1059,3 +1059,30 @@ other = "Search titles and notes, all kinds and statuses by default; ordered by 
 
 ["help.arg.query"]
 other = "non-empty substring to find in titles and notes"
+
+["output.tree.item"]
+other = "\"{{.title}}\" [{{.id}}] [{{.status}}]"
+
+["output.tree.selected"]
+other = "← selected"
+
+["output.tree.prerequisites"]
+other = "Prerequisites:"
+
+["output.tree.dependents"]
+other = "Dependents:"
+
+["output.tree.requires"]
+other = "requires:"
+
+["output.tree.dependent"]
+other = "needed by:"
+
+["output.tree.also_requires"]
+other = "also requires:"
+
+["output.tree.reference"]
+other = "(reference)"
+
+["help.deps.tree"]
+other = "deps tree ITEM shows prerequisites and dependents recursively, including every status. Other prerequisites of dependent tasks appear as context leaves; their branches are not expanded. Repeated tasks are marked as references. Each edge is labelled with its dependency direction, not a subtask relationship."

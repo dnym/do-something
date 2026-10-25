@@ -60,6 +60,9 @@ func nodeSchema(n *kong.Node) map[string]any {
 		if meta.Response != "" {
 			commandOutput["response_schema"] = meta.Response
 		}
+		if len(meta.ResponsesByAction) > 0 {
+			commandOutput["response_schemas_by_action"] = meta.ResponsesByAction
+		}
 		result["output"] = commandOutput
 	}
 	if meta.Mutation != "" {
@@ -104,12 +107,13 @@ func schema(k *kong.Kong) any {
 }
 
 type commandDescription struct {
-	Description string
-	Response    string
-	Output      string
-	Mutation    string
-	SideEffects []string
-	Examples    []string
+	Description       string
+	ResponsesByAction map[string]string
+	Response          string
+	Output            string
+	Mutation          string
+	SideEffects       []string
+	Examples          []string
 }
 
 var commandMetadata = map[string]commandDescription{
@@ -125,7 +129,7 @@ var commandMetadata = map[string]commandDescription{
 	"done":         {Description: "Set one or more items to done atomically, unblocking their dependents.", Response: "done", Output: "StatusMutation with one before/after transition per item.", Mutation: "conditional: writes status events for changed items", Examples: []string{"do-something done ITEM_ID"}},
 	"drop":         {Description: "Set one or more items to dropped (retired) atomically; dropped dependencies still block dependents.", Response: "drop", Output: "StatusMutation with one before/after transition per item.", Mutation: "conditional: writes status events for changed items", Examples: []string{"do-something drop ITEM_ID"}},
 	"reopen":       {Description: "Set one or more items to not_started atomically.", Response: "reopen", Output: "StatusMutation with one before/after transition per item.", Mutation: "conditional: writes changed items", Examples: []string{"do-something reopen ITEM_ID"}},
-	"deps":         {Description: "List, add, or remove prerequisite edges. The target item depends on every dependency argument.", Response: "deps", Output: "Dependencies response with before/after dependency ids and resolved item references.", Mutation: "conditional: add/remove write; list never writes", Examples: []string{"do-something deps list TARGET_ITEM", "do-something deps add TARGET_ITEM PREREQUISITE_A PREREQUISITE_B", "do-something deps remove TARGET_ITEM PREREQUISITE_A"}},
+	"deps":         {Description: "List, add, or remove prerequisite edges, or show a focused dependency tree. The target item depends on every dependency argument. tree expands prerequisites and dependents recursively, with other prerequisites of dependents as context leaves; includes every status.", Response: "deps", ResponsesByAction: map[string]string{"list": "deps", "add": "deps", "remove": "deps", "tree": "deps_tree"}, Output: "list/add/remove return Dependencies with before/after dependency ids and resolved item references. tree returns DependencyTree: selected item and depth-first prerequisite/dependent rows; depth zero attaches to selected, parent_id identifies the enclosing item, also_requires rows are context leaves, and reference marks repeated tasks without re-expansion.", Mutation: "conditional: add/remove write; list/tree never write", Examples: []string{"do-something deps tree TARGET_ITEM", "do-something deps list TARGET_ITEM", "do-something deps add TARGET_ITEM PREREQUISITE_A PREREQUISITE_B", "do-something deps remove TARGET_ITEM PREREQUISITE_A"}},
 	"import":       {Description: "Validate and import a canonical JSON export from a file, or from stdin when source is '-'.", Response: "import", Output: "Import report describing issues and whether data changed.", Mutation: "conditional: writes unless --dry-run is set", Examples: []string{"do-something import export.json --dry-run", "do-something import -"}},
 	"export":       {Description: "Write all store content in the canonical interchange format.", Response: "export json", Output: "Canonical Content JSON, not a Result wrapper.", Mutation: "never", Examples: []string{"do-something export json"}},
 	"snapshot":     {Description: "Create a validated, consistent single-file SQLite snapshot.", Response: "snapshot", Output: "SnapshotResult containing the written path.", Mutation: "does not change logical store data", SideEffects: []string{"writes a snapshot file"}},
@@ -173,11 +177,11 @@ func positionalMetadata(command string, index int, fallback string) (string, str
 	case "deps":
 		switch index {
 		case 0:
-			return "action", "Dependency operation: list, add, or remove.", ""
+			return "action", "Dependency operation: list, tree, add, or remove.", ""
 		case 1:
-			return "target", "The dependent item whose prerequisites are being inspected or changed.", "item-reference"
+			return "target", "The selected item for tree, or the dependent item whose prerequisites are being inspected or changed.", "item-reference"
 		case 2:
-			return "dependencies", "One or more prerequisite items that the target depends on; required by add/remove and omitted for list.", "item-reference"
+			return "dependencies", "One or more prerequisite items that the target depends on; required by add/remove and omitted for list/tree.", "item-reference"
 		}
 	case "import":
 		return "source", "Canonical JSON file path, or '-' to read stdin.", "path"
@@ -283,7 +287,7 @@ func enumDefinitions() map[string]any {
 		"effort":            map[string]any{"description": "Maximum acceptable intensity, ordered from least to most demanding.", "anchors": map[string]float64{"none": 0, "low": 1.0 / 3.0, "medium": 0.5, "high": 2.0 / 3.0, "very_high": 0.8, "max": 1}},
 		"unknown_policy":    map[string]string{"include": "Unknown filtered values pass and are identified in filter_evidence.", "exclude": "A filtered value must be known and satisfy the filter."},
 		"property_state":    map[string]string{"known": "A value is present.", "unknown": "Applicable but no value is known; never interpret as numeric zero.", "not_applicable": "The property does not apply to this item kind or state."},
-		"dependency_action": map[string]string{"list": "Inspect prerequisites without mutation.", "add": "Add prerequisite edges.", "remove": "Remove prerequisite edges."},
+		"dependency_action": map[string]string{"tree": "Inspect a focused tree of prerequisites, dependents, and sibling prerequisites without mutation.", "list": "Inspect prerequisites without mutation.", "add": "Add prerequisite edges.", "remove": "Remove prerequisite edges."},
 	}
 }
 
@@ -433,6 +437,10 @@ func helpCommand(k *kong.Kong, n *kong.Node, tr *i18n.Translator, w io.Writer) {
 	if n.Name == "show" || n.Name == "edit" || n.Name == "log" || n.Name == "start" || n.Name == "done" || n.Name == "drop" || n.Name == "reopen" || n.Name == "deps" || n.Name == "add" {
 		fmt.Fprintln(w)
 		fmt.Fprintln(w, tr.T("help.references"))
+	}
+	if n.Name == "deps" {
+		fmt.Fprintln(w)
+		fmt.Fprintln(w, tr.T("help.deps.tree"))
 	}
 	if len(n.Positional) > 0 {
 		fmt.Fprintln(w)
@@ -854,6 +862,11 @@ func jsonShape(t reflect.Type) any {
 			}
 			p["duration"] = map[string]any{"type": "number", "exclusiveMinimum": 0, "description": "Full time spent in hours, including any overrun."}
 		}
+		if t == reflect.TypeOf(output.DependencyTreeRow{}) {
+			p["depth"] = map[string]any{"type": "integer", "minimum": 0, "description": "Zero-based display depth; depth zero attaches to selected."}
+			p["relation"] = map[string]any{"type": "string", "enum": []string{"requires", "dependent", "also_requires"}, "description": "requires/also_requires: parent_id depends on item.id; dependent: item.id depends on parent_id. also_requires is an unexpanded context leaf."}
+			p["reference"] = map[string]any{"type": "boolean", "description": "Task appears elsewhere in the view; this occurrence is not expanded."}
+		}
 		if t == reflect.TypeOf(output.Item{}) {
 			values, states := map[string]any{}, map[string]any{}
 			keys := []string{}
@@ -947,7 +960,7 @@ func responseSchemas() map[string]any {
 		"suggest": output.Result{}, "list": output.Result{}, "search": output.Result{}, "show": output.Result{},
 		"log": output.LogMutation{}, "add": output.ItemMutation{}, "edit": output.ItemMutation{},
 		"start": output.StatusMutation{}, "done": output.StatusMutation{}, "drop": output.StatusMutation{}, "reopen": output.StatusMutation{},
-		"deps": output.Dependencies{}, "config": output.ConfigResult{}, "import": importp.Report{}, "sync": syncer.Report{},
+		"deps_tree": output.DependencyTree{}, "deps": output.Dependencies{}, "config": output.ConfigResult{}, "import": importp.Report{}, "sync": syncer.Report{},
 		"snapshot": output.SnapshotResult{}, "version": output.VersionResult{}, "doctor": doctorReport{}, "export json": store.Content{}, "error": output.ErrorResult{},
 	} {
 		shape := jsonShape(reflect.TypeOf(value)).(map[string]any)

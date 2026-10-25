@@ -355,10 +355,35 @@ explicitly dissolve an abandoned prerequisite.
 ```sh
 do-something deps add ITEM PREREQUISITE
 do-something deps list ITEM
+do-something deps tree ITEM
 do-something deps remove ITEM PREREQUISITE
 do-something --include-unready --explain --peek
 do-something edit ITEM --clear-cost --clear-deadline --unset-rating interest
 ```
+
+`deps tree ITEM` shows a focused dependency view starting from any remembered
+item. It expands prerequisites and dependents recursively, including done and
+dropped items. Other prerequisites of dependent tasks appear as context leaves;
+their own branches are not expanded. Every row includes a status and store-unique
+ID prefix. The selected item is marked, shared tasks appear as references, and
+edges explicitly say `requires`, `needed by`, or `also requires`.
+
+```text
+"Sand walls" [01a10676-5] [in_progress] ← selected
+Prerequisites:
+└─ requires: "Remove wallpaper" [01a10676-3] [done]
+Dependents:
+└─ needed by: "Paint room" [01a10676-7] [not_started]
+   ├─ also requires: "Buy paint" [01a10676-9] [not_started]
+   └─ needed by: "Hang pictures" [01a10676-b] [not_started]
+```
+
+The command is read-only. `--format json` returns `selected`, `prerequisites`,
+and `dependents`. Each section contains rows in depth-first display order with
+`item` (full ID, title, status), `parent_id`, zero-based `depth`, `relation`, and
+`reference`. For `requires`/`also_requires`, the parent depends on the item;
+for `dependent`, the item depends on the parent. `schema.responses.deps_tree`
+describes this response.
 
 Item references in `show`, `edit`, `log`, `start`, `done`, `drop`, `reopen`,
 `deps`, and the `--depends-on` values of `add`/`edit` accept a full id, a unique id prefix,

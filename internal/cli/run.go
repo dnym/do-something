@@ -166,13 +166,16 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 			return fail(invalid(fmt.Errorf("working database must be outside syncdir")), a.Format, tr, errout, nil)
 		}
 	}
-	writing := command == "log" || command == "add" || command == "edit" || command == "start" || command == "done" || command == "drop" || command == "reopen" || command == "deps" && a.Deps.Action != "list" || command == "config" && (a.Config.Action == "set" || a.Config.Action == "unset") || command == "import" && !a.Import.DryRun || command == "sync" && !a.Sync.DryRun || command == "snapshot"
+	writing := command == "log" || command == "add" || command == "edit" || command == "start" || command == "done" || command == "drop" || command == "reopen" || command == "deps" && (a.Deps.Action == "add" || a.Deps.Action == "remove") || command == "config" && (a.Config.Action == "set" || a.Config.Action == "unset") || command == "import" && !a.Import.DryRun || command == "sync" && !a.Sync.DryRun || command == "snapshot"
 	// Validate incomplete input before creating a store.
 	if command == "add" && (a.Add.Title == "" || a.Add.Kind == "") && !interactive {
 		return fail(invalid(fmt.Errorf("add requires --title and --kind when input is disabled")), a.Format, tr, errout, nil)
 	}
 	if command == "log" && a.Log.Duration != nil && *a.Log.Duration <= 0 {
 		return fail(&store.LogError{Reason: "duration_invalid"}, a.Format, tr, errout, nil)
+	}
+	if command == "deps" && a.Deps.Action == "tree" && len(a.Deps.IDs) != 0 {
+		return fail(invalid(fmt.Errorf("deps tree accepts exactly one item reference")), a.Format, tr, errout, nil)
 	}
 	if writing {
 		unlock, e := store.Acquire(opts)
@@ -429,6 +432,10 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 		if e != nil {
 			break
 		}
+		if a.Deps.Action == "tree" {
+			result, e = dependencyTree(s, id)
+			break
+		}
 		deps, err := s.Dependencies(id)
 		e = err
 		if e != nil {
@@ -674,6 +681,8 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 				e = output.LogText(out, value, tr)
 			case output.StatusMutation:
 				e = output.StatusText(out, value, tr)
+			case output.DependencyTree:
+				e = output.DependencyTreeText(out, value, tr)
 			case output.Dependencies:
 				e = output.DependenciesText(out, value, tr)
 			default:

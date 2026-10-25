@@ -147,7 +147,9 @@ func TestHelpCommandPages(t *testing.T) {
 	assertContains(t, out, []string{
 		"Usage: do-something deps <action> <id|title> [id|title...]",
 		"Positionals",
-		"list | add | remove",
+		"list | add | remove | tree",
+		"deps tree ITEM",
+		"context leaves",
 	})
 	out = helpOutput(t, "config", "-h")
 	assertContains(t, out, []string{

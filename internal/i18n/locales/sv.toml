@@ -953,7 +953,7 @@ other = "total_duration är den uppskattade aktiva tiden för hela posten, för 
 other = "deadline är sista dag (ÅÅÅÅ-MM-DD) posten fortfarande kan slutföras. Båda sorterna har den.\n\nDen styr urgency-termen i just nu. För project med känd remaining_duration följer brådska kravtackten (remaining_duration ÷ dagar kvar) mot scoring.k_pace (standard 2 h/dag). För media — och project utan timmeuppskattning — gäller i stället en dagsbaserad kurva: 1 − dagar kvar ÷ scoring.deadline_horizon_days (standard 30), neddämpad till 0 (ingen brådska) och takad till 1 (sen = maximal brådska).\n\nPoster utan deadline har ingen urgency-term — om du inte sätter scoring.no_deadline_horizon till ett positivt antal dagar, vilket gör att urgency utgår från att varje deadline-lös post är förfallen efter just så många dagar.\n\nSätt den med do-something add --deadline 2026-12-01 eller edit <id|title> --deadline 2026-12-01; --clear-deadline tar bort den."
 
 ["help.topic.dependencies"]
-other = "dependencies kopplar ihop poster: en post listar de förutsättningar som måste vara klara innan den kan påbörjas.\n\nEtt beroende blockerar sin beroende: medan någon förutsättning inte är klar, är den beroende posten blockerad. suggest döljer blockerade poster (se dem med --include-unready); list, show och doctor visar blockerarna med blockerarens status. Endast done löser upp en blockering — en dropped eller öppen förutsättning blockerar fortfarande, eftersom en avbokad förutsättning inte är en fullbordad. Antingen öppna den igen eller upplös kanterna: do-something deps remove <id|title> <dependency-id|title>.\n\nGrafen påverkar poängen också: unblocking-termen i just nu belönar att slutföra en post som gör dess beroende redo. Cyklar avvisas (CYCLE).\n\nHantera kanter med do-something deps list|add|remove <id|title> [ref …], eller ersätt hela mängden med do-something edit <id|title> --depends-on ref-a,ref-b (kommaseparerat). Varje ref är ett fullt id, ett entydigt id-prefix eller en exakt (skiftlägeskänslig) titel; en tvetydig titel ger INVALID_ID som listar kandidaterna, och en titel som också är en befintlig posts id tolkas som id. Ett kommatecken i en titel undviker du med omvänt snedstreck (\\,)."
+other = "dependencies kopplar ihop poster: en post listar de förutsättningar som måste vara klara innan den kan påbörjas.\n\nEtt beroende blockerar sin beroende: medan någon förutsättning inte är klar, är den beroende posten blockerad. suggest döljer blockerade poster (se dem med --include-unready); list, show och doctor visar blockerarna med blockerarens status. Endast done löser upp en blockering — en dropped eller öppen förutsättning blockerar fortfarande, eftersom en avbokad förutsättning inte är en fullbordad. Antingen öppna den igen eller upplös kanterna: do-something deps remove <id|title> <dependency-id|title>.\n\nGrafen påverkar poängen också: unblocking-termen i just nu belönar att slutföra en post som gör dess beroende redo. Cyklar avvisas (CYCLE).\n\nHantera kanter med do-something deps list|tree|add|remove <id|title> [ref …], eller ersätt hela mängden med do-something edit <id|title> --depends-on ref-a,ref-b (kommaseparerat). Varje ref är ett fullt id, ett entydigt id-prefix eller en exakt (skiftlägeskänslig) titel; en tvetydig titel ger INVALID_ID som listar kandidaterna, och en titel som också är en befintlig posts id tolkas som id. Ett kommatecken i en titel undviker du med omvänt snedstreck (\\,)."
 
 ["help.topic.status"]
 other = "status är postens livscykeltillstånd:\n  not_started — inte påbörjad\n  in_progress — påbörjad, inte slutförd\n  done — klar\n  dropped — avbokad; det finns ingen hård radering, avbokning är hur en post lämnar den aktiva listan\n\nÖvergångar är uttryckliga verb på ett eller flera id: do-something start <id|title …>, done, drop, reopen. start fungerar från alla status utom in_progress; done och drop från alla; reopen från alla utom not_started — de undantagna raderna är idempotenta tomgångar (nuvarande = mål ⇒ changed: false), så ett verb lyckas på vilken post som helst. En körning med flera id är en enda allt-eller-inget-transaction; en ändring skriver en händelse (started / completed / dropped — reopen skriver ingen) som påverkar poängsättningen, en tomgång skriver ingen.\n\nadd och edit sätter status direkt: do-something add --title '…' --kind media --status done, eller edit <id|title> --status in_progress. En statusändring skriver samma händelse som det matchande verbet (started / completed / dropped; not_started skriver ingen), så historik och poängsättning ser den precis som efter ett statuskommando. Det är den bekväma vägen för historiska poster: skapa dem i det läge de är i, utan ett efterföljande start/done/drop-steg.\n\nsuggest returnar endast not_started- och in_progress-poster; list visar alla status. Filtrera med --status.\n\nStatus påverkar poängen: in_progress-poster bär momentum-termen, done-poster låser upp sina beroende (unblocking-termen) och blockerade poster döljs från suggest."
@@ -1059,3 +1059,30 @@ other = "Sök i titlar och anteckningar, alla sorter och statusar som standard; 
 
 ["help.arg.query"]
 other = "icke-tom delsträng att söka efter i titlar och anteckningar"
+
+["output.tree.item"]
+other = "\"{{.title}}\" [{{.id}}] [{{.status}}]"
+
+["output.tree.selected"]
+other = "← vald"
+
+["output.tree.prerequisites"]
+other = "Förutsättningar:"
+
+["output.tree.dependents"]
+other = "Beroende poster:"
+
+["output.tree.requires"]
+other = "kräver:"
+
+["output.tree.dependent"]
+other = "behövs för:"
+
+["output.tree.also_requires"]
+other = "kräver också:"
+
+["output.tree.reference"]
+other = "(referens)"
+
+["help.deps.tree"]
+other = "deps tree ITEM visar förutsättningar och beroende poster rekursivt, oavsett status. Övriga förutsättningar för beroende poster visas som kontext utan att deras grenar expanderas. Upprepade poster markeras som referenser. Varje kant anger beroendets riktning, inte en relation mellan huvuduppgift och deluppgift."

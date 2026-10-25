@@ -37,7 +37,7 @@ var constraints = func() map[string]constraint {
 		"color":             {Allowed: []string{"auto", "always", "never"}},
 		"lang":              {Allowed: i18n.KnownLocales},
 		"master":            {Allowed: []string{"local", "remote"}},
-		"deps-action":       {Allowed: []string{"list", "add", "remove"}},
+		"deps-action":       {Allowed: []string{"list", "add", "remove", "tree"}},
 		"config-action":     {Allowed: []string{"get", "set", "unset"}},
 		"shell":             {Allowed: []string{"bash", "zsh", "fish"}},
 		"nonnegative":       {Minimum: number(0)},

@@ -252,6 +252,11 @@ func TestSchemaAgentDiscoverability(t *testing.T) {
 			t.Fatalf("missing command %s", name)
 		}
 	}
+	depsOutput := commands["deps"]["output"].(map[string]any)
+	depsResponses := depsOutput["response_schemas_by_action"].(map[string]any)
+	if depsResponses["tree"] != "deps_tree" || depsResponses["list"] != "deps" {
+		t.Fatalf("dependency responses are undiscoverable: %v", depsOutput)
+	}
 	suggestChange := commands["suggest"]["state_change"].(map[string]any)
 	if suggestChange["classification"] != "conditional" || !strings.Contains(suggestChange["description"].(string), "--peek") || !strings.Contains(commands["deps"]["description"].(string), "target item depends") {
 		t.Fatal("conditional suggestion/dependency direction is undiscoverable")
