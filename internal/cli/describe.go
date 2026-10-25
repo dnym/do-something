@@ -6,6 +6,7 @@ import (
 	"dosomething/internal/importp"
 	"dosomething/internal/model"
 	"dosomething/internal/output"
+	"dosomething/internal/search"
 	"dosomething/internal/store"
 	syncer "dosomething/internal/sync"
 	"fmt"
@@ -119,7 +120,7 @@ type commandDescription struct {
 var commandMetadata = map[string]commandDescription{
 	"do-something": {Description: "Keep and rank a unified list of projects and media. With no command, runs suggest.", Mutation: "conditional: the default suggest invocation records suggestions unless --peek is set"},
 	"suggest":      {Description: "Rank ready, active items for what to do now; defaults to kind=project and records returned suggestions unless --peek is set.", Response: "suggest", Output: "A ranked Result with applied filters, counts, items, readiness, and scores; score_breakdown is populated only with --explain.", Mutation: "conditional: records a suggestion event for returned items unless --peek is set", Examples: []string{"do-something suggest --session 90m --effort medium --peek", "do-something --session 90m --effort medium --peek"}},
-	"search":       {Description: "Search titles and notes using a case-insensitive substring; includes all kinds and statuses by default, ordered by activity score.", Response: "search", Output: "A Result containing matching items and their scores; does not record suggestions.", Mutation: "never", Examples: []string{"do-something search woodworking", "do-something search 'breaking bad' --status in_progress"}},
+	"search":       {Description: "Search titles and notes; case-insensitive substring by default, or typo-tolerant/reordered-word matching with --fuzzy. Includes all kinds and statuses. Default ordering is activity score; --fuzzy orders by search relevance, preferring titles over notes and exact over partial over approximate matches within each field. --random explicitly shuffles results.", Response: "search", Output: "A Result containing matching items and activity scores; fuzzy results also include search_match with relevance (0..1 ordering value, not probability), field (title/notes), kind (exact/partial/fuzzy), and a matched excerpt. Does not record suggestions.", Mutation: "never", Examples: []string{"do-something search woodworking", "do-something search 'breaking bad' --status in_progress", "do-something search woodworkng --fuzzy"}},
 	"list":         {Description: "List and optionally rank/filter items; includes every status by default.", Response: "list", Output: "A Result containing matching items and their scores; does not record suggestions.", Mutation: "never", Examples: []string{"do-something list --status in_progress"}},
 	"show":         {Description: "Inspect one item, including properties, readiness, dependencies, and score breakdown.", Response: "show", Output: "A Result containing exactly the resolved item with score_breakdown included.", Mutation: "never", Examples: []string{"do-something show ITEM_ID"}},
 	"add":          {Description: "Create an item. Non-interactive use requires --title and --kind.", Response: "add", Output: "ItemMutation with changed=true, the new id, before=null, and after containing the item.", Mutation: "always", Examples: []string{"do-something add --title 'Read Dune' --kind media --type book --total-duration 12h --remaining-duration 12h --interest high"}},
@@ -167,7 +168,7 @@ func positionalMetadata(command string, index int, fallback string) (string, str
 	item := "Item reference: full UUID, unique UUID prefix, or exact case-sensitive title."
 	switch command {
 	case "search":
-		return "query", "Non-empty case-insensitive substring to find in titles and notes.", ""
+		return "query", "Non-empty text to find in titles and notes; a case-insensitive substring by default, approximate with --fuzzy.", ""
 	case "show", "edit", "log":
 		if index == 0 {
 			return "item", item, "item-reference"
@@ -224,6 +225,7 @@ func flagDescription(name string) string {
 		"status": "Lifecycle state to set or filter.",
 		"mode":   "Soft ranking preference for activity kind; never excludes items.", "engagement": "Soft ranking preference for focused versus loose engagement; independent of effort and never excludes items.",
 		"not-tag": "Exclude exact case-sensitive tags; repeated values combine with AND.",
+		"fuzzy":   "Find approximate matches in titles and notes, including typos, reordered words, and spacing differences. Order by search relevance before applying --limit; activity score remains separate. Short words require literal matches. Only available on search.",
 		"text":    "Case-insensitive substring filter over title and notes.", "min-score": "Minimum computed desirability score from 0 to 1.",
 		"limit": "Maximum returned items; 0 means all matches.", "random": "Shuffle matching candidates before applying limit.",
 		"peek": "Do not record suggestion events.", "explain": "Include score_breakdown details in item output.",
@@ -437,6 +439,10 @@ func helpCommand(k *kong.Kong, n *kong.Node, tr *i18n.Translator, w io.Writer) {
 	if n.Name == "show" || n.Name == "edit" || n.Name == "log" || n.Name == "start" || n.Name == "done" || n.Name == "drop" || n.Name == "reopen" || n.Name == "deps" || n.Name == "add" {
 		fmt.Fprintln(w)
 		fmt.Fprintln(w, tr.T("help.references"))
+	}
+	if n.Name == "search" {
+		fmt.Fprintln(w)
+		fmt.Fprintln(w, tr.T("help.search.fuzzy"))
 	}
 	if n.Name == "deps" {
 		fmt.Fprintln(w)
@@ -866,6 +872,11 @@ func jsonShape(t reflect.Type) any {
 			p["depth"] = map[string]any{"type": "integer", "minimum": 0, "description": "Zero-based display depth; depth zero attaches to selected."}
 			p["relation"] = map[string]any{"type": "string", "enum": []string{"requires", "dependent", "also_requires"}, "description": "requires/also_requires: parent_id depends on item.id; dependent: item.id depends on parent_id. also_requires is an unexpanded context leaf."}
 			p["reference"] = map[string]any{"type": "boolean", "description": "Task appears elsewhere in the view; this occurrence is not expanded."}
+		}
+		if t == reflect.TypeOf(search.Match{}) {
+			p["relevance"] = map[string]any{"type": "number", "minimum": 0, "maximum": 1, "description": "Search ordering value, not a probability or activity score."}
+			p["field"] = map[string]any{"type": "string", "enum": []string{"title", "notes"}}
+			p["kind"] = map[string]any{"type": "string", "enum": []string{"exact", "partial", "fuzzy"}}
 		}
 		if t == reflect.TypeOf(output.Item{}) {
 			values, states := map[string]any{}, map[string]any{}

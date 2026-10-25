@@ -159,7 +159,7 @@ func TestHelpCommandPages(t *testing.T) {
 }
 func TestSearchHelp(t *testing.T) {
 	out := helpOutput(t, "search", "--help")
-	assertContains(t, out, []string{"Usage: do-something search <query> [flags]", "--status=", "--limit=", "title and notes", "non-empty substring"})
+	assertContains(t, out, []string{"Usage: do-something search <query> [flags]", "--status=", "--limit=", "title and notes", "non-empty search text", "--fuzzy", "search relevance", "Notes matches include an excerpt"})
 	if strings.Contains(out, "--text=") || strings.Contains(out, "category, and type") {
 		t.Fatal(out)
 	}

@@ -1055,10 +1055,10 @@ other = "Fortlöpande poster kan inte ha total eller återstående tidsåtgång.
 other = "En fortlöpande post har inget slutmål: promenader, teckningsövningar eller läsning utan bestämt slut. Både project och media stöder --ongoing. Det skiljer sig från en ändlig post med okänd tidsåtgång och skapar inte återkommande tillfällen eller ett schema.\n\nLägg till en med do-something add --title \"Ta en promenad\" --kind project --ongoing --min-session-duration 15m. Total och återstående tidsåtgång är not_applicable; att ange något av dessa värden ger ett fel. Omvandla en befintlig post med edit <id|title> --ongoing --clear-total-duration --clear-remaining-duration. Gör den ändlig igen med --ongoing=false och ange eventuellt tidsuppskattningar.\n\nlog registrerar nedlagd tid utan att minska återstående tid eller fråga om posten ska markeras som klar. En positiv tidsåtgång krävs fortfarande, eller ett positivt min_session_duration om tiden utelämnas. --complete ger ett fel för fortlöpande poster; --no-complete tillåts men behövs inte. Ingen procentsats för framsteg visas.\n\n--session kontrollerar fortfarande det minsta meningsfulla passet. --finish-within utesluter alltid fortlöpande poster, även med --unknown include. Poängsättningen utelämnar total och återstående tid ur konfigurerade grupper; en tom grupp utelämnas och övriga grupper normaliseras. Andra egenskaper, som kostnad, gäller fortfarande.\n\nAnvänd drop för att avföra aktiviteten och reopen för att ta tillbaka den. Statuskommandon är fortfarande uttryckliga; vanliga loggningar ändrar inte status."
 
 ["help.search"]
-other = "Sök i titlar och anteckningar, alla sorter och statusar som standard; sorterat efter aktivitetspoäng."
+other = "Sök i titlar och anteckningar, alla sorter och statusar som standard; aktivitetspoäng styr ordningen om inte --fuzzy används."
 
 ["help.arg.query"]
-other = "icke-tom delsträng att söka efter i titlar och anteckningar"
+other = "icke-tom söktext för titlar och anteckningar (delsträng som standard)"
 
 ["output.tree.item"]
 other = "\"{{.title}}\" [{{.id}}] [{{.status}}]"
@@ -1086,3 +1086,24 @@ other = "(referens)"
 
 ["help.deps.tree"]
 other = "deps tree ITEM visar förutsättningar och beroende poster rekursivt, oavsett status. Övriga förutsättningar för beroende poster visas som kontext utan att deras grenar expanderas. Upprepade poster markeras som referenser. Varje kant anger beroendets riktning, inte en relation mellan huvuduppgift och deluppgift."
+
+["output.search.match"]
+other = "Sökträff: {{.field}} · {{.kind}}"
+
+["output.search.title"]
+other = "titel"
+
+["output.search.notes"]
+other = "anteckningar"
+
+["output.search.exact"]
+other = "exakt"
+
+["output.search.partial"]
+other = "delvis"
+
+["output.search.fuzzy"]
+other = "ungefärlig"
+
+["help.search.fuzzy"]
+other = "Använd --fuzzy för stavfel, omvänd ordföljd och skillnader i mellanrum. Titelträffar kommer före träffar i anteckningar; inom varje fält kommer exakta träffar först, sedan delvisa och till sist ungefärliga träffar. Resultaten sorteras efter sökrelevans före --limit, medan den visade poängen fortfarande är aktivitetspoängen. --random blandar uttryckligen resultaten. Träffar i anteckningar visar ett utdrag. Korta ord kräver bokstavliga träffar. Postreferenser i edit, done och beroendekommandon kräver fortfarande id, entydigt prefix eller exakt titel."

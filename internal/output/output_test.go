@@ -8,6 +8,7 @@ import (
 	"dosomething/internal/i18n"
 	"dosomething/internal/model"
 	"dosomething/internal/scoring"
+	"dosomething/internal/search"
 )
 
 func TestDisplayedPrefixIncludesHiddenItems(t *testing.T) {
@@ -77,5 +78,31 @@ func TestSwedishUnknownReasons(t *testing.T) {
 	}
 	if !strings.Contains(b.String(), "insats") || !strings.Contains(b.String(), "intensitet") {
 		t.Fatal(b.String())
+	}
+}
+
+func TestFuzzySearchEvidenceText(t *testing.T) {
+	for _, locale := range []string{"en", "sv"} {
+		tr, err := i18n.New(locale)
+		if err != nil {
+			t.Fatal(err)
+		}
+		score := 0.7
+		r := Result{Items: []Item{
+			{ID: "title1", Title: "Woodworking course", Score: &score, SearchMatch: &search.Match{Field: "title", Kind: "fuzzy", Relevance: 0.8}},
+			{ID: "notes1", Title: "A course", Score: &score, SearchMatch: &search.Match{Field: "notes", Kind: "partial", Relevance: 0.4, Excerpt: "…try woodworking after lunch…"}},
+		}}
+		var b bytes.Buffer
+		if err := Text(&b, r, tr); err != nil {
+			t.Fatal(err)
+		}
+		for _, needle := range []string{tr.T("output.search.title"), tr.T("output.search.notes"), tr.T("output.search.fuzzy"), "…try woodworking after lunch…", "0.70"} {
+			if !strings.Contains(b.String(), needle) {
+				t.Fatalf("missing %q: %s", needle, b.String())
+			}
+		}
+		if strings.Contains(b.String(), "output.search.") {
+			t.Fatal(b.String())
+		}
 	}
 }

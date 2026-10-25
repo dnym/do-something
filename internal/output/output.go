@@ -5,6 +5,7 @@ import (
 	"dosomething/internal/i18n"
 	"dosomething/internal/model"
 	"dosomething/internal/scoring"
+	"dosomething/internal/search"
 	"dosomething/internal/store"
 	"encoding/json"
 	"fmt"
@@ -41,6 +42,7 @@ type Item struct {
 	Modes []string `json:"modes"`
 	// Engagements are the built-in engagement styles the item carries; empty = unclassified.
 	Engagements       []string                       `json:"engagements"`
+	SearchMatch       *search.Match                  `json:"search_match,omitempty"`
 	Score             *float64                       `json:"score"`
 	Readiness         Readiness                      `json:"readiness"`
 	Reasons           []Reason                       `json:"reasons"`
@@ -240,6 +242,15 @@ func Text(w io.Writer, r Result, tr *i18n.Translator, color ...bool) error {
 		}
 		if _, e := fmt.Fprintf(w, "%s  %-*s  %-*s  %-*s  %7s  [%s]  %s\n", score, idWidth, Prefix(it.ID, ids), titleWidth, it.Title, typeWidth, typ, length, status, strings.Join(reasons, " · ")); e != nil {
 			return e
+		}
+		if m := it.SearchMatch; m != nil {
+			detail := tr.T("output.search.match", "field", tr.T("output.search."+m.Field), "kind", tr.T("output.search."+m.Kind))
+			if m.Field == "notes" {
+				detail += ": " + m.Excerpt
+			}
+			if _, e := fmt.Fprintln(w, "  "+detail); e != nil {
+				return e
+			}
 		}
 		for _, b := range it.Readiness.BlockedBy {
 			fmt.Fprintln(w, "  "+tr.T("output.blocked_by", "id", Prefix(b.ID, ids), "title", b.Title, "status", b.Status))

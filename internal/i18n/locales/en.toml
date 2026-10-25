@@ -1055,10 +1055,10 @@ other = "Ongoing items cannot have total or remaining duration. Clear both expli
 other = "An ongoing item has no finish line: going for walks, drawing practice, or an open-ended reading activity. Both project and media support --ongoing. This is different from a finite item with an unknown duration, and does not create recurring occurrences or a schedule.\n\nAdd one with do-something add --title \"Go for a walk\" --kind project --ongoing --min-session-duration 15m. Total and remaining duration are not_applicable; setting either on an ongoing item is an error. To convert an existing item, use edit <id|title> --ongoing --clear-total-duration --clear-remaining-duration. To make it finite again, use --ongoing=false and optionally set duration estimates.\n\nlog records time spent without reducing a remainder or prompting for completion. It still requires a positive duration, or a positive min_session_duration when omitted. --complete is an error for ongoing items; --no-complete is accepted but unnecessary. No progress percentage is shown.\n\n--session still checks the minimum worthwhile session. --finish-within always excludes ongoing items, even with --unknown include. Scoring omits total/remaining duration from configured groups; an empty group is omitted and the other groups are normalized. Other properties such as cost still apply.\n\nUse drop to retire an activity and reopen to bring it back. Status commands remain explicit; ordinary logs do not change status."
 
 ["help.search"]
-other = "Search titles and notes, all kinds and statuses by default; ordered by activity score."
+other = "Search titles and notes, all kinds and statuses by default; activity-score order unless --fuzzy."
 
 ["help.arg.query"]
-other = "non-empty substring to find in titles and notes"
+other = "non-empty search text for titles and notes (substring by default)"
 
 ["output.tree.item"]
 other = "\"{{.title}}\" [{{.id}}] [{{.status}}]"
@@ -1086,3 +1086,24 @@ other = "(reference)"
 
 ["help.deps.tree"]
 other = "deps tree ITEM shows prerequisites and dependents recursively, including every status. Other prerequisites of dependent tasks appear as context leaves; their branches are not expanded. Repeated tasks are marked as references. Each edge is labelled with its dependency direction, not a subtask relationship."
+
+["output.search.match"]
+other = "Search match: {{.field}} · {{.kind}}"
+
+["output.search.title"]
+other = "title"
+
+["output.search.notes"]
+other = "notes"
+
+["output.search.exact"]
+other = "exact"
+
+["output.search.partial"]
+other = "partial"
+
+["output.search.fuzzy"]
+other = "approximate"
+
+["help.search.fuzzy"]
+other = "Use --fuzzy for typos, reordered words, and spacing differences. Title matches precede notes matches; within each field, exact matches precede partial matches, then approximate matches. Results are ranked by search relevance before --limit, while the displayed score remains the activity score. --random explicitly shuffles results. Notes matches include an excerpt. Short words require literal matches. Item references in edit, done, and dependency commands still require an ID, unique prefix, or exact title."

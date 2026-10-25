@@ -3,6 +3,7 @@ package filter
 
 import (
 	"dosomething/internal/model"
+	"dosomething/internal/search"
 	"fmt"
 	"math"
 	"strings"
@@ -38,6 +39,7 @@ type Query struct {
 	Tags           []string `json:"tags"`
 	NotTags        []string `json:"not_tags"`
 	Text           string   `json:"text"`
+	Fuzzy          bool     `json:"fuzzy,omitempty"`
 	Unknown        string   `json:"unknown_policy"`
 	IncludeUnready bool     `json:"include_unready"`
 	MinScore       float64  `json:"min_score"`
@@ -46,6 +48,9 @@ type Query struct {
 }
 
 func (q Query) Validate() error {
+	if q.Fuzzy && strings.TrimSpace(q.Text) == "" {
+		return fmt.Errorf("fuzzy search requires text")
+	}
 	if q.Unknown != "include" && q.Unknown != "exclude" {
 		return fmt.Errorf("unknown must be include or exclude")
 	}
@@ -77,6 +82,13 @@ func (q Query) Validate() error {
 	return nil
 }
 func (q Query) Match(it *model.Item) (bool, map[string]string) {
+	pass, evidence, _ := q.MatchWithSearch(it)
+	return pass, evidence
+}
+
+// MatchWithSearch also returns search evidence when fuzzy matching is enabled.
+func (q Query) MatchWithSearch(it *model.Item) (bool, map[string]string, *search.Match) {
+	var match *search.Match
 	ev := map[string]string{}
 	pass := true
 	value := func(name string, known, ok bool) {
@@ -150,12 +162,17 @@ func (q Query) Match(it *model.Item) (bool, map[string]string) {
 		if it.Notes != nil {
 			text += " " + *it.Notes
 		}
-		if !strings.Contains(strings.ToLower(text), strings.ToLower(q.Text)) {
+		if q.Fuzzy {
+			match = search.Find(q.Text, it.Title, it.Notes)
+			if match == nil {
+				pass = false
+			}
+		} else if !strings.Contains(strings.ToLower(text), strings.ToLower(q.Text)) {
 			pass = false
 		}
 		ev["text"] = "known"
 	}
-	return pass, ev
+	return pass, ev, match
 }
 
 // levelNames lists the canonical rating level names, ascending.

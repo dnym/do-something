@@ -425,6 +425,30 @@ and statuses by default, and orders results by activity score. Search does not
 record suggestions. `--limit 0` returns all
 matches; `--random` shuffles matching candidates before limiting.
 
+Use `search QUERY --fuzzy` when you remember the wording imperfectly:
+
+```sh
+do-something search woodworkng --fuzzy       # Woodworking course
+do-something search "paint buy" --fuzzy     # Buy paint
+do-something search bookshelf --fuzzy       # Build a book shelf
+```
+
+Fuzzy search tolerates small spelling mistakes (including swapped letters),
+reordered words, and spacing/punctuation differences. Short words require literal
+matches. It searches titles and notes, with all query words required in the same
+field. Title matches rank before notes matches; within each field, exact matches
+rank before partial matches, then approximate matches. Ties use title and ID.
+Search relevance determines ordering before `--limit`; `--random` explicitly
+shuffles results instead. Existing filters still apply, including `--min-score`
+for the activity score. The displayed score and JSON `score` remain the activity
+score. Each fuzzy result adds JSON `search_match` containing `relevance` (a 0–1
+ordering value, not a probability), `field`, `kind`, and `excerpt`. Text output
+labels the match and includes an excerpt for notes matches. Ordinary search
+retains its substring matching and activity-score ordering.
+
+Fuzzy search is read-only and does not change item references. Use a result's
+ID/prefix or exact title in `edit`, `done`, or `deps tree`.
+
 Interactive add/edit accepts blank to skip/keep and `clear` to unset. The
 status prompt accepts a name or `1–4`; status always has a value, so `clear` is
 not accepted. Ratings accept 0, 1, or a fraction. Total and remaining

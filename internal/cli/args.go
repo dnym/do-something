@@ -3,7 +3,8 @@ package cli
 // This single definition drives both Kong parsing and the schema command.
 type QueryFlags struct {
 	QueryOptions
-	Text string `placeholder:"TEXT"`
+	Text  string `placeholder:"TEXT"`
+	Fuzzy bool   `kong:"-"`
 }
 
 // QueryOptions are shared by browsing, suggestions, and positional text search.
@@ -89,6 +90,7 @@ type Args struct {
 	List    QueryFlags `cmd:""`
 	Search  struct {
 		Query string `arg:"" required:""`
+		Fuzzy bool
 		QueryOptions
 	} `cmd:""`
 	Show struct {

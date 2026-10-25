@@ -289,7 +289,7 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 			f = a.List
 		}
 		if command == "search" {
-			f = QueryFlags{QueryOptions: a.Search.QueryOptions, Text: a.Search.Query}
+			f = QueryFlags{QueryOptions: a.Search.QueryOptions, Text: a.Search.Query, Fuzzy: a.Search.Fuzzy}
 		}
 		if command == "show" {
 			id, e = s.ResolveItemRef(a.Show.ID)

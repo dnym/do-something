@@ -298,6 +298,10 @@ func TestSchemaAgentDiscoverability(t *testing.T) {
 			t.Errorf("%s does not explain nullable clearing: %v", name, addFlags[name])
 		}
 	}
+	searchFlags := flags("search")
+	if searchFlags["fuzzy"] == nil || !strings.Contains(searchFlags["fuzzy"]["description"].(string), "search relevance") || flags("list")["fuzzy"] != nil || flags("suggest")["fuzzy"] != nil {
+		t.Fatal("fuzzy flag scope/ranking is undiscoverable")
+	}
 	queryFlags := flags("suggest")
 	if queryFlags["session"]["examples"] == nil || !strings.Contains(queryFlags["effort"]["description"].(string), "Maximum") || !strings.Contains(queryFlags["unknown"]["description"].(string), "filter_evidence") {
 		t.Fatal("query controls lack agent-facing semantics")

@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"math/rand/v2"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -48,7 +49,7 @@ func scoringConfig(c *config.Config) scoring.Config {
 	return r
 }
 func makeQuery(f QueryFlags, c *config.Config) (filter.Query, error) {
-	q := filter.Query{Effort: f.Effort, Budget: f.Budget, Type: f.Type, Category: f.Category, Kind: f.Kind, Status: f.Status, Mode: f.Mode, Engagement: f.Engagement, Tags: append([]string{}, f.Tag...), NotTags: append([]string{}, f.NotTag...), Text: f.Text, Unknown: f.Unknown, IncludeUnready: f.IncludeUnready, MinScore: f.MinScore, Limit: c.DefaultLimit(), Random: f.Random}
+	q := filter.Query{Effort: f.Effort, Budget: f.Budget, Type: f.Type, Category: f.Category, Kind: f.Kind, Status: f.Status, Mode: f.Mode, Engagement: f.Engagement, Tags: append([]string{}, f.Tag...), NotTags: append([]string{}, f.NotTag...), Text: f.Text, Fuzzy: f.Fuzzy, Unknown: f.Unknown, IncludeUnready: f.IncludeUnready, MinScore: f.MinScore, Limit: c.DefaultLimit(), Random: f.Random}
 	if f.Limit != nil {
 		q.Limit = *f.Limit
 	}
@@ -113,7 +114,7 @@ func query(s *store.Store, c *config.Config, f QueryFlags, browse bool, id strin
 		if !browse && (it.Status != model.StatusNotStarted && it.Status != model.StatusInProgress) {
 			continue
 		}
-		pass, ev := q.Match(it)
+		pass, ev, match := q.MatchWithSearch(it)
 		if !pass {
 			continue
 		}
@@ -164,10 +165,21 @@ func query(s *store.Store, c *config.Config, f QueryFlags, browse bool, id strin
 		if score.Final < q.MinScore {
 			continue
 		}
-		out.Items = append(out.Items, output.NewItem(it, score, blockers, ev, f.Explain, cfg.Beta))
+		result := output.NewItem(it, score, blockers, ev, f.Explain, cfg.Beta)
+		result.SearchMatch = match
+		out.Items = append(out.Items, result)
 	}
 	sort.SliceStable(out.Items, func(i, j int) bool {
 		a, b := out.Items[i], out.Items[j]
+		if q.Fuzzy {
+			if a.SearchMatch.Relevance != b.SearchMatch.Relevance {
+				return a.SearchMatch.Relevance > b.SearchMatch.Relevance
+			}
+			if ta, tb := strings.ToLower(a.Title), strings.ToLower(b.Title); ta != tb {
+				return ta < tb
+			}
+			return a.ID < b.ID
+		}
 		if *a.Score == *b.Score {
 			return a.ID < b.ID
 		}
