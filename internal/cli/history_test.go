@@ -102,3 +102,25 @@ func TestCLIListMarksCooldown(t *testing.T) {
 		t.Fatal("list does not explain the cooldown penalty")
 	}
 }
+
+// An item added part-way through (90h total, 50m left) is compared against
+// the remaining time when logging began, not its lifetime total.
+func TestCLIStatsEstimateStartsAtFirstSession(t *testing.T) {
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
+	db := filepath.Join(t.TempDir(), "list.db")
+	success(t, db, "add", "--title", "Show", "--kind", "media", "--total-duration", "90h", "--remaining-duration", "50m", "--status", "in_progress")
+	success(t, db, "log", "Show", "25m")
+	success(t, db, "edit", "Show", "--remaining-duration", "50m") // re-estimate upward
+	success(t, db, "log", "Show", "50m", "--complete")
+	est := success(t, db, "stats")["estimates"].([]any)[0].(map[string]any)
+	if est["estimate_hours"] != 50.0/60 || est["actual_hours"] != 75.0/60 {
+		t.Fatal(est)
+	}
+	// suggest rotates by cooldown without listing it as a reason.
+	success(t, db, "add", "--title", "Task", "--kind", "project", "--status", "in_progress")
+	for _, r := range success(t, db, "suggest", "--peek")["items"].([]any)[0].(map[string]any)["reasons"].([]any) {
+		if r.(map[string]any)["factor"] == "cooldown" {
+			t.Fatal("suggest lists the cooldown reason")
+		}
+	}
+}

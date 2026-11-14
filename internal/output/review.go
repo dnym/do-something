@@ -42,6 +42,7 @@ type Review struct {
 	Returned      int          `json:"returned_count"`
 	Items         []ReviewItem `json:"items"`
 	AllIDs        []string     `json:"-"`
+	Single        bool         `json:"-"` // one named item: show every rating
 }
 
 // ReviewSaved counts the rating changes saved for one item.
@@ -69,7 +70,7 @@ func ReviewText(w io.Writer, r Review, tr *i18n.Translator) error {
 	for _, it := range r.Items {
 		parts := []string{}
 		for _, rr := range it.Ratings {
-			if !rr.Stale && len(r.Items) > 1 {
+			if !rr.Stale && !r.Single {
 				continue
 			}
 			name := label(tr, "rating.label."+string(rr.Property), string(rr.Property))

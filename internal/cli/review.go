@@ -34,7 +34,7 @@ const hoursPerMonth = 24 * 365.25 / 12
 // most in need of review first. With id set, it returns that item with every
 // applicable rating, whatever its state.
 func reviewCandidates(s *store.Store, c *config.Config, f ReviewFlags, now time.Time) (output.Review, error) {
-	r := output.Review{SchemaVersion: output.SchemaVersion, StaleDecay: staleDecay, Items: []output.ReviewItem{}}
+	r := output.Review{SchemaVersion: output.SchemaVersion, StaleDecay: staleDecay, Items: []output.ReviewItem{}, Single: f.ID != ""}
 	id := ""
 	if f.ID != "" {
 		var err error

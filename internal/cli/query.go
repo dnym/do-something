@@ -169,6 +169,11 @@ func query(s *store.Store, c *config.Config, f QueryFlags, browse bool, id strin
 			continue
 		}
 		result := output.NewItem(it, score, blockers, ev, f.Explain, cfg.Beta)
+		if !browse {
+			// The cooldown penalty is reported so that browsing explains a
+			// score that dropped after suggest; suggest itself rotates by it.
+			result.Reasons = withoutCooldown(result.Reasons)
+		}
 		result.SearchMatch = match
 		out.Items = append(out.Items, result)
 	}
@@ -222,4 +227,14 @@ func effectiveConfig(s *store.Store) (*config.Config, error) {
 		return nil, fmt.Errorf("config: %w", e)
 	}
 	return config.NewConfig(m), nil
+}
+
+func withoutCooldown(reasons []output.Reason) []output.Reason {
+	out := reasons[:0:0]
+	for _, r := range reasons {
+		if r.Key != "output.why.cooling" {
+			out = append(out, r)
+		}
+	}
+	return out
 }

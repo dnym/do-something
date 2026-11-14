@@ -262,7 +262,7 @@ func Text(w io.Writer, r Result, tr *i18n.Translator, color ...bool) error {
 			status += "·" + strings.Join(parts, ",")
 		}
 		if it.SnoozedUntil != nil {
-			status += ", " + tr.T("output.snoozed_until", "until", LocalTime(*it.SnoozedUntil))
+			status += ", " + tr.T("output.snoozed_until", "until", LocalInstant(*it.SnoozedUntil))
 		}
 		if _, e := fmt.Fprintf(w, "%s  %-*s  %-*s  %-*s  %7s  [%s]  %s\n", score, idWidth, Prefix(it.ID, ids), titleWidth, it.Title, typeWidth, typ, length, status, strings.Join(reasons, " · ")); e != nil {
 			return e

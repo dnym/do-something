@@ -1208,7 +1208,7 @@ other = "Undo the most recent logged session, or the most recent one for an item
 other = "Show recorded events, newest first: logged sessions, status changes, and undos, optionally for one item. Suggestions are hidden unless --event suggested or --all is given. --since limits to events on or after a date; --limit defaults to 20 (0 shows all). Undone sessions are marked."
 
 ["help.stats"]
-other = "Summarize activity for a period (default: the last 30 days, through today): time and cost logged, sessions, items started, finished, and dropped, time per kind and type and per ISO week, and logged time versus the total estimate for finished items. Undone sessions are excluded. --since/--until set inclusive dates; --all covers all time."
+other = "Summarize activity for a period (default: the last 30 days, through today): time and cost logged, sessions, items started, finished, and dropped, time per kind and type and per ISO week, and logged time versus the estimate (remaining time at the first session) for finished items. Undone sessions are excluded. --since/--until set inclusive dates; --all covers all time."
 
 ["prompt.undo"]
 other = "Undo this session? [y/N]"
@@ -1291,7 +1291,7 @@ one = "{{.count}} session"
 other = "{{.count}} sessions"
 
 ["output.stats.estimates"]
-other = "Finished items: logged time vs. total estimate"
+other = "Finished items: logged time vs. estimate"
 
 ["output.stats.estimate"]
 other = "estimated {{.estimate}} · logged {{.actual}} · ×{{.ratio}}"

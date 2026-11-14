@@ -1208,7 +1208,7 @@ other = "Ångra den senast loggade sessionen, eller den senaste för en post: å
 other = "Visa registrerade händelser, nyast först: loggade sessioner, statusändringar och ångringar, eventuellt för en post. Förslag döljs om inte --event suggested eller --all anges. --since begränsar till händelser från ett datum; --limit är 20 som standard (0 visar alla). Ångrade sessioner markeras."
 
 ["help.stats"]
-other = "Sammanfatta aktivitet för en period (standard: de senaste 30 dagarna, till och med i dag): loggad tid och kostnad, sessioner, påbörjade, slutförda och avförda poster, tid per sort och typ och per ISO-vecka samt loggad tid jämfört med den totala uppskattningen för slutförda poster. Ångrade sessioner räknas inte. --since/--until anger datum (inklusive); --all täcker all tid."
+other = "Sammanfatta aktivitet för en period (standard: de senaste 30 dagarna, till och med i dag): loggad tid och kostnad, sessioner, påbörjade, slutförda och avförda poster, tid per sort och typ och per ISO-vecka samt loggad tid jämfört med uppskattningen (återstående tid vid första sessionen) för slutförda poster. Ångrade sessioner räknas inte. --since/--until anger datum (inklusive); --all täcker all tid."
 
 ["prompt.undo"]
 other = "Ångra den här sessionen? [j/N]"
@@ -1291,7 +1291,7 @@ one = "{{.count}} session"
 other = "{{.count}} sessioner"
 
 ["output.stats.estimates"]
-other = "Slutförda poster: loggad tid jämfört med total uppskattning"
+other = "Slutförda poster: loggad tid jämfört med uppskattning"
 
 ["output.stats.estimate"]
 other = "uppskattat {{.estimate}} · loggat {{.actual}} · ×{{.ratio}}"

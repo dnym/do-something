@@ -199,6 +199,10 @@ func stats(s *store.Store, f StatsFlags, now time.Time) (output.Stats, error) {
 	buckets := map[key]*output.StatsBucket{}
 	weeks := map[string]*output.StatsWeek{}
 	logged := map[string]float64{} // all-time logged hours per item, for estimates
+	// estimate is the remaining time when an item's first session was logged:
+	// what was still expected when tracking began, unaffected by later edits
+	// to the estimate or by time spent before the item was added.
+	estimate := map[string]float64{}
 	finished := []string{}
 	for _, ev := range events {
 		if _, undone := reverted[ev.ID]; undone || ev.Type == model.EventReverted {
@@ -206,6 +210,9 @@ func stats(s *store.Store, f StatsFlags, now time.Time) (output.Stats, error) {
 		}
 		if ev.Type == model.EventLogged && ev.ItemID != nil && ev.Activity.Duration != nil {
 			logged[*ev.ItemID] += *ev.Activity.Duration
+			if _, ok := estimate[*ev.ItemID]; !ok && ev.Activity.RemainingBefore != nil {
+				estimate[*ev.ItemID] = *ev.Activity.RemainingBefore
+			}
 		}
 		if !inPeriod(ev.At) {
 			continue
@@ -267,13 +274,13 @@ func stats(s *store.Store, f StatsFlags, now time.Time) (output.Stats, error) {
 	ratios := []float64{}
 	for _, id := range finished {
 		it := items[id]
-		if seen[id] || it == nil || it.Ongoing || it.TotalDuration == nil || *it.TotalDuration <= 0 || logged[id] <= 0 {
+		if seen[id] || it == nil || estimate[id] <= 0 || logged[id] <= 0 {
 			continue
 		}
 		seen[id] = true
-		ratio := logged[id] / *it.TotalDuration
+		ratio := logged[id] / estimate[id]
 		ratios = append(ratios, ratio)
-		r.Estimates = append(r.Estimates, output.StatsEstimate{ID: id, Title: it.Title, EstimateHours: *it.TotalDuration, ActualHours: logged[id], Ratio: ratio})
+		r.Estimates = append(r.Estimates, output.StatsEstimate{ID: id, Title: it.Title, EstimateHours: estimate[id], ActualHours: logged[id], Ratio: ratio})
 	}
 	if len(ratios) > 0 {
 		sort.Float64s(ratios)

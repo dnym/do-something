@@ -60,6 +60,14 @@ func (h *History) LinkTargets(byID map[string]*HistoryEvent) {
 // LocalTime renders an event time for people, in the local zone.
 func LocalTime(t time.Time) string { return t.Local().Format("2006-01-02 15:04") }
 
+// LocalInstant is LocalTime, but a local midnight shows as just the date.
+func LocalInstant(t time.Time) string {
+	if l := t.Local(); l.Hour() == 0 && l.Minute() == 0 && l.Second() == 0 && l.Nanosecond() == 0 {
+		return l.Format(time.DateOnly)
+	}
+	return LocalTime(t)
+}
+
 func historyTitle(it *HistoryItem, ids []string, tr *i18n.Translator) string {
 	if it == nil {
 		return ""
@@ -219,7 +227,8 @@ type StatsWeek struct {
 	Sessions int     `json:"sessions"`
 }
 
-// StatsEstimate compares a finished item's total estimate with logged time.
+// StatsEstimate compares a finished item's estimate — its remaining time when
+// the first session was logged — with the time logged since.
 type StatsEstimate struct {
 	ID            string  `json:"id"`
 	Title         string  `json:"title"`
@@ -323,7 +332,7 @@ func SnoozeText(w io.Writer, r SnoozeMutation, tr *i18n.Translator) error {
 		key, until := "output.snooze.cleared", ""
 		switch {
 		case it.After != nil:
-			key, until = "output.snooze.set", LocalTime(*it.After)
+			key, until = "output.snooze.set", LocalInstant(*it.After)
 		case it.Before == nil:
 			key = "output.snooze.none"
 		}

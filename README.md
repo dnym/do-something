@@ -52,8 +52,25 @@ $ do-something log Friends
 Logged 25m. Remaining: 50m → 25m. Status unchanged. ~99.54% complete
 
 $ do-something show Friends
- 0.55  01a10673-3  Friends  tv  25m · ~99.54% complete  [in_progress]  low commitment · some interest · already in progress
+ 0.55  01a10673-3  Friends  tv  25m · ~99.54% complete  [in_progress]  low commitment · some interest · already in progress · suggested or started recently
+  score 0.55 = 80% base 0.57 + 20% right-now 0.50
+    base 0.57
+      value                 0.22  33% of base
+        Quality             0.33  = 0.33
+        Influence           0.33  = 0.33
+        Actuality           0.00  = 0.00
+      commitment            0.98  33% of base
+        Remaining duration  0.98  = 25m
+      interest              0.50  33% of base
+        Interest            0.50  = 0.50
+    right-now 0.50
+      momentum              1.00
+      cooldown              0.00  last suggested or started 0.0 days ago
 ```
+
+`show` explains the score: the base blends what the show is worth, how little
+is left, and how much you want it; right-now adds that it is under way, minus a
+cooldown because it was just suggested (so `suggest` rotates through options).
 
 Default log duration uses the stored minimum session, which was set
 to 25 minutes for Friends. (To keep things generic, there are no
@@ -72,7 +89,7 @@ Remaining time is zero. Mark this item done? [y/N] y
 Logged 25m. Remaining: 25m → 0m. Marked done. ~100.00% complete
 
 $ do-something list --status done
- 0.46  01a10673-3  Friends  tv  0m · ~100.00% complete  [done]  low commitment · some interest · estimated value
+ 0.46  01a10673-3  Friends  tv  0m · ~100.00% complete  [done]  low commitment · some interest · estimated value · suggested or started recently
 ```
 
 ### Projects & cost
@@ -160,10 +177,55 @@ do-something start "Build a bookshelf"
 
 ### Revising the plan
 
+The first evening at the workbench goes well, but you log three hours when it
+was really two. `undo` takes back the most recent session; `--dry-run` shows
+what it would restore, and without a terminal it needs `--yes`.
+
+```sh
+$ do-something log "Build a bookshelf" 3h
+Logged 3h. Remaining: 8h → 5h. Status unchanged. ~37.50% complete
+
+$ do-something undo --dry-run
+Would undo 3h (remaining 8h → 5h) logged on "Build a bookshelf" [01a10676-5] at 2026-11-14 22:28.
+  Remaining duration: 5h → 8h
+
+$ do-something undo
+Would undo 3h (remaining 8h → 5h) logged on "Build a bookshelf" [01a10676-5] at 2026-11-14 22:28.
+  Remaining duration: 5h → 8h
+Undo this session? [y/N] y
+Undid 3h (remaining 8h → 5h) logged on "Build a bookshelf" [01a10676-5] at 2026-11-14 22:28.
+  Remaining duration: 5h → 8h
+
+$ do-something log "Build a bookshelf" 2h
+Logged 2h. Remaining: 8h → 6h. Status unchanged. ~25.00% complete
+```
+
+The undone session stays in `history`, marked as undone, and no longer counts
+in `stats`.
+
 Maybe the shelves turn out to need more work than expected.
 
 ```sh
 $ do-something edit "Build a bookshelf" --total-duration 12h --remaining-duration 10h
+Updated "Build a bookshelf" [01a10676-5]:
+  Total duration: 8h → 12h
+  Remaining duration: 6h → 10h
+```
+
+There is no time for woodworking until December, but you don't want to drop
+the project either. `snooze` hides it from suggestions until then (or `--for
+2w`, `--for 3d`, …) and it comes back by itself; `unsnooze` brings it back
+early. Browsing still shows it, marked as snoozed.
+
+```sh
+$ do-something snooze "Build a bookshelf" --until 2026-12-01
+"Build a bookshelf" [01a10676-5]: snoozed until 2026-12-01
+
+$ do-something suggest
+ 0.56  01a10675-6  Evening walk  exercise  ongoing  [in_progress·movement,loose]  some interest · estimated value · unknown commitment
+
+$ do-something list --type build
+ 0.57  01a10676-5  Build a bookshelf  build  10h · ~16.67% complete  [in_progress·hands_on,making,focused, snoozed until 2026-12-01]  some interest · estimated commitment · unknown value · suggested or started recently
 ```
 
 Perhaps you're no longer enjoying the drama enough to continue. Remove it
@@ -174,53 +236,78 @@ $ do-something drop "Breaking Bad"
 "Breaking Bad" [01a10673-1]: in_progress → dropped
 
 $ do-something list --status dropped
- 0.58  01a10673-1  Breaking Bad  tv  10h · ~83.33% complete  [dropped]  strong interest · estimated commitment · estimated value
+ 0.58  01a10673-1  Breaking Bad  tv  10h · ~83.33% complete  [dropped]  strong interest · estimated commitment · estimated value · suggested or started recently
 
 $ do-something reopen "Breaking Bad"
 "Breaking Bad" [01a10673-1]: dropped → not_started
 ```
 
-### Snoozing and reviewing
+### Keeping ratings fresh
 
-Not this week, but don't lose it: `snooze` hides an item from suggestions
-until a time, without changing its status. It comes back by itself.
+Ratings fade toward the neutral 0.5 as they age — interest fastest, quality
+never — and some were never given. `review` lists the items whose ratings are
+unknown or have faded the most, stalest first:
 
 ```sh
-$ do-something snooze "Build a bookshelf" --for 2w
-$ do-something snooze "Order materials" --until 2026-12-01
-$ do-something unsnooze "Build a bookshelf"
+$ do-something review
+"Build a bookshelf" [01a10676-5]  Career value unknown · Physical value unknown · Mental value unknown · Social value unknown
+"Evening walk" [01a10675-6]  Career value unknown · Mental value unknown · Social value unknown
+"Breaking Bad" [01a10673-1]  Influence unknown
 ```
 
-Ratings fade toward the neutral prior as they age. `review` walks you through
-the items whose ratings are unknown or have faded the most, asking only for
-those ratings; `review ITEM` goes through all of one item's ratings.
+In a terminal it then asks for each of those ratings, saving every item as
+you finish it. Enter keeps a rating, `=` reconfirms it as of today, `s` skips
+the item, and `q` stops. `review ITEM` goes through all of one item's ratings.
 
 ```sh
-$ do-something review --kind media --limit 5
+$ do-something review --kind media
+Enter keeps · = reconfirms · level or 0..1 sets · clear unsets · s skips item · q quits
+Ratings are 0..1 — a level name or a plain number works: none=0 · low=1/3 · medium=1/2 · high=2/3 · very_high=4/5 · max=1
+
+[1/1] "Breaking Bad" [01a10673-1] (media)
+  Influence (0 trivial … 1 life-changing) [unknown]: very_high
+Reviewed 1 item; updated 1 rating.
 ```
 
-### Looking back and undoing
+### Looking back
 
-`history` lists what happened, newest first (suggestions only with `--all` or
-`--event suggested`), and `stats` summarizes a period — by default the last 30
-days — including how logged time compared with the estimate for items you
-finished.
+`history` lists what happened, newest first; give it an item to narrow it
+down. Suggestions are left out unless you ask for them with `--all`.
 
 ```sh
-$ do-something history "Build a bookshelf"
-$ do-something stats --since 2026-01-01
+$ do-something history Friends
+2026-11-14 22:28  completed  "Friends" [01a10673-3]
+2026-11-14 22:28  logged     "Friends" [01a10673-3]  25m (remaining 25m → 0m)
+2026-11-14 22:28  logged     "Friends" [01a10673-3]  25m (remaining 50m → 25m)
+2026-11-14 22:28  started    "Friends" [01a10673-3]
 ```
 
-Logged a session by mistake? `undo` reverts the most recent one (or the most
-recent for an item), restoring the remaining time and cost and reversing a
-completion the log caused. It asks first; scripts pass `--yes`, and
-`--dry-run` previews.
+`stats` sums up the last 30 days (or `--since`/`--until`, or `--all`): where
+the time and money went, and how the time logged on finished items compared
+with what was left when you started logging them.
 
 ```sh
-$ do-something undo --dry-run
-Would undo 25m (remaining 25m → 0m) logged on "Friends" [01a10673-3] at 2026-11-14 21:05.
-  Remaining duration: 0m → 25m
-  Status: done → in_progress
+$ do-something stats
+2026-10-16 – 2026-11-14
+  Time logged: 5.33h in 6 sessions
+  Cost logged: 100.00
+  Started 6 · Finished 3 · Dropped 1
+
+Time by type
+  project · course          2h  1 session
+  project · build           2h  1 session
+  media · tv               50m  2 sessions
+  project · exercise       20m  1 session
+  project · errand         10m  1 session
+
+Time by week
+  2026-W46     5.33h  ████████████████████
+
+Finished items: logged time vs. estimate
+  Friends             estimated 50m · logged 50m · ×1.00
+  Woodworking course  estimated 2h · logged 2h · ×1.00
+  Order materials     estimated 10m · logged 10m · ×1.00
+  Median ×1.00 over 3 items
 ```
 
 ## Agentic usage
@@ -376,7 +463,13 @@ bin/do-something search woodworking
 bin/do-something list --text woodworking --explain
 bin/do-something show FULL_ID
 bin/do-something start FULL_ID
+bin/do-something log FULL_ID 45m
+bin/do-something undo --dry-run
 bin/do-something done FULL_ID
+bin/do-something snooze FULL_ID --for 1w
+bin/do-something review --limit 5
+bin/do-something history --limit 10
+bin/do-something stats --all
 ```
 
 `make install` installs to `~/.local/bin` (`PREFIX`/`DESTDIR` supported).
@@ -669,11 +762,12 @@ defaults to 20 (`0` = all), and suggestion events appear only with `--all` or
 
 `stats` reports logged time, cost, and sessions; started/finished/dropped
 counts; time per kind and type and per ISO week; and, for items finished in
-the period, logged time versus `total_duration` with the median ratio. Undone
+the period, logged time versus the estimate with the median ratio. Undone
 sessions and completions are excluded. The period defaults to the last 30 days
 through today (`--since`/`--until` inclusive local dates, `--all` for all
-time). The estimate comparison uses the item's current total, so a total that
-was revised to match reality reads close to 1.
+time). The estimate is the remaining time when the item's first session was
+logged, so time spent before you added the item and later edits to the
+estimate do not distort the comparison.
 
 ## Configuration and scoring
 
@@ -702,7 +796,8 @@ other right-now terms, so a deadline or dependents can raise a score but never
 rank an item below an otherwise identical item without them; `raw_v` in the
 breakdown keeps the unfloored value. A recent suggestion or start lowers the
 score through the cooldown term until the window passes; `list`, `search`, and
-`show` report it as a negative `cooldown` reason. The default blend is 80% base, 20% right-now. The engine
+`show` report it as a negative `cooldown` reason (`suggest` rotates by it
+without listing it). The default blend is 80% base, 20% right-now. The engine
 is pure, bounded, and tested independently of storage. `--explain` includes
 contributions, rating ages, priors, and term details. In an interactive text
 session it also offers to refresh the top item’s ratings.
