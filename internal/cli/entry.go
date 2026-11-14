@@ -557,19 +557,5 @@ func refreshRatings(id string, s *store.Store, opts store.Options, device *confi
 	if len(spec.SetRatings) == 0 && len(spec.UnsetRatings) == 0 {
 		return nil
 	}
-	unlock, e := store.Acquire(opts)
-	if e != nil {
-		return e
-	}
-	defer unlock()
-	opts.Locked = true
-	writer, e := store.Open(store.OpenWrite, opts)
-	if e != nil {
-		return e
-	}
-	defer writer.Close()
-	if _, e = writer.Save(spec, false); e != nil {
-		return e
-	}
-	return publish(writer, device)
+	return saveRatings(spec, opts, device)
 }

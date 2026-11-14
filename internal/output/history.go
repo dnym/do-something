@@ -309,3 +309,27 @@ func StatsText(w io.Writer, s Stats, tr *i18n.Translator) error {
 	_, err := io.WriteString(w, b.String())
 	return err
 }
+
+// SnoozeMutation reports snooze/unsnooze results, one row per item.
+type SnoozeMutation struct {
+	SchemaVersion int                  `json:"schema_version"`
+	Changed       bool                 `json:"changed"`
+	Items         []store.SnoozeResult `json:"items"`
+	AllIDs        []string             `json:"-"`
+}
+
+func SnoozeText(w io.Writer, r SnoozeMutation, tr *i18n.Translator) error {
+	for _, it := range r.Items {
+		key, until := "output.snooze.cleared", ""
+		switch {
+		case it.After != nil:
+			key, until = "output.snooze.set", LocalTime(*it.After)
+		case it.Before == nil:
+			key = "output.snooze.none"
+		}
+		if _, err := fmt.Fprintln(w, tr.T(key, "title", it.Title, "id", Prefix(it.ID, r.AllIDs), "until", until)); err != nil {
+			return err
+		}
+	}
+	return nil
+}

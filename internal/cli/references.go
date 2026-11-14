@@ -8,6 +8,16 @@ import (
 // Resolve the whole batch before mutation, preserving the status commands'
 // all-or-nothing behavior and reporting every invalid reference.
 func resolveTransitionRefs(s *store.Store, verb store.Transition, refs []string) ([]string, error) {
+	ids, problems, err := resolveRefs(s, refs)
+	if err == nil && len(problems) > 0 {
+		err = &store.TransitionError{Verb: verb, Problems: problems}
+	}
+	return ids, err
+}
+
+// resolveRefs resolves every reference, collecting each invalid or ambiguous
+// one as a problem (with candidates or suggestions) instead of stopping.
+func resolveRefs(s *store.Store, refs []string) ([]string, []store.IDProblem, error) {
 	ids := []string{}
 	seen := map[string]bool{}
 	problems := []store.IDProblem{}
@@ -15,7 +25,7 @@ func resolveTransitionRefs(s *store.Store, verb store.Transition, refs []string)
 		id, err := s.ResolveItemRef(ref)
 		if err != nil {
 			if !errors.Is(err, store.ErrInvalidID) {
-				return nil, err
+				return nil, nil, err
 			}
 			p := store.IDProblem{ID: ref, Code: "INVALID_ID"}
 			var title *store.AmbiguousTitleError
@@ -38,8 +48,5 @@ func resolveTransitionRefs(s *store.Store, verb store.Transition, refs []string)
 			seen[id] = true
 		}
 	}
-	if len(problems) > 0 {
-		return nil, &store.TransitionError{Verb: verb, Problems: problems}
-	}
-	return ids, nil
+	return ids, problems, nil
 }

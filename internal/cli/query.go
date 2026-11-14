@@ -49,7 +49,7 @@ func scoringConfig(c *config.Config) scoring.Config {
 	return r
 }
 func makeQuery(f QueryFlags, c *config.Config) (filter.Query, error) {
-	q := filter.Query{Effort: f.Effort, Budget: f.Budget, Type: f.Type, Category: f.Category, Kind: f.Kind, Status: f.Status, Mode: f.Mode, Engagement: f.Engagement, Tags: append([]string{}, f.Tag...), NotTags: append([]string{}, f.NotTag...), Text: f.Text, Fuzzy: f.Fuzzy, Unknown: f.Unknown, IncludeUnready: f.IncludeUnready, MinScore: f.MinScore, Limit: c.DefaultLimit(), Random: f.Random}
+	q := filter.Query{Effort: f.Effort, Budget: f.Budget, Type: f.Type, Category: f.Category, Kind: f.Kind, Status: f.Status, Mode: f.Mode, Engagement: f.Engagement, Tags: append([]string{}, f.Tag...), NotTags: append([]string{}, f.NotTag...), Text: f.Text, Fuzzy: f.Fuzzy, Unknown: f.Unknown, IncludeUnready: f.IncludeUnready, IncludeSnoozed: f.IncludeSnoozed, MinScore: f.MinScore, Limit: c.DefaultLimit(), Random: f.Random}
 	if f.Limit != nil {
 		q.Limit = *f.Limit
 	}
@@ -125,6 +125,9 @@ func query(s *store.Store, c *config.Config, f QueryFlags, browse bool, id strin
 			}
 		}
 		if !browse && !q.IncludeUnready && len(blockers) > 0 {
+			continue
+		}
+		if !browse && !q.IncludeSnoozed && it.Snoozed(now) {
 			continue
 		}
 		ctx := scoring.Context{Mode: model.Mode(q.Mode), Engagement: model.Engagement(q.Engagement)}

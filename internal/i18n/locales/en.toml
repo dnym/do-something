@@ -1299,3 +1299,59 @@ other = "estimated {{.estimate}} · logged {{.actual}} · ×{{.ratio}}"
 ["output.stats.median"]
 one = "Median ×{{.ratio}} over {{.count}} item"
 other = "Median ×{{.ratio}} over {{.count}} items"
+
+["output.snoozed_until"]
+other = "snoozed until {{.until}}"
+
+["output.snooze.set"]
+other = "\"{{.title}}\" [{{.id}}]: snoozed until {{.until}}"
+
+["output.snooze.cleared"]
+other = "\"{{.title}}\" [{{.id}}]: no longer snoozed"
+
+["output.snooze.none"]
+other = "\"{{.title}}\" [{{.id}}]: was not snoozed"
+
+["help.snooze"]
+other = "Hide items from suggest until a time: --for a duration (3d, 2w, 36h; default 7d) or --until a local date (midnight). Snoozed items keep their status and still appear in list, search, and show, marked snoozed; suggest --include-snoozed shows them anyway. Only not_started and in_progress items can be snoozed; snoozing again replaces the time. The whole command is atomic."
+
+["help.unsnooze"]
+other = "Clear the snooze of one or more items so suggest considers them again."
+
+["help.review"]
+other = "Refresh ratings that are unknown or stale. Ratings decay toward the prior over their half-life; review lists active items with at least one unknown rating or one that has decayed 25% or more, stalest first (--kind, --limit, default 10). In a terminal it asks for each such rating: Enter keeps it, = reconfirms it with today's date, a level or 0..1 sets it, clear unsets it, s skips the rest of the item, q quits. Each item is saved as you finish it. review ITEM asks about every rating of one item. Without a terminal, or with --format json, it only lists."
+
+["prompt.review_intro"]
+other = "Enter keeps · = reconfirms · level or 0..1 sets · clear unsets · s skips item · q quits"
+
+["prompt.review_nothing_to_confirm"]
+other = "Nothing to reconfirm; enter a value or press Enter."
+
+["output.review.item"]
+other = "[{{.n}}/{{.total}}] \"{{.title}}\" [{{.id}}] ({{.kind}})"
+
+["output.review.unknown"]
+other = "unknown"
+
+["output.review.age"]
+other = "{{.months}} mo old"
+
+["output.review.decay"]
+other = "{{.percent}}% decayed"
+
+["output.review.nothing"]
+other = "No ratings need review."
+
+["output.review.more"]
+other = "… and {{.count}} more (use --limit)"
+
+["output.review.summary"]
+other = "Reviewed {{.items}}; updated {{.ratings}}."
+
+["output.review.items"]
+one = "{{.count}} item"
+other = "{{.count}} items"
+
+["output.review.ratings"]
+one = "{{.count}} rating"
+other = "{{.count}} ratings"

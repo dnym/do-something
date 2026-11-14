@@ -55,6 +55,10 @@ type ItemSpec struct {
 const itemColumns = `id, legacy_id, title, kind, status, category, "type", notes, url,
 	created_at, updated_at, deadline, remaining_duration, cost_left, min_session_duration, total_duration, ongoing`
 
+// itemReadColumns adds the columns Save never writes (snooze has its own
+// operation, so edits preserve it).
+const itemReadColumns = itemColumns + `, snoozed_until`
+
 // Save creates (creating=true) or updates (creating=false) an item in one
 // all-or-nothing transaction, including its ratings, tags, and dependencies.
 // On create it mints a UUIDv7 and returns it.
@@ -365,7 +369,7 @@ func (s *Store) AllItems() ([]*model.Item, error) {
 		return nil, err
 	}
 	defer tx.Rollback()
-	rows, err := tx.Query(`SELECT ` + itemColumns + ` FROM items ORDER BY created_at, id`)
+	rows, err := tx.Query(`SELECT ` + itemReadColumns + ` FROM items ORDER BY created_at, id`)
 	if err != nil {
 		return nil, err
 	}
@@ -385,7 +389,7 @@ func (s *Store) AllItems() ([]*model.Item, error) {
 }
 
 func (s *Store) getItemTx(tx *sql.Tx, id string) (*model.Item, error) {
-	row := tx.QueryRow(`SELECT `+itemColumns+` FROM items WHERE id=?`, id)
+	row := tx.QueryRow(`SELECT `+itemReadColumns+` FROM items WHERE id=?`, id)
 	it, err := scanItemRow(row)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -578,12 +582,20 @@ func scanValues(scan func(dest ...any) error) (*model.Item, error) {
 		updated   string
 		kind      string
 		status    string
+		snoozed   sql.NullString
 	)
 	if err := scan(
 		&it.ID, &legacy, &it.Title, &kind, &status, &category, &type_, &notes, &url,
-		&created, &updated, &deadline, &remaining, &cost, &session, &total, &it.Ongoing,
+		&created, &updated, &deadline, &remaining, &cost, &session, &total, &it.Ongoing, &snoozed,
 	); err != nil {
 		return nil, err
+	}
+	if snoozed.Valid {
+		t, err := parseTime(snoozed.String)
+		if err != nil {
+			return nil, fmt.Errorf("store: bad snoozed_until %q: %w", snoozed.String, err)
+		}
+		it.SnoozedUntil = &t
 	}
 	it.Kind = model.Kind(kind)
 	it.Status = model.Status(status)

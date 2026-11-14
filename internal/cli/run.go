@@ -166,7 +166,7 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 			return fail(invalid(fmt.Errorf("working database must be outside syncdir")), a.Format, tr, errout, nil)
 		}
 	}
-	writing := command == "log" || command == "add" || command == "edit" || command == "start" || command == "done" || command == "drop" || command == "reopen" || command == "deps" && (a.Deps.Action == "add" || a.Deps.Action == "remove") || command == "config" && (a.Config.Action == "set" || a.Config.Action == "unset") || command == "import" && !a.Import.DryRun || command == "sync" && !a.Sync.DryRun || command == "snapshot" || command == "undo" && !a.Undo.DryRun
+	writing := command == "log" || command == "add" || command == "edit" || command == "start" || command == "done" || command == "drop" || command == "reopen" || command == "deps" && (a.Deps.Action == "add" || a.Deps.Action == "remove") || command == "config" && (a.Config.Action == "set" || a.Config.Action == "unset") || command == "import" && !a.Import.DryRun || command == "sync" && !a.Sync.DryRun || command == "snapshot" || command == "undo" && !a.Undo.DryRun || command == "snooze" || command == "unsnooze"
 	// Validate incomplete input before creating a store.
 	if command == "add" && (a.Add.Title == "" || a.Add.Kind == "") && !interactive {
 		return fail(invalid(fmt.Errorf("add requires --title and --kind when input is disabled")), a.Format, tr, errout, nil)
@@ -688,6 +688,26 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 		result = rep
 	case "doctor":
 		result, e = doctor(s, device, tr)
+	case "snooze", "unsnooze":
+		var r output.SnoozeMutation
+		if command == "snooze" {
+			r, e = snooze(s, a.Snooze, time.Now())
+		} else {
+			r, e = unsnooze(s, a.Unsnooze.IDs)
+		}
+		changed = r.Changed
+		result = r
+	case "review":
+		var candidates output.Review
+		candidates, e = reviewCandidates(s, c, a.Review, time.Now())
+		if e != nil {
+			break
+		}
+		result = candidates
+		if interactive && a.Format != "json" {
+			// Each reviewed item is saved and published under its own lock.
+			result, e = reviewSession(candidates, a.Review.ID != "", opts, device, in, errout, tr)
+		}
 	case "history":
 		result, e = history(s, a.History)
 	case "stats":
@@ -719,6 +739,12 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 				e = output.DependencyTreeText(out, value, tr)
 			case output.Dependencies:
 				e = output.DependenciesText(out, value, tr)
+			case output.Review:
+				e = output.ReviewText(out, value, tr)
+			case output.ReviewResult:
+				e = output.ReviewResultText(out, value, tr)
+			case output.SnoozeMutation:
+				e = output.SnoozeText(out, value, tr)
 			case output.History:
 				e = output.HistoryText(out, value, tr)
 			case output.Stats:
@@ -798,6 +824,17 @@ func fail(e error, format string, tr *i18n.Translator, w io.Writer, details any)
 	if errors.As(e, &te) {
 		code = "INVALID_ID"
 		details = te
+	}
+	var snoozeErr *store.SnoozeError
+	if errors.As(e, &snoozeErr) {
+		code = "INVALID_STATE"
+		for _, p := range snoozeErr.Problems {
+			if p.Code == "INVALID_ID" {
+				code = "INVALID_ID"
+			}
+		}
+		details = snoozeErr
+		exit = 2
 	}
 	var undoErr *store.UndoError
 	if errors.As(e, &undoErr) {

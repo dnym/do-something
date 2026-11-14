@@ -1299,3 +1299,59 @@ other = "uppskattat {{.estimate}} · loggat {{.actual}} · ×{{.ratio}}"
 ["output.stats.median"]
 one = "Median ×{{.ratio}} över {{.count}} post"
 other = "Median ×{{.ratio}} över {{.count}} poster"
+
+["output.snoozed_until"]
+other = "vilar till {{.until}}"
+
+["output.snooze.set"]
+other = "\"{{.title}}\" [{{.id}}]: vilar till {{.until}}"
+
+["output.snooze.cleared"]
+other = "\"{{.title}}\" [{{.id}}]: vilar inte längre"
+
+["output.snooze.none"]
+other = "\"{{.title}}\" [{{.id}}]: vilade inte"
+
+["help.snooze"]
+other = "Dölj poster från suggest till en viss tid: --for en tidslängd (3d, 2w, 36h; standard 7d) eller --until ett lokalt datum (midnatt). Vilande poster behåller sin status och visas fortfarande i list, search och show, markerade som vilande; suggest --include-snoozed visar dem ändå. Endast not_started- och in_progress-poster kan vila; en ny snooze ersätter tiden. Hela kommandot är atomärt."
+
+["help.unsnooze"]
+other = "Ta bort vilan för en eller flera poster så att suggest tar med dem igen."
+
+["help.review"]
+other = "Uppdatera betyg som är okända eller inaktuella. Betyg avtar mot prior under sin halveringstid; review listar aktiva poster med minst ett okänt betyg eller ett som avtagit 25 % eller mer, mest inaktuella först (--kind, --limit, standard 10). I en terminal frågar den efter varje sådant betyg: Enter behåller, = bekräftar med dagens datum, en nivå eller 0..1 sätter, clear tar bort, s hoppar över resten av posten, q avslutar. Varje post sparas när du är klar med den. review POST frågar efter alla betyg för en post. Utan terminal, eller med --format json, listar den bara."
+
+["prompt.review_intro"]
+other = "Enter behåller · = bekräftar · nivå eller 0..1 sätter · clear tar bort · s hoppar över posten · q avslutar"
+
+["prompt.review_nothing_to_confirm"]
+other = "Inget att bekräfta; ange ett värde eller tryck Enter."
+
+["output.review.item"]
+other = "[{{.n}}/{{.total}}] \"{{.title}}\" [{{.id}}] ({{.kind}})"
+
+["output.review.unknown"]
+other = "okänt"
+
+["output.review.age"]
+other = "{{.months}} mån gammalt"
+
+["output.review.decay"]
+other = "{{.percent}} % avtaget"
+
+["output.review.nothing"]
+other = "Inga betyg behöver ses över."
+
+["output.review.more"]
+other = "… och {{.count}} till (använd --limit)"
+
+["output.review.summary"]
+other = "Gick igenom {{.items}}; uppdaterade {{.ratings}}."
+
+["output.review.items"]
+one = "{{.count}} post"
+other = "{{.count}} poster"
+
+["output.review.ratings"]
+one = "{{.count}} betyg"
+other = "{{.count}} betyg"

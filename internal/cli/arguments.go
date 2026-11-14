@@ -47,6 +47,7 @@ var constraints = func() map[string]constraint {
 		"positive-duration": {ExclusiveMinimum: number(0), Format: "duration"},
 		"date":              {Format: "date"},
 		"event-type":        {},
+		"snooze-duration":   {ExclusiveMinimum: number(0), Format: "snooze-duration"},
 	}
 	for _, t := range model.AllEventTypes {
 		c := m["event-type"]
@@ -162,6 +163,12 @@ func decodeParameter(name, raw string, target reflect.Value, c constraint) error
 			if _, err := time.Parse("2006-01-02", raw); err != nil {
 				return fail(err)
 			}
+		case "snooze-duration":
+			d, err := parseSnoozeDuration(raw)
+			if err != nil {
+				return fail(err)
+			}
+			n = d.Seconds()
 		}
 		target.SetString(raw)
 	case reflect.Float64:
@@ -200,4 +207,21 @@ func decodeParameter(name, raw string, target reflect.Value, c constraint) error
 		return fail(fmt.Errorf("value outside allowed finite range"))
 	}
 	return nil
+}
+
+// parseSnoozeDuration accepts whole days (3d) and weeks (2w) in addition to
+// Go durations (36h, 90m); units may not be mixed with d/w.
+func parseSnoozeDuration(raw string) (time.Duration, error) {
+	if n := len(raw); n > 1 && (raw[n-1] == 'd' || raw[n-1] == 'w') {
+		v, err := strconv.ParseFloat(raw[:n-1], 64)
+		if err != nil || math.IsNaN(v) || math.IsInf(v, 0) {
+			return 0, fmt.Errorf("use a number of days or weeks, e.g. 3d or 2w")
+		}
+		days := v
+		if raw[n-1] == 'w' {
+			days *= 7
+		}
+		return time.Duration(days * 24 * float64(time.Hour)), nil
+	}
+	return time.ParseDuration(raw)
 }

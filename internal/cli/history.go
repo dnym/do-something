@@ -355,3 +355,57 @@ func askYesNo(in io.Reader, out io.Writer, question string, tr *i18n.Translator)
 		}
 	}
 }
+
+type SnoozeFlags struct {
+	IDs   []string `arg:"" required:"" name:"id"`
+	For   string   `type:"snooze-duration" xor:"snooze"`
+	Until string   `type:"date" xor:"snooze"`
+}
+
+// defaultSnooze applies when neither --for nor --until is given.
+const defaultSnooze = 7 * 24 * time.Hour
+
+func snooze(s *store.Store, f SnoozeFlags, now time.Time) (output.SnoozeMutation, error) {
+	until := now.Add(defaultSnooze)
+	switch {
+	case f.For != "":
+		d, err := parseSnoozeDuration(f.For)
+		if err != nil {
+			return output.SnoozeMutation{}, invalid(err)
+		}
+		until = now.Add(d)
+	case f.Until != "":
+		day, err := localDate(f.Until)
+		if err != nil {
+			return output.SnoozeMutation{}, invalid(err)
+		}
+		if !day.After(now) {
+			return output.SnoozeMutation{}, invalid(&argumentError{"until", f.Until, constraint{Format: "date"}, fmt.Errorf("must be a future date")})
+		}
+		until = day
+	}
+	return applySnooze(s, f.IDs, &until)
+}
+
+func unsnooze(s *store.Store, refs []string) (output.SnoozeMutation, error) {
+	return applySnooze(s, refs, nil)
+}
+
+func applySnooze(s *store.Store, refs []string, until *time.Time) (output.SnoozeMutation, error) {
+	r := output.SnoozeMutation{SchemaVersion: output.SchemaVersion, Items: []store.SnoozeResult{}}
+	ids, problems, err := resolveRefs(s, refs)
+	if err != nil {
+		return r, err
+	}
+	if len(problems) > 0 {
+		return r, &store.SnoozeError{Problems: problems}
+	}
+	if r.Items, err = s.Snooze(ids, until); err != nil {
+		return r, err
+	}
+	for _, it := range r.Items {
+		r.Changed = r.Changed || it.Changed
+	}
+	r.AllIDs, _, err = allItemReferences(s)
+	return r, err
+}

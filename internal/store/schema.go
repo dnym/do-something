@@ -9,8 +9,9 @@ import (
 // gated on it: a snapshot with a version newer than this binary understands is
 // rejected with SCHEMA_MISMATCH (forward-only migrations; see the README policy).
 // v2 adds the `reverted` event type and events.reverts (undo of logged
-// sessions). Older snapshots (v1) remain readable and are upgraded on read.
-const SchemaVersion = 2
+// sessions). v3 adds items.snoozed_until (snooze). Older snapshots (v1, v2)
+// remain readable and are upgraded on read.
+const SchemaVersion = 3
 
 // MinSnapshotVersion is the oldest schema a frozen snapshot or interchange file
 // may carry; it is upgraded in memory when read.
@@ -141,6 +142,11 @@ ALTER TABLE events_v2 RENAME TO events;
 CREATE INDEX idx_events_type ON events(type);
 CREATE INDEX idx_events_reverts ON events(reverts);
 `,
+	},
+	{
+		// v3: snooze hides an item from suggestions until an instant.
+		version: 3,
+		sql:     `ALTER TABLE items ADD COLUMN snoozed_until TEXT;`,
 	},
 }
 

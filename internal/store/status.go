@@ -102,9 +102,14 @@ type TransitionError struct {
 }
 
 func (e *TransitionError) Error() string {
+	return problemsText(transitionVerbName(e.Verb), e.Problems)
+}
+
+// problemsText lists every offending reference of a multi-item command.
+func problemsText(verb string, problems []IDProblem) string {
 	var b strings.Builder
-	fmt.Fprintf(&b, "%s: ", transitionVerbName(e.Verb))
-	for i, p := range e.Problems {
+	fmt.Fprintf(&b, "%s: ", verb)
+	for i, p := range problems {
 		if i > 0 {
 			b.WriteString("; ")
 		}

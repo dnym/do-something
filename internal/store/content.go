@@ -99,7 +99,7 @@ func (c *Content) upgrade() {
 
 func (c Content) Tables() []Table {
 	return []Table{
-		{"items", strings.Split("id,legacy_id,title,kind,status,category,type,notes,url,created_at,updated_at,deadline,remaining_duration,cost_left,min_session_duration,total_duration,ongoing", ","), 1, c.Items, nil},
+		{"items", strings.Split("id,legacy_id,title,kind,status,category,type,notes,url,created_at,updated_at,deadline,remaining_duration,cost_left,min_session_duration,total_duration,ongoing,snoozed_until", ","), 1, c.Items, map[string]int{"snoozed_until": 3}},
 		{"ratings", []string{"item_id", "property", "value", "rated_at"}, 2, c.Ratings, nil},
 		{"item_tags", []string{"item_id", "tag"}, 2, c.Tags, nil},
 		{"item_modes", []string{"item_id", "mode"}, 2, c.Modes, nil},
@@ -377,8 +377,8 @@ func (c Content) Validate() error {
 				if title == "" || !model.Kind(kind).Valid() || !model.Status(status).Valid() {
 					return fmt.Errorf("invalid item %s", id)
 				}
-				for _, k := range []string{"created_at", "updated_at", "deadline"} {
-					if r[k] == nil && k == "deadline" {
+				for _, k := range []string{"created_at", "updated_at", "deadline", "snoozed_until"} {
+					if r[k] == nil && (k == "deadline" || k == "snoozed_until") {
 						continue
 					}
 					s, ok := r[k].(string)

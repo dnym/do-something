@@ -55,7 +55,10 @@ type Item struct {
 	Dependencies      []string                       `json:"dependencies"`
 	EstimatedProgress *float64                       `json:"estimated_progress_percent"`
 	LegacyID          *int64                         `json:"legacy_id"`
-	Beta              float64                        `json:"-"` // effective right-now blend, for text explain
+	// SnoozedUntil is set while the item is snoozed (hidden from suggest);
+	// null when not snoozed or the snooze has passed.
+	SnoozedUntil *time.Time `json:"snoozed_until"`
+	Beta         float64    `json:"-"` // effective right-now blend, for text explain
 }
 type Result struct {
 	SchemaVersion int          `json:"schema_version"`
@@ -99,6 +102,9 @@ func NewItem(it *model.Item, r scoring.Result, blockers []store.Blocker, evidenc
 				o.Properties[string(p)] = it.MeasurementValue(p)
 			}
 		}
+	}
+	if it.Snoozed(time.Now()) {
+		o.SnoozedUntil = it.SnoozedUntil
 	}
 	o.Score = &r.Final
 	if explain {
@@ -254,6 +260,9 @@ func Text(w io.Writer, r Result, tr *i18n.Translator, color ...bool) error {
 			parts := append([]string{}, it.Modes...)
 			parts = append(parts, it.Engagements...)
 			status += "·" + strings.Join(parts, ",")
+		}
+		if it.SnoozedUntil != nil {
+			status += ", " + tr.T("output.snoozed_until", "until", LocalTime(*it.SnoozedUntil))
 		}
 		if _, e := fmt.Fprintf(w, "%s  %-*s  %-*s  %-*s  %7s  [%s]  %s\n", score, idWidth, Prefix(it.ID, ids), titleWidth, it.Title, typeWidth, typ, length, status, strings.Join(reasons, " · ")); e != nil {
 			return e

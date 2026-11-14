@@ -180,6 +180,25 @@ $ do-something reopen "Breaking Bad"
 "Breaking Bad" [01a10673-1]: dropped → not_started
 ```
 
+### Snoozing and reviewing
+
+Not this week, but don't lose it: `snooze` hides an item from suggestions
+until a time, without changing its status. It comes back by itself.
+
+```sh
+$ do-something snooze "Build a bookshelf" --for 2w
+$ do-something snooze "Order materials" --until 2026-12-01
+$ do-something unsnooze "Build a bookshelf"
+```
+
+Ratings fade toward the neutral prior as they age. `review` walks you through
+the items whose ratings are unknown or have faded the most, asking only for
+those ratings; `review ITEM` goes through all of one item's ratings.
+
+```sh
+$ do-something review --kind media --limit 5
+```
+
 ### Looking back and undoing
 
 `history` lists what happened, newest first (suggestions only with `--all` or
@@ -324,7 +343,8 @@ binary refuses a v2 snapshot: upgrade every syncing device.
 | Schema | Versions | Change |
 |---|---|---|
 | 1 | v0.1.x | Base schema |
-| 2 | v0.2.0+ | `reverted` events and `events.reverts`, for `undo` |
+| 2 | v0.2.0 | `reverted` events and `events.reverts`, for `undo` |
+| 3 | v0.3.0+ | `items.snoozed_until`, for `snooze` |
 
 `database_uuid` guards against accidental database mixups. It does not authenticate
 a peer or defend against somebody who can write arbitrary files into the sync
@@ -603,6 +623,30 @@ The response includes an event ID, the before/after estimates and statuses, and
 estimated progress. Repeated invocations count as separate sessions. To take a
 session back, use `undo` (see below); to correct an estimate, use
 `edit --remaining-duration`.
+
+### Snooze and review
+
+`snooze ITEM... [--for DURATION | --until DATE]` hides not_started and
+in_progress items from `suggest` until an instant: `--for` takes whole days
+(`3d`), weeks (`2w`), or a Go duration (`36h`), default 7 days; `--until` takes
+a local date and means its midnight. Status, score, and history are unchanged;
+`list`, `search`, and `show` still include the item, marked with
+`snoozed_until` (null once the time has passed), and `suggest
+--include-snoozed` shows snoozed items anyway. Snoozing again replaces the
+time; `unsnooze ITEM...` clears it. Both commands are atomic over all
+references; done and dropped items cannot be snoozed (`INVALID_STATE`).
+
+`review [ITEM] [--kind KIND] [--limit N]` finds active items with a rating
+that is unknown or has decayed at least 25% of the way to the prior (its
+`decay`, from the rating's age and half-life), stalest first (by mean decay),
+10 at a time by default. In an interactive text terminal it asks for each such
+rating: Enter keeps it, `=` reconfirms the current value with today's date, a
+level or 0..1 sets it, `clear` unsets it, `s` skips the rest of the item, and
+`q` quits. Each item is saved (and published) when you finish it, so quitting
+keeps earlier answers. With `ITEM` it asks about every applicable rating of
+that item. Without a terminal or with `--format json`, review only lists
+candidates with per-rating state, value, age, half-life, and decay; automation
+then uses `edit`.
 
 ### Undo, history, and stats
 

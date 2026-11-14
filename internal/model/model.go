@@ -352,6 +352,15 @@ type Item struct {
 
 	// Dependencies are the ids this item depends on (its prerequisites).
 	Dependencies []string `json:"dependencies"`
+
+	// SnoozedUntil hides the item from suggestions until this instant; a past
+	// value has no effect. nil = not snoozed.
+	SnoozedUntil *time.Time `json:"snoozed_until"`
+}
+
+// Snoozed reports whether the item is hidden from suggestions at now.
+func (it *Item) Snoozed(now time.Time) bool {
+	return it.SnoozedUntil != nil && it.SnoozedUntil.After(now)
 }
 
 // RatingValue returns the effective value for a rating property, or nil if there

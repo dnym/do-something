@@ -42,6 +42,7 @@ type Query struct {
 	Fuzzy          bool     `json:"fuzzy,omitempty"`
 	Unknown        string   `json:"unknown_policy"`
 	IncludeUnready bool     `json:"include_unready"`
+	IncludeSnoozed bool     `json:"include_snoozed"`
 	MinScore       float64  `json:"min_score"`
 	Limit          int      `json:"limit"`
 	Random         bool     `json:"random"`

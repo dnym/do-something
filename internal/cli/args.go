@@ -27,6 +27,7 @@ type QueryOptions struct {
 	Peek           bool
 	Explain        bool
 	IncludeUnready bool
+	IncludeSnoozed bool
 	Unknown        string `type:"unknown"`
 	FailEmpty      bool
 }
@@ -134,7 +135,10 @@ type Args struct {
 		Key    string  `arg:"" optional:""`
 		Value  *string `arg:"" optional:""`
 	} `cmd:""`
+	Snooze     SnoozeFlags  `cmd:""`
+	Unsnooze   IDs          `cmd:""`
 	Undo       UndoFlags    `cmd:""`
+	Review     ReviewFlags  `cmd:""`
 	History    HistoryFlags `cmd:""`
 	Stats      StatsFlags   `cmd:""`
 	Doctor     struct{}     `cmd:""`

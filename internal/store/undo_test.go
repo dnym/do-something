@@ -3,6 +3,7 @@ package store
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"testing"
 
@@ -178,7 +179,7 @@ func TestV1StoreMigratesWithBackupAndStableDigest(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer st.Close()
-	backups, _ := filepath.Glob(filepath.Join(dir, "backups", "pre-schema-v2-*.db"))
+	backups, _ := filepath.Glob(filepath.Join(dir, "backups", fmt.Sprintf("pre-schema-v%d-*.db", SchemaVersion)))
 	if len(backups) != 1 {
 		t.Fatalf("backups %v", backups)
 	}
