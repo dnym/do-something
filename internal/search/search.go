@@ -261,3 +261,21 @@ func originalOffset(text string, lowercaseIndex int) int {
 	}
 	return len(text)
 }
+
+// Similar reports whether two whole strings are within a small edit distance
+// (one edit per five characters, at least one), ignoring case and spacing.
+// It returns a similarity in (0,1] when they are, for ranking typo matches.
+func Similar(a, b string) (float64, bool) {
+	ra := []rune(strings.ToLower(strings.Join(strings.Fields(a), " ")))
+	rb := []rune(strings.ToLower(strings.Join(strings.Fields(b), " ")))
+	n := max(len(ra), len(rb))
+	if n == 0 {
+		return 0, false
+	}
+	limit := max(1, n/5)
+	d := distance(ra, rb, limit)
+	if d > limit {
+		return 0, false
+	}
+	return 1 - float64(d)/float64(n), true
+}

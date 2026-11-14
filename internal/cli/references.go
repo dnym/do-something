@@ -20,6 +20,10 @@ func resolveTransitionRefs(s *store.Store, verb store.Transition, refs []string)
 			p := store.IDProblem{ID: ref, Code: "INVALID_ID"}
 			var title *store.AmbiguousTitleError
 			var prefix *store.AmbiguousIDError
+			var missing *store.ItemNotFoundError
+			if errors.As(err, &missing) && len(missing.Suggestions) > 0 {
+				p.Suggestions = missing.Suggestions
+			}
 			if errors.As(err, &title) {
 				p.Candidates = title.Candidates
 			}

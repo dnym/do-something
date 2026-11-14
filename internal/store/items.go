@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	"dosomething/internal/model"
@@ -397,10 +399,37 @@ func (s *Store) getItemTx(tx *sql.Tx, id string) (*model.Item, error) {
 	return it, nil
 }
 
-// ItemNotFoundError is an INVALID_ID condition for a single item.
-type ItemNotFoundError struct{ ID string }
+// ItemNotFoundError is an INVALID_ID condition for a single item. When the
+// failure comes from resolving a user reference, Suggestions lists the closest
+// titles (case-insensitive and fuzzy matches); they are hints only and never
+// resolve the reference.
+type ItemNotFoundError struct {
+	ID          string       `json:"id"`
+	Suggestions []Suggestion `json:"suggestions"`
+}
 
-func (e *ItemNotFoundError) Error() string { return "no item matches id or prefix " + e.ID }
+// Suggestion is a likely intended item for a reference that did not resolve.
+type Suggestion struct {
+	ID    string `json:"id"`
+	Title string `json:"title"`
+}
+
+func (e *ItemNotFoundError) Error() string {
+	msg := "no item matches id, id prefix, or exact title " + strconv.Quote(e.ID)
+	if len(e.Suggestions) > 0 {
+		msg += "; did you mean " + QuoteSuggestions(e.Suggestions) + "?"
+	}
+	return msg
+}
+
+// QuoteSuggestions renders suggested titles for human-facing messages.
+func QuoteSuggestions(list []Suggestion) string {
+	titles := make([]string, len(list))
+	for i, v := range list {
+		titles[i] = strconv.Quote(v.Title)
+	}
+	return strings.Join(titles, ", ")
+}
 func (e *ItemNotFoundError) Unwrap() error { return ErrInvalidID }
 
 // ItemNotFound reports whether err is an unknown-item failure.

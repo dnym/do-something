@@ -403,7 +403,32 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 				break
 			}
 		}
-		result = output.ItemMutation{SchemaVersion: output.SchemaVersion, Changed: changed, ID: id, Before: before, After: after}
+		mutation := output.ItemMutation{SchemaVersion: output.SchemaVersion, Changed: changed, ID: id, Before: before, After: after, Warnings: []output.Warning{}}
+		if before == nil || before.Title != after.Title {
+			similar, se := s.SimilarTitles(after.Title, id)
+			if se != nil {
+				e = se
+				break
+			}
+			if len(similar) > 0 {
+				refs := make([]output.ItemReference, len(similar))
+				for i, v := range similar {
+					refs[i] = output.ItemReference{ID: v.ID, Title: v.Title}
+				}
+				mutation.Warnings = append(mutation.Warnings, output.Warning{Code: output.WarningSimilarTitle, Message: fmt.Sprintf("other items have nearly the same title: %s; title references are case-sensitive", store.QuoteSuggestions(similar)), Items: refs})
+			}
+		}
+		allIDs, refs, re := allItemReferences(s)
+		if re != nil {
+			e = re
+			break
+		}
+		mutation.AllIDs = allIDs
+		mutation.Titles = map[string]string{}
+		for k, v := range refs {
+			mutation.Titles[k] = v.Title
+		}
+		result = mutation
 	case "log":
 		var r output.LogMutation
 		r, e = logActivity(s, a.Log, interactive, in, errout, tr)
@@ -685,6 +710,11 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 				e = output.DependencyTreeText(out, value, tr)
 			case output.Dependencies:
 				e = output.DependenciesText(out, value, tr)
+			case output.ItemMutation:
+				e = output.ItemMutationText(out, value, tr)
+				if e == nil {
+					e = output.WarningsText(errout, value.Warnings, value.AllIDs, tr)
+				}
 			default:
 				e = output.RenderValue(out, result, tr)
 			}
@@ -742,6 +772,13 @@ func fail(e error, format string, tr *i18n.Translator, w io.Writer, details any)
 	if errors.As(e, &ambiguousTitle) {
 		details = ambiguousTitle
 	}
+	var notFound *store.ItemNotFoundError
+	if errors.As(e, &notFound) && details == nil {
+		if notFound.Suggestions == nil {
+			notFound.Suggestions = []store.Suggestion{}
+		}
+		details = notFound
+	}
 	var te *store.TransitionError
 	if errors.As(e, &te) {
 		code = "INVALID_ID"
@@ -775,6 +812,9 @@ func fail(e error, format string, tr *i18n.Translator, w io.Writer, details any)
 		detail := e.Error()
 		if tr.Locale() != "en" {
 			detail = tr.T("error.code." + strings.ToLower(code))
+			if notFound != nil && len(notFound.Suggestions) > 0 {
+				detail += "\n  " + tr.T("error.did_you_mean", "titles", store.QuoteSuggestions(notFound.Suggestions))
+			}
 		}
 		var arg *argumentError
 		if errors.As(e, &arg) {

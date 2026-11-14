@@ -87,9 +87,10 @@ type TransitionResult struct {
 
 // IDProblem pairs an offending id with its machine-readable code.
 type IDProblem struct {
-	Candidates []string `json:"candidates,omitempty"`
-	ID         string   `json:"id"`
-	Code       string   `json:"code"` // INVALID_ID | INVALID_STATE
+	Candidates  []string     `json:"candidates,omitempty"`
+	Suggestions []Suggestion `json:"suggestions,omitempty"` // close titles for an unknown reference
+	ID          string       `json:"id"`
+	Code        string       `json:"code"` // INVALID_ID | INVALID_STATE
 }
 
 // TransitionError lists every id that failed an all-or-nothing multi-id
@@ -110,6 +111,9 @@ func (e *TransitionError) Error() string {
 		fmt.Fprintf(&b, "%s: %s", p.ID, p.Code)
 		if len(p.Candidates) > 0 {
 			fmt.Fprintf(&b, " (candidates: %s)", strings.Join(p.Candidates, ", "))
+		}
+		if len(p.Suggestions) > 0 {
+			fmt.Fprintf(&b, " (did you mean %s?)", QuoteSuggestions(p.Suggestions))
 		}
 	}
 	return b.String()

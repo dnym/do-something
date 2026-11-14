@@ -28,6 +28,10 @@ type ItemMutation struct {
 	ID            string      `json:"id"`
 	Before        *model.Item `json:"before"`
 	After         *model.Item `json:"after"`
+	// Warnings are non-fatal observations, e.g. SIMILAR_TITLE; empty when none.
+	Warnings []Warning         `json:"warnings"`
+	AllIDs   []string          `json:"-"`
+	Titles   map[string]string `json:"-"`
 }
 type StatusMutation struct {
 	SchemaVersion int                      `json:"schema_version"`

@@ -1107,3 +1107,90 @@ other = "ungefärlig"
 
 ["help.search.fuzzy"]
 other = "Använd --fuzzy för stavfel, omvänd ordföljd och skillnader i mellanrum. Titelträffar kommer före träffar i anteckningar; inom varje fält kommer exakta träffar först, sedan delvisa och till sist ungefärliga träffar. Resultaten sorteras efter sökrelevans före --limit, medan den visade poängen fortfarande är aktivitetspoängen. --random blandar uttryckligen resultaten. Träffar i anteckningar visar ett utdrag. Korta ord kräver bokstavliga träffar. Postreferenser i edit, done och beroendekommandon kräver fortfarande id, entydigt prefix eller exakt titel."
+
+["output.item_added"]
+other = "Lade till \"{{.title}}\" [{{.id}}]: {{.summary}}"
+
+["output.item_updated"]
+other = "Uppdaterade \"{{.title}}\" [{{.id}}]:"
+
+["output.item_unchanged"]
+other = "Inga ändringar av \"{{.title}}\" [{{.id}}]."
+
+["output.yes"]
+other = "ja"
+
+["output.no"]
+other = "nej"
+
+["output.warning"]
+other = "Varning: {{.message}}"
+
+["output.warning.similar_title"]
+other = "andra poster har nästan samma titel: {{.items}}. Titelreferenser skiljer på versaler och gemener; byt namn med edit --title om detta inte var avsikten."
+
+["error.did_you_mean"]
+other = "Menade du {{.titles}}?"
+
+["output.explain.final"]
+other = "poäng {{.final}} = {{.base_share}} bas {{.base}} + {{.beta}} just nu {{.right_now}}"
+
+["output.explain.final_base"]
+other = "poäng {{.final}} = bas {{.base}} (inga just nu-termer)"
+
+["output.explain.base"]
+other = "bas {{.base}}"
+
+["output.explain.right_now"]
+other = "just nu {{.right_now}}"
+
+["output.explain.share"]
+other = "{{.share}} av basen"
+
+["output.explain.weight"]
+other = "vikt {{.weight}}"
+
+["output.explain.value"]
+other = "= {{.value}}"
+
+["output.explain.unknown_prior"]
+other = "okänd, prior"
+
+["output.explain.prior"]
+other = "poängsatt med prior"
+
+["output.explain.not_applicable"]
+other = "ej tillämplig"
+
+["output.explain.rated_ago"]
+other = "betygsatt för {{.months}} mån sedan"
+
+["output.explain.days_left"]
+other = "{{.days}} dagar kvar"
+
+["output.explain.pace"]
+other = "kräver {{.pace}} h/dag"
+
+["output.explain.unblocks"]
+other = "skulle frigöra {{.ready}} av {{.total}} beroende poster"
+
+["output.explain.anchor_age"]
+other = "senast föreslagen eller påbörjad för {{.days}} dagar sedan"
+
+["output.explain.term.urgency"]
+other = "brådska"
+
+["output.explain.term.momentum"]
+other = "fart"
+
+["output.explain.term.unblocking"]
+other = "frigörande"
+
+["output.explain.term.mode_match"]
+other = "aktivitetsmatchning"
+
+["output.explain.term.engagement_match"]
+other = "engagemangsmatchning"
+
+["output.explain.term.cooldown"]
+other = "vila"

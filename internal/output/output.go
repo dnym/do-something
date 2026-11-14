@@ -55,6 +55,7 @@ type Item struct {
 	Dependencies      []string                       `json:"dependencies"`
 	EstimatedProgress *float64                       `json:"estimated_progress_percent"`
 	LegacyID          *int64                         `json:"legacy_id"`
+	Beta              float64                        `json:"-"` // effective right-now blend, for text explain
 }
 type Result struct {
 	SchemaVersion int          `json:"schema_version"`
@@ -106,6 +107,7 @@ func NewItem(it *model.Item, r scoring.Result, blockers []store.Blocker, evidenc
 	if len(r.Terms) == 0 {
 		beta = 0
 	}
+	o.Beta = beta
 	en := canonical
 	for _, g := range r.Groups {
 		key := "value_estimate"
@@ -261,7 +263,7 @@ func Text(w io.Writer, r Result, tr *i18n.Translator, color ...bool) error {
 			}
 		}
 		if it.Breakdown != nil {
-			if e := RenderValue(w, it.Breakdown, tr); e != nil {
+			if e := ExplainText(w, *it.Breakdown, it.Beta, tr); e != nil {
 				return e
 			}
 		}

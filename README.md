@@ -389,7 +389,12 @@ Item references in `show`, `edit`, `log`, `start`, `done`, `drop`, `reopen`,
 `deps`, and the `--depends-on` values of `add`/`edit` accept a full id, a unique id prefix,
 or an exact (case-sensitive) title; an ambiguous title is an error
 (`INVALID_ID` lists the candidates), and a title that is also an existing
-item's id resolves as the id. UUIDs and unique UUID prefixes take priority over
+item's id resolves as the id. A reference that matches nothing fails with
+"did you mean" hints (`details.suggestions` in JSON) drawn from
+case-insensitive, partial, and typo matches; hints are never resolved
+automatically. `add`, and an `edit` that renames, warn with `SIMILAR_TITLE`
+(in `warnings`, and on stderr in text mode) when another item's title differs
+only in case or spacing. UUIDs and unique UUID prefixes take priority over
 titles. Title matching includes every status. Multi-item status commands resolve
 all references before changing anything and list every invalid or ambiguous
 reference on failure. Repeated references to the same item are applied once.

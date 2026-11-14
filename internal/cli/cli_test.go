@@ -604,3 +604,33 @@ func TestCLILocalizedJSONAndIdempotentEdit(t *testing.T) {
 		}
 	}
 }
+
+func TestCLISimilarTitleWarningAndSuggestions(t *testing.T) {
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
+	db := filepath.Join(t.TempDir(), "list.db")
+	first := success(t, db, "add", "--title", "Fix bike", "--kind", "project")
+	if w := first["warnings"].([]any); len(w) != 0 {
+		t.Fatal(w)
+	}
+	second := success(t, db, "add", "--title", "fix bike", "--kind", "project")
+	w := second["warnings"].([]any)
+	if len(w) != 1 || w[0].(map[string]any)["code"] != "SIMILAR_TITLE" {
+		t.Fatal(second)
+	}
+	if items := w[0].(map[string]any)["items"].([]any); len(items) != 1 || items[0].(map[string]any)["id"] != first["id"] {
+		t.Fatal(w)
+	}
+	// Editing other fields does not repeat the warning.
+	if w := success(t, db, "edit", second["id"].(string), "--interest", "1")["warnings"].([]any); len(w) != 0 {
+		t.Fatal(w)
+	}
+	code, _, errout := invoke(t, db, "show", "FIX BIKE")
+	var body map[string]any
+	if e := json.Unmarshal([]byte(errout), &body); e != nil || code != 2 {
+		t.Fatalf("%d %s", code, errout)
+	}
+	details := body["error"].(map[string]any)["details"].(map[string]any)
+	if details["id"] != "FIX BIKE" || len(details["suggestions"].([]any)) != 2 {
+		t.Fatal(details)
+	}
+}

@@ -4,7 +4,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
+
+	"dosomething/internal/search"
 )
 
 // AmbiguousIDError reports that an id prefix matches multiple items. It is an
@@ -130,8 +133,86 @@ func (s *Store) ResolveItemRef(ref string) (string, error) {
 	case 1:
 		return matches[0], nil
 	case 0:
+		var nf *ItemNotFoundError
+		if errors.As(err, &nf) {
+			suggestions, serr := s.SuggestTitles(ref, maxSuggestions)
+			if serr != nil {
+				return "", serr
+			}
+			return "", &ItemNotFoundError{ID: nf.ID, Suggestions: suggestions}
+		}
 		return "", err
 	default:
 		return "", &AmbiguousTitleError{Title: ref, Candidates: matches}
 	}
+}
+
+// maxSuggestions bounds the "did you mean" hints attached to a failed lookup.
+const maxSuggestions = 3
+
+// SuggestTitles returns up to limit items whose titles are close to ref: a
+// case- and whitespace-insensitive equal title first, then search matches by
+// relevance, then whole-title typo matches. The hints never change resolution, which stays case-sensitive.
+func (s *Store) SuggestTitles(ref string, limit int) ([]Suggestion, error) {
+	out := []Suggestion{}
+	if strings.TrimSpace(ref) == "" || limit <= 0 {
+		return out, nil
+	}
+	rows, err := s.db.Query(`SELECT id, title FROM items ORDER BY id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	type scored struct {
+		Suggestion
+		rank float64
+	}
+	found := []scored{}
+	for rows.Next() {
+		var v Suggestion
+		if err := rows.Scan(&v.ID, &v.Title); err != nil {
+			return nil, err
+		}
+		if SameTitle(ref, v.Title) {
+			found = append(found, scored{v, 2})
+		} else if m := search.Find(ref, v.Title, nil); m != nil {
+			found = append(found, scored{v, m.Relevance})
+		} else if sim, ok := search.Similar(ref, v.Title); ok {
+			found = append(found, scored{v, 0.6 * sim})
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	sort.SliceStable(found, func(i, j int) bool { return found[i].rank > found[j].rank })
+	for i := 0; i < len(found) && i < limit; i++ {
+		out = append(out, found[i].Suggestion)
+	}
+	return out, nil
+}
+
+// SameTitle reports whether two titles differ only in case or whitespace.
+func SameTitle(a, b string) bool {
+	return strings.EqualFold(strings.Join(strings.Fields(a), " "), strings.Join(strings.Fields(b), " "))
+}
+
+// SimilarTitles lists other items whose titles differ from title only in
+// case or whitespace — likely accidental duplicates.
+func (s *Store) SimilarTitles(title, exceptID string) ([]Suggestion, error) {
+	rows, err := s.db.Query(`SELECT id, title FROM items WHERE id <> ? ORDER BY id`, exceptID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := []Suggestion{}
+	for rows.Next() {
+		var v Suggestion
+		if err := rows.Scan(&v.ID, &v.Title); err != nil {
+			return nil, err
+		}
+		if SameTitle(title, v.Title) {
+			out = append(out, v)
+		}
+	}
+	return out, rows.Err()
 }

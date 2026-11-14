@@ -1107,3 +1107,90 @@ other = "approximate"
 
 ["help.search.fuzzy"]
 other = "Use --fuzzy for typos, reordered words, and spacing differences. Title matches precede notes matches; within each field, exact matches precede partial matches, then approximate matches. Results are ranked by search relevance before --limit, while the displayed score remains the activity score. --random explicitly shuffles results. Notes matches include an excerpt. Short words require literal matches. Item references in edit, done, and dependency commands still require an ID, unique prefix, or exact title."
+
+["output.item_added"]
+other = "Added \"{{.title}}\" [{{.id}}]: {{.summary}}"
+
+["output.item_updated"]
+other = "Updated \"{{.title}}\" [{{.id}}]:"
+
+["output.item_unchanged"]
+other = "No changes to \"{{.title}}\" [{{.id}}]."
+
+["output.yes"]
+other = "yes"
+
+["output.no"]
+other = "no"
+
+["output.warning"]
+other = "Warning: {{.message}}"
+
+["output.warning.similar_title"]
+other = "other items have nearly the same title: {{.items}}. Title references are case-sensitive; rename one with edit --title if this is unintended."
+
+["error.did_you_mean"]
+other = "Did you mean {{.titles}}?"
+
+["output.explain.final"]
+other = "score {{.final}} = {{.base_share}} base {{.base}} + {{.beta}} right-now {{.right_now}}"
+
+["output.explain.final_base"]
+other = "score {{.final}} = base {{.base}} (no right-now terms)"
+
+["output.explain.base"]
+other = "base {{.base}}"
+
+["output.explain.right_now"]
+other = "right-now {{.right_now}}"
+
+["output.explain.share"]
+other = "{{.share}} of base"
+
+["output.explain.weight"]
+other = "weight {{.weight}}"
+
+["output.explain.value"]
+other = "= {{.value}}"
+
+["output.explain.unknown_prior"]
+other = "unknown, prior"
+
+["output.explain.prior"]
+other = "scored at prior"
+
+["output.explain.not_applicable"]
+other = "not applicable"
+
+["output.explain.rated_ago"]
+other = "rated {{.months}} mo ago"
+
+["output.explain.days_left"]
+other = "{{.days}} days left"
+
+["output.explain.pace"]
+other = "needs {{.pace}} h/day"
+
+["output.explain.unblocks"]
+other = "would unblock {{.ready}} of {{.total}} dependents"
+
+["output.explain.anchor_age"]
+other = "last suggested or started {{.days}} days ago"
+
+["output.explain.term.urgency"]
+other = "urgency"
+
+["output.explain.term.momentum"]
+other = "momentum"
+
+["output.explain.term.unblocking"]
+other = "unblocking"
+
+["output.explain.term.mode_match"]
+other = "mode match"
+
+["output.explain.term.engagement_match"]
+other = "engagement match"
+
+["output.explain.term.cooldown"]
+other = "cooldown"
