@@ -8,9 +8,13 @@ import (
 // SchemaVersion is the current schema version. Snapshots carry it in meta and are
 // gated on it: a snapshot with a version newer than this binary understands is
 // rejected with SCHEMA_MISMATCH (forward-only migrations; see the README policy).
-// The app has never shipped a store, so the schema is still edited in place and
-// the first real change will land as v2.
-const SchemaVersion = 1
+// v2 adds the `reverted` event type and events.reverts (undo of logged
+// sessions). Older snapshots (v1) remain readable and are upgraded on read.
+const SchemaVersion = 2
+
+// MinSnapshotVersion is the oldest schema a frozen snapshot or interchange file
+// may carry; it is upgraded in memory when read.
+const MinSnapshotVersion = 1
 
 // AppID identifies the application that wrote the store; it is stored in meta and
 // travels with the file.
@@ -31,13 +35,11 @@ type migration struct {
 }
 
 // migrations are applied in version order on first write-open. All content tables
-// from the plan §4 are created here so that a fresh store is fully formed before
-// any scoring, sync, or filter code runs. The app has never shipped a store, so
-// there are no migration steps yet: the base schema below is edited in place
-// (as it was when the `idea` kind was removed), and item_modes /
-// item_engagements are part of it — both built-in sets are interface
-// vocabulary pinned by CHECKs (like kind/status), not user data. The
-// machinery stays for the first real schema change.
+// from the plan §4 are created by v1 so that a fresh store is fully formed before
+// any scoring, sync, or filter code runs. v1 shipped in v0.1.x and must never be
+// edited again; later versions are forward-only steps. item_modes /
+// item_engagements are part of v1 — both built-in sets are interface vocabulary
+// pinned by CHECKs (like kind/status), not user data.
 var migrations = []migration{
 	{
 		version: 1,
@@ -114,6 +116,30 @@ CREATE INDEX idx_events_type ON events(type);
 CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT NOT NULL);
 
 CREATE TABLE config(key TEXT PRIMARY KEY, value TEXT NOT NULL, updated_at TEXT);
+`,
+	},
+	{
+		// v2: `reverted` events undo a logged session. SQLite cannot alter a
+		// CHECK constraint, so the events table is rebuilt.
+		version: 2,
+		sql: `
+CREATE TABLE events_v2(
+  id TEXT PRIMARY KEY,
+  item_id TEXT,
+  item_ids TEXT,
+  type TEXT NOT NULL CHECK(type IN ('suggested','started','completed','dropped','logged','reverted')),
+  at TEXT NOT NULL,
+  query TEXT,
+  activity TEXT,
+  reverts TEXT,
+  CHECK((type = 'reverted') = (reverts IS NOT NULL))
+);
+INSERT INTO events_v2(id, item_id, item_ids, type, at, query, activity)
+  SELECT id, item_id, item_ids, type, at, query, activity FROM events;
+DROP TABLE events;
+ALTER TABLE events_v2 RENAME TO events;
+CREATE INDEX idx_events_type ON events(type);
+CREATE INDEX idx_events_reverts ON events(reverts);
 `,
 	},
 }

@@ -180,6 +180,30 @@ $ do-something reopen "Breaking Bad"
 "Breaking Bad" [01a10673-1]: dropped → not_started
 ```
 
+### Looking back and undoing
+
+`history` lists what happened, newest first (suggestions only with `--all` or
+`--event suggested`), and `stats` summarizes a period — by default the last 30
+days — including how logged time compared with the estimate for items you
+finished.
+
+```sh
+$ do-something history "Build a bookshelf"
+$ do-something stats --since 2026-01-01
+```
+
+Logged a session by mistake? `undo` reverts the most recent one (or the most
+recent for an item), restoring the remaining time and cost and reversing a
+completion the log caused. It asks first; scripts pass `--yes`, and
+`--dry-run` previews.
+
+```sh
+$ do-something undo --dry-run
+Would undo 25m (remaining 25m → 0m) logged on "Friends" [01a10673-3] at 2026-11-14 21:05.
+  Remaining duration: 0m → 25m
+  Status: done → in_progress
+```
+
 ## Agentic usage
 
 The application has been designed ground-up with agentic use in mind.
@@ -291,7 +315,16 @@ never triggers interactive prompts; `--no-input` also disables prompts in a TTY.
 
 The working SQLite store uses WAL and **must stay outside a synchronized folder**.
 Snapshots are validated, standalone `VACUUM INTO` files. Migrations only move
-forward; unsupported schemas are rejected. Preserve a snapshot before upgrading.
+forward; unsupported schemas are rejected. The first command run by a newer
+version migrates the store, first saving a standalone copy in
+`<db path>.state/backups/`. Older snapshots and JSON exports (schema v1, from
+v0.1.x) stay readable, so existing sync baselines keep working, but a v0.1.x
+binary refuses a v2 snapshot: upgrade every syncing device.
+
+| Schema | Versions | Change |
+|---|---|---|
+| 1 | v0.1.x | Base schema |
+| 2 | v0.2.0+ | `reverted` events and `events.reverts`, for `undo` |
 
 `database_uuid` guards against accidental database mixups. It does not authenticate
 a peer or defend against somebody who can write arbitrary files into the sync
@@ -567,12 +600,36 @@ estimate update, and optional completion event are one transaction. Completion
 unblocks dependents, just like `done`.
 
 The response includes an event ID, the before/after estimates and statuses, and
-estimated progress. Repeated invocations count as separate sessions. To correct
-an estimate, use `edit --remaining-duration`; use `reopen` if completion was
-accidental. The original activity remains in history.
+estimated progress. Repeated invocations count as separate sessions. To take a
+session back, use `undo` (see below); to correct an estimate, use
+`edit --remaining-duration`.
 
-This unreleased schema is updated in place; pre-release databases and JSON exports
-using an older table layout must be recreated or converted before use.
+### Undo, history, and stats
+
+`undo [ITEM]` reverts the most recent logged session, or the most recent for
+`ITEM`, in one transaction: remaining time and cost return to their values
+before the session, and a completion caused by the log returns the item to its
+previous status. Events are append-only, so undo appends `reverted` events
+(`reverts` names the undone event) instead of deleting anything; the undo
+therefore survives sync, whose event union would resurrect a deleted row.
+History keeps the session, marked `reverted_by`. Undo refuses with
+`INVALID_STATE` when the item's remaining time, cost, or status changed after
+the session (adjust it with `edit`), or when nothing is left to undo. Undo
+covers logged sessions; status commands reverse each other. A terminal asks for
+confirmation; non-interactive use requires `--yes`; `--dry-run` previews.
+
+`history [ITEM]` lists events newest first: `--event` selects types
+(repeatable), `--since DATE` sets an inclusive local start date, `--limit`
+defaults to 20 (`0` = all), and suggestion events appear only with `--all` or
+`--event suggested`.
+
+`stats` reports logged time, cost, and sessions; started/finished/dropped
+counts; time per kind and type and per ISO week; and, for items finished in
+the period, logged time versus `total_duration` with the median ratio. Undone
+sessions and completions are excluded. The period defaults to the last 30 days
+through today (`--since`/`--until` inclusive local dates, `--all` for all
+time). The estimate comparison uses the item's current total, so a total that
+was revised to match reality reads close to 1.
 
 ## Configuration and scoring
 
@@ -595,7 +652,13 @@ its applicable properties. Unknown properties contribute the 0.5 prior rather
 than disappearing. Ratings decay toward the prior; undated ratings do not decay.
 Cost curves use `k/(k+value)`. Right-now terms include deadline urgency, momentum,
 unblocking, and cooldown, plus mode and engagement matches that are present
-only when `--mode` / `--engagement` are given. The default blend is 80% base, 20% right-now. The engine
+only when `--mode` / `--engagement` are given. Urgency (present with a deadline)
+and unblocking (present with active dependents) are floored at the mean of the
+other right-now terms, so a deadline or dependents can raise a score but never
+rank an item below an otherwise identical item without them; `raw_v` in the
+breakdown keeps the unfloored value. A recent suggestion or start lowers the
+score through the cooldown term until the window passes; `list`, `search`, and
+`show` report it as a negative `cooldown` reason. The default blend is 80% base, 20% right-now. The engine
 is pure, bounded, and tested independently of storage. `--explain` includes
 contributions, rating ages, priors, and term details. In an interactive text
 session it also offers to refresh the top item’s ratings.

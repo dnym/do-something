@@ -301,10 +301,14 @@ const (
 	EventCompleted EventType = "completed"
 	EventDropped   EventType = "dropped"
 	EventLogged    EventType = "logged"
+	// EventReverted undoes the event named by Reverts (a logged session, or
+	// the completion a log caused). It is append-only like every event, so
+	// an undo survives the event union performed by sync.
+	EventReverted EventType = "reverted"
 )
 
 // AllEventTypes lists every event type, in stable order.
-var AllEventTypes = []EventType{EventSuggested, EventStarted, EventCompleted, EventDropped, EventLogged}
+var AllEventTypes = []EventType{EventSuggested, EventStarted, EventCompleted, EventDropped, EventLogged, EventReverted}
 
 // Rating is one 0..1 ordinal rating for a property of an item.
 type Rating struct {
@@ -425,7 +429,8 @@ type Event struct {
 	ItemIDs  []string        `json:"item_i_ds"` // JSON array of returned candidate ids (suggested only)
 	Type     EventType       `json:"type"`
 	At       time.Time       `json:"at"`
-	Query    *string         `json:"query"` // JSON of the interpreted filter (suggested only)
+	Query    *string         `json:"query"`   // JSON of the interpreted filter (suggested only)
+	Reverts  *string         `json:"reverts"` // id of the undone event (reverted only)
 }
 
 // KeyedDependency is one edge in the dependency graph: item depends on target.

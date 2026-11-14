@@ -17,6 +17,9 @@ type LoggedActivity struct {
 	Cost            *float64 `json:"cost"`
 	CostBefore      *float64 `json:"cost_before"`
 	CostAfter       *float64 `json:"cost_after"`
+	// StatusBefore is recorded when the session completed the item, so an
+	// undo can restore the prior status. Absent in older events.
+	StatusBefore *string `json:"status_before,omitempty"`
 }
 
 // RemainingAfterLog clamps overrun and floating-point subtraction noise to zero.
@@ -29,6 +32,9 @@ func RemainingAfterLog(before, duration float64) float64 {
 }
 
 func (a LoggedActivity) Validate() error {
+	if a.StatusBefore != nil && !Status(*a.StatusBefore).Valid() {
+		return fmt.Errorf("invalid activity status_before")
+	}
 	if a.Duration == nil && a.Cost == nil {
 		return fmt.Errorf("activity requires time or cost")
 	}

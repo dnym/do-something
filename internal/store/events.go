@@ -66,8 +66,17 @@ func (s *Store) appendEventTx(tx *sql.Tx, ev model.Event) (string, error) {
 	} else if ev.Activity != nil {
 		return "", fmt.Errorf("activity is only valid for logged events")
 	}
-	querySQL := `INSERT INTO events(id, item_id, item_ids, type, at, query, activity) VALUES(?,?,?,?,?,?,?)`
-	args := []any{nullIfEmpty(itemID), nullIfEmpty(itemIDs), string(ev.Type), at.UTC().Format(time.RFC3339Nano), nullIfEmpty(query), activity}
+	var reverts any
+	if ev.Type == model.EventReverted {
+		if ev.Reverts == nil || *ev.Reverts == "" || itemID == "" {
+			return "", fmt.Errorf("reverted event requires reverts and item_id")
+		}
+		reverts = *ev.Reverts
+	} else if ev.Reverts != nil {
+		return "", fmt.Errorf("reverts is only valid for reverted events")
+	}
+	querySQL := `INSERT INTO events(id, item_id, item_ids, type, at, query, activity, reverts) VALUES(?,?,?,?,?,?,?,?)`
+	args := []any{nullIfEmpty(itemID), nullIfEmpty(itemIDs), string(ev.Type), at.UTC().Format(time.RFC3339Nano), nullIfEmpty(query), activity, reverts}
 	if id == "" {
 		var err error
 		id, err = insertGenerated(tx, newEventID, querySQL, args...)
@@ -89,7 +98,7 @@ func nullIfEmpty(s string) any {
 
 // EventsByType returns all events of a type, most recent first.
 func (s *Store) EventsByType(t model.EventType) ([]model.Event, error) {
-	rows, err := s.db.Query(`SELECT id, item_id, item_ids, type, at, query, activity FROM events WHERE type=? ORDER BY at DESC, id`, string(t))
+	rows, err := s.db.Query(`SELECT `+eventColumns+` FROM events WHERE type=? ORDER BY at DESC, id`, string(t))
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +116,7 @@ func (s *Store) EventsByType(t model.EventType) ([]model.Event, error) {
 
 // AllEvents returns every event, most recent first (used by sync reconciliation).
 func (s *Store) AllEvents() ([]model.Event, error) {
-	rows, err := s.db.Query(`SELECT id, item_id, item_ids, type, at, query, activity FROM events ORDER BY at, id`)
+	rows, err := s.db.Query(`SELECT ` + eventColumns + ` FROM events ORDER BY at, id`)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +132,12 @@ func (s *Store) AllEvents() ([]model.Event, error) {
 	return out, rows.Err()
 }
 
-func scanEvent(rows *sql.Rows) (model.Event, error) {
+const eventColumns = `id, item_id, item_ids, type, at, query, activity, reverts`
+
+// scanner is satisfied by *sql.Rows and *sql.Row.
+type scanner interface{ Scan(...any) error }
+
+func scanEvent(rows scanner) (model.Event, error) {
 	var (
 		ev       model.Event
 		itemID   sql.NullString
@@ -131,9 +145,14 @@ func scanEvent(rows *sql.Rows) (model.Event, error) {
 		at       string
 		query    sql.NullString
 		activity sql.NullString
+		reverts  sql.NullString
 	)
-	if err := rows.Scan(&ev.ID, &itemID, &itemIDs, &ev.Type, &at, &query, &activity); err != nil {
+	if err := rows.Scan(&ev.ID, &itemID, &itemIDs, &ev.Type, &at, &query, &activity, &reverts); err != nil {
 		return ev, err
+	}
+	if reverts.Valid {
+		v := reverts.String
+		ev.Reverts = &v
 	}
 	if activity.Valid {
 		var err error

@@ -38,18 +38,75 @@ type Table struct {
 	Columns []string
 	Keys    int
 	Rows    []Row
+	// Since maps a column added after v1 to the schema version introducing
+	// it. Such columns are nullable: older content reads them as NULL, and the
+	// canonical encoding omits them while every row is NULL, so digests of
+	// content that does not use them match the older schema's digests.
+	Since map[string]int
+}
+
+// ColumnsAt lists the columns present in schema version v.
+func (t Table) ColumnsAt(v int) []string {
+	out := []string{}
+	for _, c := range t.Columns {
+		if t.Since[c] <= v {
+			out = append(out, c)
+		}
+	}
+	return out
+}
+
+// canonicalColumns omits added columns that no row uses (see Since).
+func (t Table) canonicalColumns() []string {
+	out := []string{}
+	for _, c := range t.Columns {
+		if t.Since[c] > 0 {
+			used := false
+			for _, r := range t.Rows {
+				if r[c] != nil {
+					used = true
+					break
+				}
+			}
+			if !used {
+				continue
+			}
+		}
+		out = append(out, c)
+	}
+	return out
+}
+
+// upgrade fills columns added after the content's schema version with NULL so
+// every row carries every current column, and marks the content current.
+func (c *Content) upgrade() {
+	if c.SchemaVersion >= SchemaVersion || c.SchemaVersion < MinSnapshotVersion {
+		return
+	}
+	for _, t := range c.Tables() {
+		for _, r := range t.Rows {
+			for col, since := range t.Since {
+				if since > c.SchemaVersion {
+					if _, ok := r[col]; !ok {
+						r[col] = nil
+					}
+				}
+			}
+		}
+	}
+	c.SchemaVersion = SchemaVersion
 }
 
 func (c Content) Tables() []Table {
 	return []Table{
-		{"items", strings.Split("id,legacy_id,title,kind,status,category,type,notes,url,created_at,updated_at,deadline,remaining_duration,cost_left,min_session_duration,total_duration,ongoing", ","), 1, c.Items},
-		{"ratings", []string{"item_id", "property", "value", "rated_at"}, 2, c.Ratings},
-		{"item_tags", []string{"item_id", "tag"}, 2, c.Tags},
-		{"item_modes", []string{"item_id", "mode"}, 2, c.Modes},
-		{"item_engagements", []string{"item_id", "engagement"}, 2, c.Engagements},
-		{"dependencies", []string{"item_id", "depends_on"}, 2, c.Dependencies},
-		{"config", []string{"key", "value", "updated_at"}, 1, c.Config},
-		{"events", []string{"id", "item_id", "item_ids", "type", "at", "query", "activity"}, 1, c.Events},
+		{"items", strings.Split("id,legacy_id,title,kind,status,category,type,notes,url,created_at,updated_at,deadline,remaining_duration,cost_left,min_session_duration,total_duration,ongoing", ","), 1, c.Items, nil},
+		{"ratings", []string{"item_id", "property", "value", "rated_at"}, 2, c.Ratings, nil},
+		{"item_tags", []string{"item_id", "tag"}, 2, c.Tags, nil},
+		{"item_modes", []string{"item_id", "mode"}, 2, c.Modes, nil},
+		{"item_engagements", []string{"item_id", "engagement"}, 2, c.Engagements, nil},
+		{"dependencies", []string{"item_id", "depends_on"}, 2, c.Dependencies, nil},
+		{"config", []string{"key", "value", "updated_at"}, 1, c.Config, nil},
+		{"events", []string{"id", "item_id", "item_ids", "type", "at", "query", "activity", "reverts"}, 1, c.Events, map[string]int{"reverts": 2}},
 	}
 }
 func EmptyContent() Content {
@@ -89,21 +146,29 @@ func EqualRows(a, b Row) bool {
 	return bytes.Equal(x, y)
 }
 func (s *Store) Content() (Content, error) { return readContent(s.db) }
+
+// readContent reads every table; a snapshot of an older schema is upgraded in
+// memory (added columns read as NULL).
 func readContent(db *sql.DB) (Content, error) {
 	c := EmptyContent()
+	version, e := currentSchemaVersion(db)
+	if e != nil {
+		return c, e
+	}
 	tx, e := db.Begin()
 	if e != nil {
 		return c, e
 	}
 	defer tx.Rollback()
 	for _, t := range c.Tables() {
-		rows, e := tx.Query(`SELECT "` + strings.Join(t.Columns, `","`) + `" FROM "` + t.Name + `"`)
+		columns := t.ColumnsAt(version)
+		rows, e := tx.Query(`SELECT "` + strings.Join(columns, `","`) + `" FROM "` + t.Name + `"`)
 		if e != nil {
 			return c, e
 		}
 		out := []Row{}
 		for rows.Next() {
-			v := make([]any, len(t.Columns))
+			v := make([]any, len(columns))
 			p := make([]any, len(v))
 			for i := range v {
 				p[i] = &v[i]
@@ -113,7 +178,10 @@ func readContent(db *sql.DB) (Content, error) {
 				return c, e
 			}
 			r := Row{}
-			for i, k := range t.Columns {
+			for _, k := range t.Columns {
+				r[k] = nil
+			}
+			for i, k := range columns {
 				r[k] = v[i]
 			}
 			out = append(out, r)
@@ -136,7 +204,7 @@ func ReadSnapshot(path string) (Content, string, error) {
 		return Content{}, "", e
 	}
 	defer db.Close()
-	if e = ValidateDB(db); e != nil {
+	if e = ValidateSnapshotDB(db); e != nil {
 		return Content{}, "", e
 	}
 	var id string
@@ -160,14 +228,15 @@ func (c Content) Canonical(events bool) ([]byte, error) {
 			continue
 		}
 		put(t.Name)
-		for _, col := range t.Columns {
+		columns := t.canonicalColumns()
+		for _, col := range columns {
 			put(col)
 		}
 		rows := append([]Row{}, t.Rows...)
 		sort.Slice(rows, func(i, j int) bool { return RowKey(t, rows[i]) < RowKey(t, rows[j]) })
 		_ = binary.Write(&b, binary.BigEndian, uint64(len(rows)))
 		for _, r := range rows {
-			for _, k := range t.Columns {
+			for _, k := range columns {
 				v := r[k]
 				if t.Name == "items" && k == "ongoing" && v == nil {
 					v = int64(0)
@@ -231,6 +300,18 @@ func DecodeContent(b []byte) (Content, error) {
 		for _, row := range c.Items {
 			if row["ongoing"] == nil {
 				row["ongoing"] = int64(0)
+			}
+		}
+		c.upgrade()
+		// Every row carries every column, as rows read from SQL do, so row
+		// comparison during import and sync is independent of the source.
+		for _, t := range c.Tables() {
+			for _, r := range t.Rows {
+				for _, col := range t.Columns {
+					if _, ok := r[col]; !ok && t.Since[col] > 0 {
+						r[col] = nil
+					}
+				}
 			}
 		}
 		e = c.Validate()
@@ -363,9 +444,23 @@ func (c Content) Validate() error {
 					return e
 				}
 				switch r["type"] {
-				case "suggested", "started", "completed", "dropped", "logged":
+				case "suggested", "started", "completed", "dropped", "logged", "reverted":
 				default:
 					return fmt.Errorf("invalid event type")
+				}
+				if r["type"] == "reverted" {
+					target, ok := r["reverts"].(string)
+					if !ok {
+						return fmt.Errorf("reverted event requires reverts")
+					}
+					if _, e := uuid.Parse(target); e != nil {
+						return fmt.Errorf("invalid reverted event target: %w", e)
+					}
+					if r["item_id"] == nil || r["item_id"] == "" {
+						return fmt.Errorf("reverted event requires item_id")
+					}
+				} else if r["reverts"] != nil {
+					return fmt.Errorf("reverts is only valid for reverted events")
 				}
 				if r["type"] == "logged" {
 					if r["item_id"] == nil || r["item_id"] == "" {
@@ -582,7 +677,7 @@ func CaptureSnapshot(source, target string) error {
 		return e
 	}
 	defer db.Close()
-	if e = ValidateDB(db); e != nil {
+	if e = ValidateSnapshotDB(db); e != nil {
 		return e
 	}
 	s := &Store{db: db}

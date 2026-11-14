@@ -833,7 +833,7 @@ other = "category är ämnet för posten; fritext på alla sorter (fantasy, prog
 other = "Betyg (0..1) per sort:\n  project — intensity, career, physical, mental, social, interest\n  media — intensity, actuality, influence, quality, interest\n\nMätvärden per sort:\n  project — remaining_duration, cost_left, min_session_duration, total_duration, deadline\n  media — remaining_duration, cost_left, min_session_duration, total_duration, deadline\n\nOkända värden rapporteras aldrig som nollor; poängsättningen behandlar dem med ett prior på 0.5 (scoring.prior).\n\nAlla egenskaper har sin egen sida: do-something help <property>. Använd --ongoing för aktiviteter utan slutmål (se help ongoing)."
 
 ["help.topic.scoring"]
-other = "score = (1 - beta) * base + beta * right-now, beta standard 0.2 (scoring.beta)\n\nbase: postens värdegrupper, vikta och normaliserade:\n  project — value (career, physical, mental, social), commitment (remaining_duration, cost_left), interest\n  media — value (quality, influence, actuality), commitment (remaining_duration), interest\nOkända värden betygas med ett prior på 0.5 (scoring.prior). Commitment halveras vid k-konstanterna (scoring.k.*); grupp-, egenskaps- och termvikter är konfiguration (scoring.group.*, scoring.weights.*, scoring.term.*).\n\nright-now: urgency (deadline mot takt), momentum (påbörjad), unblocking (låser upp andra poster), mode_match (posten passar den valda --mode; finns bara om --mode anges), engagement_match (posten passar den valda --engagement; finns bara om --engagement anges) och cooldown (inte föreslagen nyligen), blandade efter sina vikter. Använd --ongoing för aktiviteter utan slutmål (se help ongoing)."
+other = "score = (1 - beta) * base + beta * right-now, beta standard 0.2 (scoring.beta)\n\nbase: postens värdegrupper, vikta och normaliserade:\n  project — value (career, physical, mental, social), commitment (remaining_duration, cost_left), interest\n  media — value (quality, influence, actuality), commitment (remaining_duration), interest\nOkända värden betygas med ett prior på 0.5 (scoring.prior). Commitment halveras vid k-konstanterna (scoring.k.*); grupp-, egenskaps- och termvikter är konfiguration (scoring.group.*, scoring.weights.*, scoring.term.*).\n\nright-now: urgency (deadline mot takt), momentum (påbörjad), unblocking (låser upp andra poster), mode_match (posten passar den valda --mode; finns bara om --mode anges), engagement_match (posten passar den valda --engagement; finns bara om --engagement anges) och cooldown (inte föreslagen nyligen), blandade efter sina vikter. Urgency och unblocking golvas vid medelvärdet av de övriga right-now-termerna, så en deadline eller beroende poster sänker aldrig poängen (raw_v behåller det ogolvade värdet). Använd --ongoing för aktiviteter utan slutmål (se help ongoing)."
 
 ["help.topic.filters"]
 other = "Filter kombineras med AND; varje flagga begränsar resultatmängden.\n  --kind project|media|both   --status not_started|in_progress|done|dropped\n  --type T  --category C  --tag T  --not-tag T  --text T\n  --effort LEVEL  --session DURATION  --finish-within DURATION\n  --budget N  --min-score 0..1  --unknown include|exclude\n  --limit N  --random  --peek  --explain  --fail-empty\n  --mode movement|hands_on|thinking|making  --engagement focused|loose\n\n--kind both (suggest och list) rangordnar project och media i en lista; suggest är --kind project som standard.\n--effort LEVEL är ett betygsnivånamn — none, low, medium, high, very_high, max — och behåller poster med intensity på eller under nivåns tak (se help effort).\n--mode och --engagement omrankerar poster mot den valda aktivitetstypen och engagemangsstilen (se help modes och help engagement); till skillnad från övriga filter excluderar de aldrig poster.\nPoster med okända värden släpps igenom och märks \"unknown\"; --unknown exclude är strikt."
@@ -1194,3 +1194,108 @@ other = "engagemangsmatchning"
 
 ["output.explain.term.cooldown"]
 other = "vila"
+
+["output.why.cooling"]
+other = "föreslagen eller påbörjad nyligen"
+
+["output.explain.floored"]
+other = "höjd från {{.raw}} (sänker aldrig poängen)"
+
+["help.undo"]
+other = "Ångra den senast loggade sessionen, eller den senaste för en post: återställer den återstående tid och kostnad den förbrukade och upphäver en slutförning som loggningen orsakade. Ångra lägger till en reverted-händelse (sessionen finns kvar i historiken, markerad som ångrad), så den överlever synkronisering. Den vägrar om postens återstående tid, kostnad eller status ändrats efter sessionen; använd edit i stället. En terminal ber om bekräftelse; utan interaktion krävs --yes. --dry-run visar vad som skulle hända utan att ändra något. Statuskommandon (start, done, drop, reopen) upphävs i stället med varandra."
+
+["help.history"]
+other = "Visa registrerade händelser, nyast först: loggade sessioner, statusändringar och ångringar, eventuellt för en post. Förslag döljs om inte --event suggested eller --all anges. --since begränsar till händelser från ett datum; --limit är 20 som standard (0 visar alla). Ångrade sessioner markeras."
+
+["help.stats"]
+other = "Sammanfatta aktivitet för en period (standard: de senaste 30 dagarna, till och med i dag): loggad tid och kostnad, sessioner, påbörjade, slutförda och avförda poster, tid per sort och typ och per ISO-vecka samt loggad tid jämfört med den totala uppskattningen för slutförda poster. Ångrade sessioner räknas inte. --since/--until anger datum (inklusive); --all täcker all tid."
+
+["prompt.undo"]
+other = "Ångra den här sessionen? [j/N]"
+
+["output.undo.done"]
+other = "Ångrade {{.what}} loggat på \"{{.title}}\" [{{.id}}] {{.at}}."
+
+["output.undo.preview"]
+other = "Skulle ångra {{.what}} loggat på \"{{.title}}\" [{{.id}}] {{.at}}."
+
+["output.undo.cancelled"]
+other = "Ångring avbruten; inget ändrades."
+
+["error.undo.nothing_to_undo"]
+other = "Det finns ingen loggad session att ångra."
+
+["error.undo.already_undone"]
+other = "Den här sessionen är redan ångrad."
+
+["error.undo.not_a_log"]
+other = "Endast loggade sessioner kan ångras."
+
+["error.undo.item_missing"]
+other = "Sessionens post finns inte längre."
+
+["error.undo.changed_since"]
+other = "Postens återstående tid, kostnad eller status ändrades efter sessionen; justera den med edit i stället."
+
+["output.history.empty"]
+other = "inga händelser"
+
+["output.history.missing_item"]
+other = "(borttagen post)"
+
+["output.history.suggested"]
+other = "{{.count}} poster: {{.items}}"
+
+["output.history.undid"]
+other = "ångrade {{.what}} från {{.at}}"
+
+["output.history.undid_unknown"]
+other = "ångrade händelse {{.id}}"
+
+["output.history.undone"]
+other = "(ångrad)"
+
+["output.history.remaining"]
+other = "(återstår {{.before}} → {{.after}})"
+
+["output.history.cost"]
+other = "kostnad {{.cost}}"
+
+["output.stats.period"]
+other = "{{.since}} – {{.until}}"
+
+["output.stats.period_all"]
+other = "All tid till och med {{.until}}"
+
+["output.stats.time"]
+one = "Loggad tid: {{.time}} under {{.count}} session"
+other = "Loggad tid: {{.time}} under {{.count}} sessioner"
+
+["output.stats.cost"]
+other = "Loggad kostnad: {{.cost}}"
+
+["output.stats.status"]
+other = "Påbörjade {{.started}} · Slutförda {{.completed}} · Avförda {{.dropped}}"
+
+["output.stats.unknown_item"]
+other = "(borttagen post)"
+
+["output.stats.by_type"]
+other = "Tid per typ"
+
+["output.stats.by_week"]
+other = "Tid per vecka"
+
+["output.stats.sessions"]
+one = "{{.count}} session"
+other = "{{.count}} sessioner"
+
+["output.stats.estimates"]
+other = "Slutförda poster: loggad tid jämfört med total uppskattning"
+
+["output.stats.estimate"]
+other = "uppskattat {{.estimate}} · loggat {{.actual}} · ×{{.ratio}}"
+
+["output.stats.median"]
+one = "Median ×{{.ratio}} över {{.count}} post"
+other = "Median ×{{.ratio}} över {{.count}} poster"

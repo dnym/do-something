@@ -98,6 +98,9 @@ func termNotes(tr *i18n.Translator, t scoring.TermResult) []string {
 	if t.Ready != nil && t.Total != nil {
 		notes = append(notes, tr.T("output.explain.unblocks", "ready", fmt.Sprint(*t.Ready), "total", fmt.Sprint(*t.Total)))
 	}
+	if t.RawV != nil {
+		notes = append(notes, tr.T("output.explain.floored", "raw", FormatFloat(*t.RawV)))
+	}
 	if t.AnchorAge != nil {
 		notes = append(notes, tr.T("output.explain.anchor_age", "days", fmt.Sprintf("%.1f", *t.AnchorAge)))
 	}

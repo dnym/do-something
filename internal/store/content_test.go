@@ -5,6 +5,7 @@ import (
 	"dosomething/internal/model"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"testing"
 )
@@ -266,14 +267,13 @@ func TestMigrationAtomicityAndSchemaGate(t *testing.T) {
 }
 
 // TestActivityTablesBaseSchema: item_modes and item_engagements are part of
-// the base schema — the app has never shipped a store, so there is no
-// migration to them. A fresh store is recorded at the base version, and the
-// CHECKs pin the built-in tokens at the database level, below the
+// the base (v1) schema. A fresh store is recorded at the current version, and
+// the CHECKs pin the built-in tokens at the database level, below the
 // application-level validation.
 func TestActivityTablesBaseSchema(t *testing.T) {
 	s := openTestStore(t)
 	var version string
-	if e := s.db.QueryRow("SELECT value FROM meta WHERE key='schema_version'").Scan(&version); e != nil || version != "1" {
+	if e := s.db.QueryRow("SELECT value FROM meta WHERE key='schema_version'").Scan(&version); e != nil || version != fmt.Sprint(SchemaVersion) {
 		t.Fatalf("fresh store schema_version = %q (%v)", version, e)
 	}
 	id := addTestItem(t, s, "check", model.KindProject)

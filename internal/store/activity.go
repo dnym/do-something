@@ -116,6 +116,9 @@ func (s *Store) LogTime(id string, duration, cost *float64, complete, force bool
 	if complete && a.RemainingAfter != nil && *a.RemainingAfter == 0 {
 		result.StatusAfter = model.StatusDone
 		result.Completed = true
+		before := string(it.Status)
+		a.StatusBefore = &before
+		result.Activity = a
 	}
 	now := nowRFC3339()
 	at, _ := parseTime(now)

@@ -134,9 +134,12 @@ type Args struct {
 		Key    string  `arg:"" optional:""`
 		Value  *string `arg:"" optional:""`
 	} `cmd:""`
-	Doctor     struct{} `cmd:""`
-	Schema     struct{} `cmd:""`
-	Version    struct{} `cmd:""`
+	Undo       UndoFlags    `cmd:""`
+	History    HistoryFlags `cmd:""`
+	Stats      StatsFlags   `cmd:""`
+	Doctor     struct{}     `cmd:""`
+	Schema     struct{}     `cmd:""`
+	Version    struct{}     `cmd:""`
 	Completion struct {
 		Shell string `arg:"" type:"shell"`
 	} `cmd:""`

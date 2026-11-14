@@ -9,7 +9,8 @@
 //
 // Right-now terms: urgency (deadline / no_deadline_horizon), momentum
 // (status in_progress), unblocking (fraction of active dependents that would
-// become ready if the item finished), mode_match (present only when the
+// become ready if the item finished; urgency and unblocking are floored at the
+// mean of the other terms so they never lower a score), mode_match (present only when the
 // query selects an activity kind: 1 item has it, 0.5 item unclassified, 0
 // other kinds only), engagement_match (present only when the query selects
 // an engagement style, same value semantics over the item's engagements),
@@ -187,7 +188,10 @@ type GroupResult struct {
 type TermResult struct {
 	Name   string  `json:"name"` // one of the Term* constants
 	Weight float64 `json:"weight"`
-	V      float64 `json:"v"` // term value [0,1]
+	V      float64 `json:"v"` // term value [0,1], after flooring
+	// RawV is the unfloored value when urgency/unblocking was raised to the
+	// mean of the other terms (it never lowers a score); nil otherwise.
+	RawV *float64 `json:"raw_v"`
 
 	// Numeric explain detail; nil when not applicable.
 	DaysLeft  *float64 `json:"days_left"`  // urgency: days until the effective deadline (negative = overdue)
@@ -403,17 +407,12 @@ func costLike(k, v float64) float64 {
 // then sets final = base.
 func rightNowScore(item *model.Item, ctx Context, cfg Config, now time.Time) (float64, []TermResult, bool) {
 	terms := make([]TermResult, 0, 4)
-	num, den := 0.0, 0.0
 	add := func(name string, v float64, fill func(*TermResult)) {
 		t := TermResult{Name: name, Weight: nonNeg(weightOf(cfg.TermWeights, name, 1.0)), V: clamp01(v)}
 		if fill != nil {
 			fill(&t)
 		}
 		terms = append(terms, t)
-		if t.Weight > 0 {
-			num += t.Weight * t.V
-			den += t.Weight
-		}
 	}
 
 	// urgency: present when a deadline is known, or no_deadline_horizon
@@ -501,12 +500,46 @@ func rightNowScore(item *model.Item, ctx Context, cfg Config, now time.Time) (fl
 		}
 	})
 
+	// Urgency and unblocking are present only when an item has a deadline or
+	// active dependents. A present term below the others' mean would make
+	// such an item rank below an otherwise identical item without one, so
+	// these terms are floored at the mean of the remaining terms: they can
+	// raise right-now but never lower it (a floored term has exactly the
+	// effect of an absent one). RawV keeps the unfloored value.
+	coreNum, coreDen := 0.0, 0.0
+	for _, t := range terms {
+		if !bonusTerm(t.Name) && t.Weight > 0 {
+			coreNum += t.Weight * t.V
+			coreDen += t.Weight
+		}
+	}
+	if coreDen > 0 {
+		core := coreNum / coreDen
+		for i := range terms {
+			if t := &terms[i]; bonusTerm(t.Name) && t.V < core {
+				raw := t.V
+				t.RawV = &raw
+				t.V = core
+			}
+		}
+	}
+	num, den := 0.0, 0.0
+	for _, t := range terms {
+		if t.Weight > 0 {
+			num += t.Weight * t.V
+			den += t.Weight
+		}
+	}
 	rightnow := 0.0
 	if den > 0 {
 		rightnow = num / den
 	}
 	return clamp01(rightnow), terms, den > 0
 }
+
+// bonusTerm reports whether a term only applies to some items (deadline,
+// dependents) and is therefore floored so that it never penalizes.
+func bonusTerm(name string) bool { return name == TermUrgency || name == TermUnblocking }
 
 // urgencyDaysLeft returns the days until the effective deadline (negative when
 // overdue), or ok=false when the urgency term is absent.

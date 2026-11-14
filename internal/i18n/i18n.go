@@ -106,6 +106,25 @@ func (tr *Translator) T(key string, args ...interface{}) string {
 	return res
 }
 
+// TN is T with plural selection by count (the catalog's one/other forms); the
+// count is also available to the template as {{.count}}.
+func (tr *Translator) TN(key string, count int, args ...interface{}) string {
+	if tr == nil || tr.localize == nil {
+		return key
+	}
+	msg := map[string]interface{}{"count": count}
+	for i := 0; i+1 < len(args); i += 2 {
+		if k, ok := args[i].(string); ok {
+			msg[k] = args[i+1]
+		}
+	}
+	res, err := tr.localize.Localize(&goi18n.LocalizeConfig{MessageID: key, TemplateData: msg, PluralCount: count})
+	if err != nil && res == "" {
+		return key
+	}
+	return res
+}
+
 // ValidateLocale reports whether an explicitly supplied locale (from --lang) is a
 // shipped locale.
 func ValidateLocale(locale string) bool { return known(locale) }

@@ -136,6 +136,9 @@ var commandMetadata = map[string]commandDescription{
 	"snapshot":     {Description: "Create a validated, consistent single-file SQLite snapshot.", Response: "snapshot", Output: "SnapshotResult containing the written path.", Mutation: "does not change logical store data", SideEffects: []string{"writes a snapshot file"}},
 	"sync":         {Description: "Compare and resolve the store against another device snapshot; explicit resolution may be required for conflicts.", Response: "sync", Output: "Sync report with decision, conflicts, archives, baseline, and changed/dry_run flags.", Mutation: "conditional: writes unless --dry-run is set", SideEffects: []string{"may write archive and synchronization-state files"}},
 	"config":       {Description: "List effective configuration, get one key, or set/unset a database configuration value.", Response: "config", Output: "ConfigResult with values and their default/database sources.", Mutation: "conditional: set/unset write; list/get never write", Examples: []string{"do-something config", "do-something config set scoring.k.cost_left 500", "do-something config unset scoring.k.cost_left"}},
+	"undo":         {Description: "Undo the most recent logged session (optionally for one item): restore the remaining time and cost it consumed and reverse a completion it caused, by appending reverted events. Refuses (INVALID_STATE) when the item's remaining time, cost, or status changed since the session, or when nothing is left to undo. Non-interactive use requires --yes.", Response: "undo", Output: "UndoMutation with the undone session, the restored before/after values, and the reverted event ids; dry_run previews without writing.", Mutation: "conditional: writes unless --dry-run is set or the confirmation is declined", Examples: []string{"do-something undo --dry-run", "do-something undo ITEM_ID --yes"}},
+	"history":      {Description: "List recorded events newest first, optionally for one item: logged sessions, status changes, and undos. Suggestion events are included only with --event suggested or --all. Undone events carry reverted_by.", Response: "history", Output: "History with matched/returned counts and events (type, time, item reference, logged activity, suggested candidates, reverts/reverted_by).", Mutation: "never", Examples: []string{"do-something history", "do-something history ITEM_ID --event logged --limit 0"}},
+	"stats":        {Description: "Summarize activity over a period (default the last 30 days through today, local dates): logged time, cost, and sessions; started/finished/dropped counts; time per kind/type and ISO week; logged time versus total estimate for items finished in the period. Undone sessions and completions are excluded.", Response: "stats", Output: "Stats with period bounds, totals, by_type and by_week buckets (hours), and estimates with actual/estimate ratios and their median.", Mutation: "never", Examples: []string{"do-something stats", "do-something stats --since 2026-01-01 --until 2026-03-31", "do-something stats --all"}},
 	"doctor":       {Description: "Validate store integrity, references, configuration, sync state, and diagnostics.", Response: "doctor", Output: "Diagnostic report; unhealthy results also exit 1.", Mutation: "no logical data changes", SideEffects: []string{"may garbage-collect obsolete local history files"}},
 	"schema":       {Description: "Print this machine-readable command, concept, output, and error contract.", Output: "This schema document; always JSON regardless of --format.", Mutation: "never"},
 	"version":      {Description: "Print application and contract version information.", Response: "version", Output: "VersionResult with --format json; otherwise one text line.", Mutation: "never"},
@@ -173,6 +176,10 @@ func positionalMetadata(command string, index int, fallback string) (string, str
 		if index == 0 {
 			return "item", item, "item-reference"
 		}
+	case "undo":
+		return "item", "Optional item reference; undo that item's most recent logged session instead of the overall most recent one.", "item-reference"
+	case "history":
+		return "item", "Optional item reference; show only events concerning that item.", "item-reference"
 	case "start", "done", "drop", "reopen":
 		return "items", "One or more item references; the whole transition is atomic.", "item-reference"
 	case "deps":
@@ -244,7 +251,9 @@ func flagDescription(name string) string {
 		"clear-min-session-duration": "Set min_session_duration to unknown/null.", "clear-total-duration": "Set total_duration to unknown/null.",
 		"clear-tags": "Replace tags with an empty set.", "clear-modes": "Replace modes with an empty, unclassified set.", "clear-engagements": "Replace engagements with an empty, unclassified set.", "clear-dependencies": "Replace prerequisites with an empty set.",
 		"complete": "After logging time, mark the item done only if remaining_duration reaches zero.", "no-complete": "Suppress interactive completion without marking done.", "force": "Allow logging outside in_progress; does not bypass missing estimates or validation.",
-		"dry-run": "Validate and report without applying changes.", "keep-local": "Resolve a sync conflict by keeping local content.", "take-remote": "Resolve/bootstrap by taking remote snapshot content.", "merge": "Perform a three-way merge.", "master": "For merge conflicts, prefer local or remote values.",
+		"dry-run": "Validate and report without applying changes.", "yes": "Confirm without prompting; required by undo in non-interactive use.",
+		"event": "Only these event types; repeat or comma-separate values.", "since": "Inclusive start date (local, YYYY-MM-DD).", "until": "Inclusive end date (local, YYYY-MM-DD); defaults to today.",
+		"all": "history: include suggestion events; stats: cover all time instead of the last 30 days.", "keep-local": "Resolve a sync conflict by keeping local content.", "take-remote": "Resolve/bootstrap by taking remote snapshot content.", "merge": "Perform a three-way merge.", "master": "For merge conflicts, prefer local or remote values.",
 	}[name]; ok {
 		return d
 	}
@@ -810,7 +819,7 @@ func jsonShape(t reflect.Type) any {
 		return map[string]any{"type": "string", "format": "date-time"}
 	}
 	if t == reflect.TypeOf(store.Content{}) {
-		properties := map[string]any{"schema_version": map[string]any{"type": "integer", "const": store.SchemaVersion}}
+		properties := map[string]any{"schema_version": map[string]any{"type": "integer", "const": store.SchemaVersion, "description": fmt.Sprintf("Exports carry %d; import also accepts %d and upgrades it.", store.SchemaVersion, store.MinSnapshotVersion)}}
 		required := []string{"schema_version"}
 		for _, table := range store.EmptyContent().Tables() {
 			fields := map[string]any{}
@@ -972,7 +981,7 @@ func responseSchemas() map[string]any {
 		"log": output.LogMutation{}, "add": output.ItemMutation{}, "edit": output.ItemMutation{},
 		"start": output.StatusMutation{}, "done": output.StatusMutation{}, "drop": output.StatusMutation{}, "reopen": output.StatusMutation{},
 		"deps_tree": output.DependencyTree{}, "deps": output.Dependencies{}, "config": output.ConfigResult{}, "import": importp.Report{}, "sync": syncer.Report{},
-		"snapshot": output.SnapshotResult{}, "version": output.VersionResult{}, "doctor": doctorReport{}, "export json": store.Content{}, "error": output.ErrorResult{},
+		"snapshot": output.SnapshotResult{}, "version": output.VersionResult{}, "undo": output.UndoMutation{}, "history": output.History{}, "stats": output.Stats{}, "doctor": doctorReport{}, "export json": store.Content{}, "error": output.ErrorResult{},
 	} {
 		shape := jsonShape(reflect.TypeOf(value)).(map[string]any)
 		shape["$schema"] = "https://json-schema.org/draft/2020-12/schema"

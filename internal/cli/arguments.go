@@ -46,6 +46,12 @@ var constraints = func() map[string]constraint {
 		"duration":          {Minimum: number(0), Format: "duration"},
 		"positive-duration": {ExclusiveMinimum: number(0), Format: "duration"},
 		"date":              {Format: "date"},
+		"event-type":        {},
+	}
+	for _, t := range model.AllEventTypes {
+		c := m["event-type"]
+		c.Allowed = append(c.Allowed, string(t))
+		m["event-type"] = c
 	}
 	for _, l := range model.AllLevels {
 		c := m["effort"]

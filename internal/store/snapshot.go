@@ -44,7 +44,7 @@ func ValidatePath(path string) error {
 		return err
 	}
 	defer db.Close()
-	return ValidateDB(db)
+	return ValidateSnapshotDB(db)
 }
 
 // vacuumIntoPath runs VACUUM INTO against the store's working database, writing a

@@ -114,7 +114,8 @@ func TestFinalEqualsBaseWithZeroTermWeights(t *testing.T) {
 }
 
 // TestUrgencyProject: deadline in 10 days, 20 remaining-duration left ⇒ pace 2 h/day,
-// v = 2/(2+2) = 0.5; cooldown fresh ⇒ 1. rightnow = 0.75, final = 0.55.
+// raw v = 2/(2+2) = 0.5; cooldown fresh ⇒ 1, so urgency is floored at 1 (it
+// never lowers right-now). rightnow = 1, final = 0.6.
 func TestUrgencyProject(t *testing.T) {
 	it := mkItem(model.KindProject, func(i *model.Item) {
 		i.Deadline = deadline(10)
@@ -128,19 +129,20 @@ func TestUrgencyProject(t *testing.T) {
 	if !ok {
 		t.Fatal("urgency term missing")
 	}
-	want(t, "urgency v", u.V, 0.5)
+	want(t, "urgency raw v", rawV(u), 0.5)
+	want(t, "urgency v", u.V, 1)
 	if u.DaysLeft == nil || !almost(*u.DaysLeft, 10) {
 		t.Errorf("days_left = %v, want 10", u.DaysLeft)
 	}
 	if u.Pace == nil || !almost(*u.Pace, 2) {
 		t.Errorf("pace = %v, want 2", u.Pace)
 	}
-	want(t, "rightnow", res.RightNow, 0.75)
-	want(t, "final", res.Final, 0.55)
+	want(t, "rightnow", res.RightNow, 1)
+	want(t, "final", res.Final, 0.6)
 }
 
-// TestUrgencyMedia: deadline in 15 days ⇒ v = 1 − 15/30 = 0.5 (same blend as
-// the project case).
+// TestUrgencyMedia: deadline in 15 days ⇒ raw v = 1 − 15/30 = 0.5 (floored
+// like the project case).
 func TestUrgencyMedia(t *testing.T) {
 	it := mkItem(model.KindMedia, func(i *model.Item) {
 		i.Deadline = deadline(15)
@@ -150,12 +152,12 @@ func TestUrgencyMedia(t *testing.T) {
 		t.Fatalf("score: %v", err)
 	}
 	u, _ := termOf(t, res, TermUrgency)
-	want(t, "urgency v", u.V, 0.5)
+	want(t, "urgency raw v", rawV(u), 0.5)
 	if u.Pace != nil {
 		t.Errorf("media pace = %v, want nil (day-based)", *u.Pace)
 	}
-	want(t, "rightnow", res.RightNow, 0.75)
-	want(t, "final", res.Final, 0.55)
+	want(t, "rightnow", res.RightNow, 1)
+	want(t, "final", res.Final, 0.6)
 }
 
 // TestUrgencyAbsent: no deadline and no_deadline_horizon ⇒ the term is absent
@@ -172,8 +174,8 @@ func TestUrgencyAbsent(t *testing.T) {
 }
 
 // TestNoDeadlineHorizon: no_deadline_horizon = 14 restores "assume 14 days".
-// Media: v = 1 − 14/30 ⇒ final 0.5533…. Project with 20 h left: pace 20/14,
-// v = 5/12 ⇒ final 0.5416….
+// Media: raw v = 1 − 14/30. Project with 20 h left: pace 20/14, raw v = 5/12.
+// Both are below the fresh cooldown, so they are floored and final = 0.6.
 func TestNoDeadlineHorizon(t *testing.T) {
 	cfg := DefaultConfig()
 	cfg.NoDeadlineHorizon = 14
@@ -182,7 +184,9 @@ func TestNoDeadlineHorizon(t *testing.T) {
 	if err != nil {
 		t.Fatalf("score: %v", err)
 	}
-	want(t, "media final", media.Final, 0.5533333333333333)
+	mu, _ := termOf(t, media, TermUrgency)
+	want(t, "media raw v", rawV(mu), 1-14.0/30)
+	want(t, "media final", media.Final, 0.6)
 
 	project, err := Score(mkItem(model.KindProject, func(i *model.Item) {
 		i.RemainingDuration = fptr(20)
@@ -190,12 +194,14 @@ func TestNoDeadlineHorizon(t *testing.T) {
 	if err != nil {
 		t.Fatalf("score: %v", err)
 	}
-	want(t, "project final", project.Final, 0.5416666666666666)
+	pu, _ := termOf(t, project, TermUrgency)
+	want(t, "project raw v", rawV(pu), 5.0/12)
+	want(t, "project final", project.Final, 0.6)
 }
 
 // TestUrgencyRemainingDurationFallback: a project with a deadline but unknown
-// remaining_duration falls back to the day-based curve: v = 1 − 10/30 ⇒ final
-// 0.4833….
+// remaining_duration falls back to the day-based curve: raw v = 1 − 10/30,
+// floored at the fresh cooldown ⇒ final 0.6.
 func TestUrgencyRemainingDurationFallback(t *testing.T) {
 	it := mkItem(model.KindProject, func(i *model.Item) {
 		i.Deadline = deadline(10)
@@ -205,12 +211,11 @@ func TestUrgencyRemainingDurationFallback(t *testing.T) {
 		t.Fatalf("score: %v", err)
 	}
 	u, _ := termOf(t, res, TermUrgency)
-	want(t, "urgency v", u.V, 2.0/3)
+	want(t, "urgency raw v", rawV(u), 2.0/3)
 	if u.Pace != nil {
 		t.Errorf("pace = %v, want nil (fallback)", *u.Pace)
 	}
-	// rightnow = (2/3 + 1)/2 = 5/6
-	want(t, "final", res.Final, 17.0/30)
+	want(t, "final", res.Final, 0.6)
 }
 
 // TestUrgencyOverdue: overdue deadlines pin urgency at (near) 1 — the clamp in
@@ -234,9 +239,9 @@ func TestUrgencyOverdue(t *testing.T) {
 		t.Fatalf("score: %v", err)
 	}
 	u, _ = termOf(t, project, TermUrgency)
-	want(t, "project v", u.V, 10.0/12) // pace 10/1
+	want(t, "project raw v", rawV(u), 10.0/12) // pace 10/1, floored at cooldown 1
 	// base = (0.5 + (2/3+0.5)/2 + 0.5)/3 = 19/36 (whl known ⇒ commitment D = 7/12)
-	want(t, "project final", project.Final, 0.8*(19.0/36)+0.2*(11.0/12))
+	want(t, "project final", project.Final, 0.8*(19.0/36)+0.2)
 }
 
 // TestMomentum: an in-progress item (suggested at "now", so cooldown = 0)
@@ -293,11 +298,11 @@ func TestUnblocking(t *testing.T) {
 	if !ok {
 		t.Fatal("unblocking term missing")
 	}
-	want(t, "unblocking v", u.V, 0.5)
+	want(t, "unblocking raw v", rawV(u), 0.5)
 	if u.Ready == nil || *u.Ready != 1 || u.Total == nil || *u.Total != 2 {
 		t.Errorf("ready/total = %v/%v, want 1/2", u.Ready, u.Total)
 	}
-	want(t, "final", mixed.Final, 0.55)
+	want(t, "final", mixed.Final, 0.6) // floored at the fresh cooldown
 
 	// all terminated ⇒ term absent
 	inactive, err := Score(mkItem(model.KindProject), Context{Dependents: []Dependent{
@@ -486,8 +491,8 @@ func TestCustomComposition(t *testing.T) {
 }
 
 // TestAllTermsPresent pins the canonical term order and a full four-term
-// right-now blend: urgency 0.5 (pace 2), momentum 1, unblocking 1, cooldown
-// 1/7 ⇒ rightnow 37/56.
+// right-now blend: momentum 1 and cooldown 1/7 average 4/7, so urgency 0.5
+// (pace 2) is floored to 4/7; unblocking 1 ⇒ rightnow 19/28.
 func TestAllTermsPresent(t *testing.T) {
 	it := mkItem(model.KindProject, func(i *model.Item) {
 		i.Status = model.StatusInProgress
@@ -507,15 +512,16 @@ func TestAllTermsPresent(t *testing.T) {
 		t.Fatalf("term order = %v", got)
 	}
 	u, _ := termOf(t, res, TermUrgency)
-	want(t, "urgency", u.V, 0.5)
+	want(t, "urgency raw", rawV(u), 0.5)
+	want(t, "urgency", u.V, 4.0/7)
 	mo, _ := termOf(t, res, TermMomentum)
 	want(t, "momentum", mo.V, 1)
 	ub, _ := termOf(t, res, TermUnblocking)
 	want(t, "unblocking", ub.V, 1)
 	cd, _ := termOf(t, res, TermCooldown)
 	want(t, "cooldown", cd.V, 1.0/7)
-	want(t, "rightnow", res.RightNow, 37.0/56)
-	want(t, "final", res.Final, 0.8*res.Base+0.2*(37.0/56))
+	want(t, "rightnow", res.RightNow, 19.0/28)
+	want(t, "final", res.Final, 0.8*res.Base+0.2*(19.0/28))
 }
 
 // TestModeMatch: mode_match is present only when the query carries a mode.
@@ -964,4 +970,39 @@ func names(terms []TermResult) []string {
 		out[i] = tr.Name
 	}
 	return out
+}
+
+// rawV is a term's unfloored value.
+func rawV(t TermResult) float64 {
+	if t.RawV != nil {
+		return *t.RawV
+	}
+	return t.V
+}
+
+// TestDeadlineAndDependentsNeverPenalize pins the floor: a far-off deadline or
+// dependents that would not become ready never rank an item below an
+// otherwise identical item without them, while a near deadline still raises it.
+func TestDeadlineAndDependentsNeverPenalize(t *testing.T) {
+	for _, recent := range []*time.Time{nil, &testNow} {
+		ctx := Context{LastSuggested: recent}
+		plain, _ := Score(mkItem(model.KindProject, func(i *model.Item) { i.RemainingDuration = fptr(2) }), ctx, DefaultConfig(), testNow)
+		far, _ := Score(mkItem(model.KindProject, func(i *model.Item) {
+			i.RemainingDuration = fptr(2)
+			i.Deadline = deadline(60)
+		}), ctx, DefaultConfig(), testNow)
+		near, _ := Score(mkItem(model.KindProject, func(i *model.Item) {
+			i.RemainingDuration = fptr(2)
+			i.Deadline = deadline(1)
+		}), ctx, DefaultConfig(), testNow)
+		blocked := ctx
+		blocked.Dependents = []Dependent{{Status: model.StatusNotStarted, OtherOpenDeps: 2}}
+		deps, _ := Score(mkItem(model.KindProject, func(i *model.Item) { i.RemainingDuration = fptr(2) }), blocked, DefaultConfig(), testNow)
+		if far.Final < plain.Final-1e-12 || deps.Final < plain.Final-1e-12 {
+			t.Errorf("recent=%v: far %v / deps %v below plain %v", recent != nil, far.Final, deps.Final, plain.Final)
+		}
+		if recent != nil && near.Final <= plain.Final {
+			t.Errorf("near deadline %v does not raise plain %v after a recent suggestion", near.Final, plain.Final)
+		}
+	}
 }

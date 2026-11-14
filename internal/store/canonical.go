@@ -37,17 +37,31 @@ func ParseCanonical(data []byte) (Content, error) {
 		if e != nil || name != t.Name {
 			return c, fmt.Errorf("invalid canonical table")
 		}
+		// Columns added after v1 (Table.Since) are encoded only when some row
+		// uses them. A column name cannot be mistaken for the row count that
+		// follows: the bytes after a count start with a type tag (0..3).
+		columns := []string{}
 		for _, col := range t.Columns {
+			if t.Since[col] > 0 {
+				mark := r.Size() - int64(r.Len())
+				if k, e := str(); e == nil && k == col {
+					columns = append(columns, col)
+				} else if _, e := r.Seek(mark, io.SeekStart); e != nil {
+					return c, e
+				}
+				continue
+			}
 			k, e := str()
 			if e != nil || k != col {
 				return c, fmt.Errorf("invalid canonical column")
 			}
+			columns = append(columns, col)
 		}
 		var n uint64
 		if e = binary.Read(r, binary.BigEndian, &n); e != nil {
 			return c, e
 		}
-		if n > uint64(r.Len()/len(t.Columns)) {
+		if n > uint64(r.Len()/len(columns)) {
 			return c, io.ErrUnexpectedEOF
 		}
 		rows := []Row{}
@@ -55,6 +69,9 @@ func ParseCanonical(data []byte) (Content, error) {
 		for i := uint64(0); i < n; i++ {
 			row := Row{}
 			for _, k := range t.Columns {
+				row[k] = nil
+			}
+			for _, k := range columns {
 				tag, e := r.ReadByte()
 				if e != nil {
 					return c, e

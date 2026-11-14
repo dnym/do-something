@@ -141,7 +141,17 @@ func NewItem(it *model.Item, r scoring.Result, blockers []store.Blocker, evidenc
 	for _, t := range r.Terms {
 		sum += t.Weight
 	}
+	var cooling *Reason
 	for _, t := range r.Terms {
+		if t.Name == scoring.TermCooldown && t.V < 1 {
+			// A recent suggestion or start lowers the score until the cooldown
+			// window passes. Always report it (as a negative contribution) so
+			// browsing commands explain why a score dropped after suggest.
+			if sum > 0 {
+				cooling = &Reason{t.Name, en.T("output.why.cooling"), -beta * t.Weight / sum * (1 - t.V), "output.why.cooling"}
+			}
+			continue
+		}
 		key := map[string]string{"urgency": "urgent", "momentum": "momentum", "unblocking": "unblocking", "cooldown": "fresh"}[t.Name]
 		if t.Name == scoring.TermModeMatch {
 			switch {
@@ -170,6 +180,9 @@ func NewItem(it *model.Item, r scoring.Result, blockers []store.Blocker, evidenc
 	sort.SliceStable(o.Reasons, func(i, j int) bool { return o.Reasons[i].Contribution > o.Reasons[j].Contribution })
 	if len(o.Reasons) > 3 {
 		o.Reasons = o.Reasons[:3]
+	}
+	if cooling != nil {
+		o.Reasons = append(o.Reasons, *cooling)
 	}
 	return o
 }

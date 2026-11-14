@@ -21,6 +21,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 	"uuid"
 
 	_ "modernc.org/sqlite"
@@ -133,6 +134,19 @@ func Open(mode OpenMode, opts Options) (*Store, error) {
 		return nil, err
 	}
 	s := &Store{db: db, dbPath: opts.DBPath, stateDir: stateDir}
+	if mode == OpenRead {
+		// An older live store is migrated once, under the write lock, by the
+		// first command after an upgrade — reads included.
+		if v, err := currentSchemaVersion(db); err == nil && v > 0 && v < SchemaVersion {
+			s.close()
+			w, err := Open(OpenWrite, opts)
+			if err != nil {
+				return nil, err
+			}
+			w.Close()
+			return Open(OpenRead, opts)
+		}
+	}
 
 	if mode == OpenWrite {
 		// Validate file-level integrity before doing anything else: a corrupt or
@@ -153,6 +167,10 @@ func Open(mode OpenMode, opts Options) (*Store, error) {
 				return nil, ErrStoreCorrupt
 			}
 		}
+		if err := s.backupBeforeMigration(); err != nil {
+			s.close()
+			return nil, err
+		}
 		if err := applyMigrations(db); err != nil {
 			s.close()
 			return nil, err
@@ -167,6 +185,20 @@ func Open(mode OpenMode, opts Options) (*Store, error) {
 		return nil, err
 	}
 	return s, nil
+}
+
+// backupBeforeMigration preserves a standalone copy of an older store before
+// its first forward-only migration, under <state dir>/backups.
+func (s *Store) backupBeforeMigration() error {
+	v, err := currentSchemaVersion(s.db)
+	if err != nil || v == 0 || v >= SchemaVersion {
+		return err
+	}
+	name := fmt.Sprintf("pre-schema-v%d-%s.db", SchemaVersion, time.Now().UTC().Format("20060102T150405.000000000Z"))
+	if err := s.VacuumInto(filepath.Join(s.stateDir, "backups", name)); err != nil {
+		return fmt.Errorf("store: backup before migrating schema v%d: %w", v, err)
+	}
+	return nil
 }
 
 // StoreOpenError wraps a store-open failure with the path and an optional detail,
@@ -262,6 +294,10 @@ func (s *Store) Validate() error {
 	return ValidateDB(s.db)
 }
 
+// ValidateSnapshotDB validates a frozen snapshot, which may carry any schema
+// from MinSnapshotVersion to SchemaVersion (older ones are upgraded on read).
+func ValidateSnapshotDB(db *sql.DB) error { return validateDB(db, MinSnapshotVersion) }
+
 // ValidateDB validates an already-open database handle: file integrity, the
 // forward-only schema gate, and the presence of every expected table.
 //
@@ -270,7 +306,9 @@ func (s *Store) Validate() error {
 // migrations first), so read paths on it — and every frozen snapshot, which
 // is never migrated — report SCHEMA_MISMATCH instead of STORE_CORRUPT on the
 // tables the new schema added.
-func ValidateDB(db *sql.DB) error {
+func ValidateDB(db *sql.DB) error { return validateDB(db, SchemaVersion) }
+
+func validateDB(db *sql.DB, minVersion int) error {
 	if err := checkFileIntegrity(db); err != nil {
 		return err
 	}
@@ -281,8 +319,8 @@ func ValidateDB(db *sql.DB) error {
 	if err != nil {
 		return &StoreOpenError{Err: ErrSchemaMismatch, Detail: err.Error()}
 	}
-	if v != SchemaVersion {
-		return &StoreOpenError{Err: ErrSchemaMismatch, Detail: fmt.Sprintf("store schema v%d is older than required v%d", v, SchemaVersion)}
+	if v < minVersion || v > SchemaVersion {
+		return &StoreOpenError{Err: ErrSchemaMismatch, Detail: fmt.Sprintf("store schema v%d is older than required v%d", v, minVersion)}
 	}
 	for _, t := range []string{"items", "ratings", "item_tags", "item_modes", "item_engagements", "dependencies", "events", "meta", "config"} {
 		if !tableExists(db, t) {
@@ -290,7 +328,7 @@ func ValidateDB(db *sql.DB) error {
 		}
 	}
 	for _, t := range EmptyContent().Tables() {
-		rows, err := db.Query(`SELECT source."` + strings.Join(t.Columns, `",source."`) + `" FROM "` + t.Name + `" AS source LIMIT 0`)
+		rows, err := db.Query(`SELECT source."` + strings.Join(t.ColumnsAt(v), `",source."`) + `" FROM "` + t.Name + `" AS source LIMIT 0`)
 		if err != nil {
 			return &StoreOpenError{Err: ErrStoreCorrupt, Detail: err.Error()}
 		}

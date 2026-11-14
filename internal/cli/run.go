@@ -166,7 +166,7 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 			return fail(invalid(fmt.Errorf("working database must be outside syncdir")), a.Format, tr, errout, nil)
 		}
 	}
-	writing := command == "log" || command == "add" || command == "edit" || command == "start" || command == "done" || command == "drop" || command == "reopen" || command == "deps" && (a.Deps.Action == "add" || a.Deps.Action == "remove") || command == "config" && (a.Config.Action == "set" || a.Config.Action == "unset") || command == "import" && !a.Import.DryRun || command == "sync" && !a.Sync.DryRun || command == "snapshot"
+	writing := command == "log" || command == "add" || command == "edit" || command == "start" || command == "done" || command == "drop" || command == "reopen" || command == "deps" && (a.Deps.Action == "add" || a.Deps.Action == "remove") || command == "config" && (a.Config.Action == "set" || a.Config.Action == "unset") || command == "import" && !a.Import.DryRun || command == "sync" && !a.Sync.DryRun || command == "snapshot" || command == "undo" && !a.Undo.DryRun
 	// Validate incomplete input before creating a store.
 	if command == "add" && (a.Add.Title == "" || a.Add.Kind == "") && !interactive {
 		return fail(invalid(fmt.Errorf("add requires --title and --kind when input is disabled")), a.Format, tr, errout, nil)
@@ -688,6 +688,15 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 		result = rep
 	case "doctor":
 		result, e = doctor(s, device, tr)
+	case "history":
+		result, e = history(s, a.History)
+	case "stats":
+		result, e = stats(s, a.Stats, time.Now())
+	case "undo":
+		var r output.UndoMutation
+		r, e = undo(s, a.Undo, interactive, in, errout, tr)
+		changed = r.Changed
+		result = r
 	}
 	if e != nil {
 		return fail(e, a.Format, tr, errout, result)
@@ -710,6 +719,12 @@ func Run(argv []string, in *os.File, out, errout io.Writer) int {
 				e = output.DependencyTreeText(out, value, tr)
 			case output.Dependencies:
 				e = output.DependenciesText(out, value, tr)
+			case output.History:
+				e = output.HistoryText(out, value, tr)
+			case output.Stats:
+				e = output.StatsText(out, value, tr)
+			case output.UndoMutation:
+				e = output.UndoText(out, value, tr)
 			case output.ItemMutation:
 				e = output.ItemMutationText(out, value, tr)
 				if e == nil {
@@ -784,6 +799,12 @@ func fail(e error, format string, tr *i18n.Translator, w io.Writer, details any)
 		code = "INVALID_ID"
 		details = te
 	}
+	var undoErr *store.UndoError
+	if errors.As(e, &undoErr) {
+		code = "INVALID_STATE"
+		details = undoErr
+		exit = 2
+	}
 	var logErr *store.LogError
 	if errors.As(e, &logErr) {
 		code = "INVALID_STATE"
@@ -829,6 +850,9 @@ func fail(e error, format string, tr *i18n.Translator, w io.Writer, details any)
 		}
 		if logErr != nil {
 			detail = tr.T("error.log." + logErr.Reason)
+		}
+		if undoErr != nil {
+			detail = tr.T("error.undo." + undoErr.Reason)
 		}
 		fmt.Fprintln(w, tr.T("error.generic", "code", code, "detail", detail))
 	}

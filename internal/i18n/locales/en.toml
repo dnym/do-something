@@ -833,7 +833,7 @@ other = "category is the topic of the item; free text on every kind (fantasy, pr
 other = "Ratings (0..1) by kind:\n  project — intensity, career, physical, mental, social, interest\n  media — intensity, actuality, influence, quality, interest\n\nMeasurements by kind:\n  project — remaining_duration, cost_left, min_session_duration, total_duration, deadline\n  media — remaining_duration, cost_left, min_session_duration, total_duration, deadline\n\nUnknown values are never reported as zeroes; scoring treats them with a 0.5 prior (scoring.prior).\n\nEvery property has its own page: do-something help <property>. Use --ongoing for activities with no finish line (see help ongoing)."
 
 ["help.topic.scoring"]
-other = "score = (1 - beta) * base + beta * right-now, beta default 0.2 (scoring.beta)\n\nbase: the value groups of the item's kind, weighted and normalized:\n  project — value (career, physical, mental, social), commitment (remaining_duration, cost_left), interest\n  media — value (quality, influence, actuality), commitment (remaining_duration), interest\nUnknown values are scored with a 0.5 prior (scoring.prior). Commitment halves at the k constants (scoring.k.*); group, property, and term weights are config keys (scoring.group.*, scoring.weights.*, scoring.term.*).\n\nright-now: urgency (deadline versus pace), momentum (already in progress), unblocking (frees other items), mode_match (item fits the selected --mode; present only when --mode is given), engagement_match (item fits the selected --engagement; present only when --engagement is given), and cooldown (not suggested recently), blended by their weights. Use --ongoing for activities with no finish line (see help ongoing)."
+other = "score = (1 - beta) * base + beta * right-now, beta default 0.2 (scoring.beta)\n\nbase: the value groups of the item's kind, weighted and normalized:\n  project — value (career, physical, mental, social), commitment (remaining_duration, cost_left), interest\n  media — value (quality, influence, actuality), commitment (remaining_duration), interest\nUnknown values are scored with a 0.5 prior (scoring.prior). Commitment halves at the k constants (scoring.k.*); group, property, and term weights are config keys (scoring.group.*, scoring.weights.*, scoring.term.*).\n\nright-now: urgency (deadline versus pace), momentum (already in progress), unblocking (frees other items), mode_match (item fits the selected --mode; present only when --mode is given), engagement_match (item fits the selected --engagement; present only when --engagement is given), and cooldown (not suggested recently), blended by their weights. Urgency and unblocking are floored at the mean of the other right-now terms, so a deadline or dependents never lower a score (raw_v keeps the unfloored value). Use --ongoing for activities with no finish line (see help ongoing)."
 
 ["help.topic.filters"]
 other = "Filters combine with AND; every flag narrows the result set.\n  --kind project|media|both   --status not_started|in_progress|done|dropped\n  --type T  --category C  --tag T  --not-tag T  --text T\n  --effort LEVEL  --session DURATION  --finish-within DURATION\n  --budget N  --min-score 0..1  --unknown include|exclude\n  --limit N  --random  --peek  --explain  --fail-empty\n  --mode movement|hands_on|thinking|making  --engagement focused|loose\n\n--kind both (suggest and list) ranks projects and media in one list; suggest defaults to --kind project.\n--effort LEVEL is a rating level — none, low, medium, high, very_high, max — and keeps items with intensity at or below the level's ceiling (see help effort).\n--mode and --engagement re-rank items toward the selected kind and engagement style (see help modes and help engagement); unlike the other filters they never exclude items.\nItems with unknown values pass and are labelled \"unknown\"; --unknown exclude is strict."
@@ -1194,3 +1194,108 @@ other = "engagement match"
 
 ["output.explain.term.cooldown"]
 other = "cooldown"
+
+["output.why.cooling"]
+other = "suggested or started recently"
+
+["output.explain.floored"]
+other = "raised from {{.raw}} (never lowers the score)"
+
+["help.undo"]
+other = "Undo the most recent logged session, or the most recent one for an item: restores the remaining time and cost it consumed and reverses a completion the log caused. Undo appends a reverted event (the session stays in history, marked undone), so it survives sync. It refuses when the item's remaining time, cost, or status changed after the session; use edit instead. A terminal asks for confirmation; non-interactive use requires --yes. --dry-run previews without changing anything. Status commands (start, done, drop, reopen) are reversed with each other instead."
+
+["help.history"]
+other = "Show recorded events, newest first: logged sessions, status changes, and undos, optionally for one item. Suggestions are hidden unless --event suggested or --all is given. --since limits to events on or after a date; --limit defaults to 20 (0 shows all). Undone sessions are marked."
+
+["help.stats"]
+other = "Summarize activity for a period (default: the last 30 days, through today): time and cost logged, sessions, items started, finished, and dropped, time per kind and type and per ISO week, and logged time versus the total estimate for finished items. Undone sessions are excluded. --since/--until set inclusive dates; --all covers all time."
+
+["prompt.undo"]
+other = "Undo this session? [y/N]"
+
+["output.undo.done"]
+other = "Undid {{.what}} logged on \"{{.title}}\" [{{.id}}] at {{.at}}."
+
+["output.undo.preview"]
+other = "Would undo {{.what}} logged on \"{{.title}}\" [{{.id}}] at {{.at}}."
+
+["output.undo.cancelled"]
+other = "Undo cancelled; nothing changed."
+
+["error.undo.nothing_to_undo"]
+other = "There is no logged session to undo."
+
+["error.undo.already_undone"]
+other = "This session has already been undone."
+
+["error.undo.not_a_log"]
+other = "Only logged sessions can be undone."
+
+["error.undo.item_missing"]
+other = "The session's item no longer exists."
+
+["error.undo.changed_since"]
+other = "The item's remaining time, cost, or status changed after this session; adjust it with edit instead."
+
+["output.history.empty"]
+other = "no events"
+
+["output.history.missing_item"]
+other = "(deleted item)"
+
+["output.history.suggested"]
+other = "{{.count}} items: {{.items}}"
+
+["output.history.undid"]
+other = "undid {{.what}} from {{.at}}"
+
+["output.history.undid_unknown"]
+other = "undid event {{.id}}"
+
+["output.history.undone"]
+other = "(undone)"
+
+["output.history.remaining"]
+other = "(remaining {{.before}} → {{.after}})"
+
+["output.history.cost"]
+other = "cost {{.cost}}"
+
+["output.stats.period"]
+other = "{{.since}} – {{.until}}"
+
+["output.stats.period_all"]
+other = "All time through {{.until}}"
+
+["output.stats.time"]
+one = "Time logged: {{.time}} in {{.count}} session"
+other = "Time logged: {{.time}} in {{.count}} sessions"
+
+["output.stats.cost"]
+other = "Cost logged: {{.cost}}"
+
+["output.stats.status"]
+other = "Started {{.started}} · Finished {{.completed}} · Dropped {{.dropped}}"
+
+["output.stats.unknown_item"]
+other = "(deleted item)"
+
+["output.stats.by_type"]
+other = "Time by type"
+
+["output.stats.by_week"]
+other = "Time by week"
+
+["output.stats.sessions"]
+one = "{{.count}} session"
+other = "{{.count}} sessions"
+
+["output.stats.estimates"]
+other = "Finished items: logged time vs. total estimate"
+
+["output.stats.estimate"]
+other = "estimated {{.estimate}} · logged {{.actual}} · ×{{.ratio}}"
+
+["output.stats.median"]
+one = "Median ×{{.ratio}} over {{.count}} item"
+other = "Median ×{{.ratio}} over {{.count}} items"
